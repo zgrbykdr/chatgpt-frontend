@@ -1,0 +1,5 @@
+[
+  {"text":"Doctor's fees – Pay $50", "money":-50},
+  {"text":"From sale of stock you get $50", "money":50},
+  {"text":"Go to Jail", "gotoJail":true}
+]
