@@ -1,0 +1,5 @@
+[
+  {"text":"Advance to Go", "moveTo":0},
+  {"text":"Bank pays you dividend of $50", "money":50},
+  {"text":"Go to Jail", "gotoJail":true}
+]
