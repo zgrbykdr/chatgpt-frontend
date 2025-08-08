@@ -13,6 +13,8 @@
     "dark_blue": 200
   },
   "hotel_multiplier": 5,
+  "bank_houses": 32,
+  "bank_hotels": 12,
   "squares": [
     {"type": "go", "name": "GO", "description": "Collect $200 salary as you pass"},
     {"type": "property", "color": "brown", "name": "Mediterranean Avenue", "price": 60, "rent": [2, 10, 30, 90, 160, 250]},

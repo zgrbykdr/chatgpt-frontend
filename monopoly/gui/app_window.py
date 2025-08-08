@@ -31,13 +31,24 @@ def run_gui(game: Game) -> None:
         [sg.Text("P1 Pos:"), sg.Text("0", key="-P1POS-")],
         [sg.Text("P2 Pos:"), sg.Text("0", key="-P2POS-")],
         [sg.HorizontalSeparator()],
-        [sg.Button("Roll"), sg.Button("End Turn"), sg.Button("Buy"), sg.Button("Pay Tax Flat"), sg.Button("Pay Tax %")],
+        [sg.Button("Roll"), sg.Button("Roll in Jail"), sg.Button("End Turn")],
+        [sg.Button("Buy"), sg.Button("Auction"), sg.Button("Build"), sg.Button("Sell")],
+        [sg.Button("Mortgage"), sg.Button("Unmortgage"), sg.Button("Trade")],
+        [sg.Button("Pay Tax Flat"), sg.Button("Pay Tax %")],
         [sg.Button("Pay Jail Fine"), sg.Button("Use Jail Card")],
         [sg.Multiline(size=(48, 12), key="-LOG-", disabled=True)]
     ]
 
     # Editor Tab
     editor_layout = [
+        [sg.Text("Editor: Board Settings")],
+        [sg.Text("GO Salary"), sg.Input(str(game.go_salary), key="-ED-GO-", size=(8,1)),
+         sg.Text("Jail Fine"), sg.Input(str(game.config['board'].get('jail_fine',50)), key="-ED-JF-", size=(8,1)),
+         sg.Text("Bank Houses"), sg.Input(str(game.bank_houses), key="-ED-BH-", size=(6,1)),
+         sg.Text("Bank Hotels"), sg.Input(str(game.bank_hotels), key="-ED-BT-", size=(6,1))],
+        [sg.Text("House Costs (color->cost JSON)"), sg.Input(json.dumps(game.house_costs), key='-ED-HC-', size=(60,1))],
+        [sg.Button("Save Board Settings")],
+        [sg.HorizontalSeparator()],
         [sg.Text("Editor: Squares")],
         [sg.Text("Index"), sg.Input("", key="-ED-INDEX-", size=(5,1)), sg.Button("Load Square"), sg.Button("Save Square")],
         [sg.Text("Type"), sg.Input("", key="-ED-TYPE-", size=(12,1)),
@@ -71,6 +82,7 @@ def run_gui(game: Game) -> None:
         window["-P2POS-"].update(str(game.players[1].position))
         window["-CURRENT-"].update(game.players[game.current_player_index].name)
         window["-LOG-"].update("\n".join(game.log[-200:]))
+        window["End Turn"].update(disabled=game.must_roll_again)
 
     refresh_all()
 
@@ -88,11 +100,21 @@ def run_gui(game: Game) -> None:
         if event == "End Turn":
             game.end_turn()
             refresh_all()
+        if event == "Roll in Jail":
+            game.jail_roll()
+            refresh_all()
         if event == "Buy":
             idx = game.players[game.current_player_index].position
             if game.squares[idx]["type"] in {"property", "railroad", "utility"}:
                 game.buy_property(idx)
             refresh_all()
+        if event == "Auction":
+            idx = game.players[game.current_player_index].position
+            if game.squares[idx]["type"] in {"property", "railroad", "utility"} and game.properties_state[idx].owner_index is None:
+                winner, price = _auction_window(game, idx)
+                if winner is not None and price is not None:
+                    game.auction_buy(idx, winner, price)
+                    refresh_all()
         if event == "Pay Tax Flat":
             game.choose_tax("flat")
             refresh_all()
@@ -138,6 +160,35 @@ def run_gui(game: Game) -> None:
                 refresh_all()
             except Exception as e:
                 sg.popup_error(f"Save failed: {e}")
+        if event == "Build":
+            idx = _select_owned_property(game, game.current_player_index)
+            if idx is not None:
+                if not game.build_house(idx):
+                    sg.popup_error("Cannot build here.")
+                refresh_all()
+        if event == "Sell":
+            idx = _select_owned_property(game, game.current_player_index)
+            if idx is not None:
+                if not game.sell_house(idx):
+                    sg.popup_error("Cannot sell here.")
+                refresh_all()
+        if event == "Mortgage":
+            idx = _select_owned_property(game, game.current_player_index)
+            if idx is not None:
+                if not game.mortgage(idx):
+                    sg.popup_error("Cannot mortgage.")
+                refresh_all()
+        if event == "Unmortgage":
+            idx = _select_owned_property(game, game.current_player_index, mortgaged_only=True)
+            if idx is not None:
+                if not game.unmortgage(idx):
+                    sg.popup_error("Cannot unmortgage.")
+                refresh_all()
+        if event == "Trade":
+            offer = _trade_window(game)
+            if offer:
+                game.apply_trade(offer)
+                refresh_all()
         if event == "Reload Decks View":
             window["-ED-CHANCE-"].update(json.dumps(game.config["chance"], indent=2))
             window["-ED-COMM-"].update(json.dumps(game.config["community_chest"], indent=2))
@@ -150,6 +201,20 @@ def run_gui(game: Game) -> None:
                 sg.popup("Decks updated")
             except Exception as e:
                 sg.popup_error(f"Deck save failed: {e}")
+        if event == "Save Board Settings":
+            try:
+                game.go_salary = int(values['-ED-GO-'])
+                game.config['board']['go_salary'] = game.go_salary
+                game.config['board']['jail_fine'] = int(values['-ED-JF-'])
+                game.bank_houses = int(values['-ED-BH-'])
+                game.bank_hotels = int(values['-ED-BT-'])
+                game.house_costs = json.loads(values['-ED-HC-'])
+                game.config['board']['bank_houses'] = game.bank_houses
+                game.config['board']['bank_hotels'] = game.bank_hotels
+                game.config['board']['house_costs'] = game.house_costs
+                sg.popup("Board settings saved (runtime). Use Save Config to persist.")
+            except Exception as e:
+                sg.popup_error(f"Save failed: {e}")
         if event in ("Load Config", "Save Config") or event in ("-menu-Load Config-", "-menu-Save Config-"):
             # Menu tied to same handlers below
             pass
@@ -183,3 +248,108 @@ def _board_preview(game: Game) -> List[str]:
         name = s.get("name", s["type"]).strip()
         out.append(f"{idx:02d}: {name} / {s['type']}")
     return out
+
+
+def _auction_window(game: Game, prop_index: int):
+    sq = game.squares[prop_index]
+    layout = [
+        [sg.Text(f"Auction: {sq.get('name')} (list price {game.currency}{sq.get('price',0)})")],
+        [sg.Text(f"{game.players[0].name} bid"), sg.Input(key='-BID0-', size=(10,1))],
+        [sg.Text(f"{game.players[1].name} bid"), sg.Input(key='-BID1-', size=(10,1))],
+        [sg.Button("OK"), sg.Button("Cancel")]
+    ]
+    win = sg.Window("Auction", layout)
+    winner = None
+    price = None
+    while True:
+        e, v = win.read()
+        if e in (sg.WIN_CLOSED, "Cancel"):
+            break
+        if e == "OK":
+            try:
+                b0 = int(v['-BID0-'] or 0)
+                b1 = int(v['-BID1-'] or 0)
+                if b0 < 0 or b1 < 0:
+                    raise ValueError
+                if b0 == b1:
+                    sg.popup("Tie or no bids. No sale.")
+                    break
+                if b0 > b1:
+                    winner = 0
+                    price = b0
+                else:
+                    winner = 1
+                    price = b1
+                # ensure cash
+                if game.players[winner].cash < price:
+                    sg.popup_error("Winner lacks cash.")
+                    winner = None
+                    price = None
+                else:
+                    break
+            except Exception:
+                sg.popup_error("Invalid bids")
+    win.close()
+    return winner, price
+
+
+def _select_owned_property(game: Game, player_index: int, mortgaged_only: bool=False):
+    props = [i for i in game.players[player_index].properties if (not mortgaged_only or game.properties_state[i].mortgaged)]
+    names = [f"{i:02d} {game.squares[i].get('name')}" for i in props]
+    layout = [[sg.Listbox(values=names, size=(40, 10), key='-LB-')], [sg.Button("OK"), sg.Button("Cancel")]]
+    win = sg.Window("Select Property", layout)
+    idx = None
+    while True:
+        e, v = win.read()
+        if e in (sg.WIN_CLOSED, "Cancel"):
+            break
+        if e == "OK":
+            sel = v['-LB-']
+            if sel:
+                sel_text = sel[0]
+                idx = int(sel_text.split()[0])
+                break
+    win.close()
+    return idx
+
+
+def _trade_window(game: Game):
+    p0_props = [f"{i:02d} {game.squares[i].get('name')}" for i in game.players[0].properties]
+    p1_props = [f"{i:02d} {game.squares[i].get('name')}" for i in game.players[1].properties]
+    layout = [
+        [sg.Text("Trade")],
+        [sg.Text(game.players[0].name)],
+        [sg.Listbox(values=p0_props, select_mode=sg.SELECT_MODE_MULTIPLE, size=(30,10), key='-P0PROPS-'),
+         sg.VSeparator(),
+         sg.Listbox(values=p1_props, select_mode=sg.SELECT_MODE_MULTIPLE, size=(30,10), key='-P1PROPS-')],
+        [sg.Text(f"{game.players[0].name} gives cash"), sg.Input("0", key='-P0CASH-', size=(8,1)),
+         sg.Text(f"{game.players[1].name} gives cash"), sg.Input("0", key='-P1CASH-', size=(8,1))],
+        [sg.Text("GOJ from P0->P1"), sg.Input("0", key='-GOJ01-', size=(4,1)),
+         sg.Text("GOJ from P1->P0"), sg.Input("0", key='-GOJ10-', size=(4,1))],
+        [sg.Button("Make Trade"), sg.Button("Cancel")]
+    ]
+    win = sg.Window("Trade", layout)
+    offer = None
+    while True:
+        e, v = win.read()
+        if e in (sg.WIN_CLOSED, "Cancel"):
+            break
+        if e == "Make Trade":
+            try:
+                props_from = [int(x.split()[0]) for x in v['-P0PROPS-']]
+                props_to = [int(x.split()[0]) for x in v['-P1PROPS-']]
+                offer = {
+                    'from': 0,
+                    'to': 1,
+                    'cash_from': int(v['-P0CASH-'] or 0),
+                    'cash_to': int(v['-P1CASH-'] or 0),
+                    'props_from': props_from,
+                    'props_to': props_to,
+                    'goj_from': int(v['-GOJ01-'] or 0),
+                    'goj_to': int(v['-GOJ10-'] or 0)
+                }
+                break
+            except Exception:
+                sg.popup_error("Invalid trade inputs")
+    win.close()
+    return offer
