@@ -1,0 +1,18 @@
+[
+  {"type": "move_to", "target": 0, "description": "Advance to GO (Collect $200)"},
+  {"type": "move_to", "target": 24, "description": "Advance to Illinois Avenue"},
+  {"type": "move_to", "target": 11, "description": "Advance to St. Charles Place"},
+  {"type": "nearest_railroad", "description": "Advance token to the nearest Railroad and pay owner twice the rental"},
+  {"type": "nearest_utility", "description": "Advance token to the nearest Utility. If unowned, you may buy it. If owned, pay ten times the amount shown on the dice."},
+  {"type": "collect", "amount": 50, "description": "Bank pays you dividend of $50"},
+  {"type": "out_of_jail_free", "description": "Get Out of Jail Free"},
+  {"type": "go_to_jail", "description": "Go to Jail"},
+  {"type": "repairs", "house": 25, "hotel": 100, "description": "Make general repairs on all your property: For each house pay $25, For each hotel $100"},
+  {"type": "pay_each_player", "amount": 50, "description": "Pay each player $50"},
+  {"type": "collect_from_each_player", "amount": 50, "description": "You have been elected Chairman of the Board – Pay each player $50"},
+  {"type": "move_back", "spaces": 3, "description": "Go Back Three Spaces"},
+  {"type": "move_to", "target": 5, "description": "Take a trip to Reading Railroad"},
+  {"type": "move_to", "target": 39, "description": "Advance to Boardwalk"},
+  {"type": "collect", "amount": 150, "description": "Your building loan matures – Collect $150"},
+  {"type": "collect", "amount": 100, "description": "You have won a crossword competition – Collect $100"}
+]
