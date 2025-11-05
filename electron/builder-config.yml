@@ -1,0 +1,19 @@
+appId: com.heatpump.sim
+productName: HeatPumpSim
+files:
+  - dist/**/*
+  - electron/**/*
+  - server/**/*
+extraResources:
+  - from: server/dist
+    to: resources/server
+mac:
+  target:
+    - dmg
+linux:
+  target:
+    - AppImage
+win:
+  target:
+    - nsis
+publish: null

@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background text-slate-100;
+}
+
+button {
+  @apply rounded bg-slate-700 px-3 py-1 text-sm font-semibold text-white transition hover:bg-slate-500;
+}
