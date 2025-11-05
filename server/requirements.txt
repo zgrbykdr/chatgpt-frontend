@@ -1,0 +1,6 @@
+fastapi==0.103.2
+uvicorn==0.23.2
+numpy==1.26.1
+scipy==1.11.3
+coolprop==6.4.3
+jsonschema==4.19.1

@@ -1,0 +1,63 @@
+{
+  "Evaporator": {
+    "modeling": "MB",
+    "params": {
+      "fluid": "R134a",
+      "massFlow": 0.3,
+      "area": 12.0,
+      "length": 5.0,
+      "qualityIn": 0.2,
+      "pressure": 650000,
+      "wallTemperature": 280.15
+    },
+    "ports": [
+      { "name": "in", "direction": "in", "medium": "refrigerant" },
+      { "name": "out", "direction": "out", "medium": "refrigerant" }
+    ]
+  },
+  "Condenser": {
+    "modeling": "MB",
+    "params": {
+      "fluid": "R134a",
+      "massFlow": 0.3,
+      "area": 10.0,
+      "length": 4.2,
+      "qualityIn": 0.9,
+      "pressure": 1900000,
+      "wallTemperature": 315.15
+    },
+    "ports": [
+      { "name": "in", "direction": "in", "medium": "refrigerant" },
+      { "name": "out", "direction": "out", "medium": "refrigerant" }
+    ]
+  },
+  "Compressor": {
+    "modeling": "LUMPED",
+    "params": {
+      "fluid": "R134a",
+      "massFlow": 0.3,
+      "suctionPressure": 650000,
+      "dischargePressure": 1950000,
+      "eta_is": 0.75,
+      "speed": 45.0
+    },
+    "ports": [
+      { "name": "in", "direction": "in", "medium": "refrigerant" },
+      { "name": "out", "direction": "out", "medium": "refrigerant" }
+    ]
+  },
+  "ExpansionValve": {
+    "modeling": "LUMPED",
+    "params": {
+      "fluid": "R134a",
+      "upstreamPressure": 1950000,
+      "downstreamPressure": 650000,
+      "Cv": 0.8,
+      "opening": 0.5
+    },
+    "ports": [
+      { "name": "in", "direction": "in", "medium": "refrigerant" },
+      { "name": "out", "direction": "out", "medium": "refrigerant" }
+    ]
+  }
+}

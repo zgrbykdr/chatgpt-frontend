@@ -1,0 +1,100 @@
+{
+  "version": "1.0.0",
+  "fluids": [
+    { "name": "Water", "role": "secondary" },
+    { "name": "R134a", "role": "primary" }
+  ],
+  "components": [
+    {
+      "id": "evap",
+      "type": "Evaporator",
+      "modeling": "MB",
+      "params": {
+        "fluid": "R134a",
+        "massFlow": 0.32,
+        "area": 12.5,
+        "length": 5.0,
+        "qualityIn": 0.25,
+        "pressure": 650000,
+        "wallTemperature": 279.15
+      },
+      "ports": [
+        { "name": "in", "direction": "in", "medium": "refrigerant" },
+        { "name": "out", "direction": "out", "medium": "refrigerant" }
+      ],
+      "ui": { "position": { "x": -200, "y": 40 } }
+    },
+    {
+      "id": "comp",
+      "type": "Compressor",
+      "modeling": "LUMPED",
+      "params": {
+        "fluid": "R134a",
+        "suctionPressure": 650000,
+        "dischargePressure": 1950000,
+        "suctionTemperature": 279.15,
+        "massFlow": 0.32,
+        "eta_is": 0.75
+      },
+      "ports": [
+        { "name": "in", "direction": "in", "medium": "refrigerant" },
+        { "name": "out", "direction": "out", "medium": "refrigerant" }
+      ],
+      "ui": { "position": { "x": 0, "y": -120 } }
+    },
+    {
+      "id": "cond",
+      "type": "Condenser",
+      "modeling": "MB",
+      "params": {
+        "fluid": "R134a",
+        "massFlow": 0.32,
+        "area": 10.2,
+        "length": 4.2,
+        "qualityIn": 0.98,
+        "pressure": 1950000,
+        "wallTemperature": 315.15
+      },
+      "ports": [
+        { "name": "in", "direction": "in", "medium": "refrigerant" },
+        { "name": "out", "direction": "out", "medium": "refrigerant" }
+      ],
+      "ui": { "position": { "x": 220, "y": 20 } }
+    },
+    {
+      "id": "exp",
+      "type": "ExpansionValve",
+      "modeling": "LUMPED",
+      "params": {
+        "fluid": "R134a",
+        "upstreamPressure": 1950000,
+        "downstreamPressure": 650000,
+        "Cv": 0.8,
+        "opening": 0.45
+      },
+      "ports": [
+        { "name": "in", "direction": "in", "medium": "refrigerant" },
+        { "name": "out", "direction": "out", "medium": "refrigerant" }
+      ],
+      "ui": { "position": { "x": -10, "y": 140 } }
+    }
+  ],
+  "connections": [
+    { "id": "c1", "from": { "id": "evap", "port": "out" }, "to": { "id": "comp", "port": "in" }, "type": "fluid" },
+    { "id": "c2", "from": { "id": "comp", "port": "out" }, "to": { "id": "cond", "port": "in" }, "type": "fluid" },
+    { "id": "c3", "from": { "id": "cond", "port": "out" }, "to": { "id": "exp", "port": "in" }, "type": "fluid" },
+    { "id": "c4", "from": { "id": "exp", "port": "out" }, "to": { "id": "evap", "port": "in" }, "type": "fluid" }
+  ],
+  "simulation": {
+    "start": 0.0,
+    "stop": 3600.0,
+    "integrator": "BDF2",
+    "scenario": "W10/W35",
+    "tolerances": { "absolute": 1e-5, "relative": 1e-4 }
+  },
+  "units": {
+    "temperature": "C",
+    "pressure": "bar",
+    "massFlow": "kg/s"
+  }
+}
