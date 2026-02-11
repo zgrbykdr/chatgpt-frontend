@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Item Pack",
+  "type": "object",
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "weight", "valueGp"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "weight": { "type": "number" },
+          "valueGp": { "type": "number" },
+          "location": { "type": "string" },
+          "containerId": { "type": "string" },
+          "modifiers": { "type": "array", "items": { "type": "object" } }
+        }
+      }
+    }
+  }
+}

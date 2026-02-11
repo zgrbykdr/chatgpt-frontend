@@ -1,0 +1,13 @@
+{
+  "name": "dnd3e-dm-desktop",
+  "version": "1.0.0",
+  "description": "Desktop DM campaign manager for D&D 3E style games",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node tests/run-tests.js"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

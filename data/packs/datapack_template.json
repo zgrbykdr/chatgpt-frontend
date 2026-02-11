@@ -1,0 +1,22 @@
+{
+  "packId": "my-private-pack",
+  "version": "1.0.0",
+  "feats": [
+    {
+      "id": "feat_custom_1",
+      "name": "Custom Feat",
+      "source": "My Private Book p.10",
+      "summary": "Short non-copyright-heavy summary.",
+      "mappingStatus": "Mapped",
+      "prerequisites": [
+        { "type": "ability_min", "ability": "DEX", "value": 13 }
+      ],
+      "modifiers": [
+        { "target": "initiative", "value": 2, "bonusType": "competence", "notes": "Custom feat bonus" }
+      ]
+    }
+  ],
+  "spells": [],
+  "items": [],
+  "conditions": []
+}

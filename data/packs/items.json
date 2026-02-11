@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "id": "item_chain_shirt",
+      "name": "Chain Shirt",
+      "weight": 25,
+      "valueGp": 100,
+      "location": "worn",
+      "modifiers": [
+        { "target": "ac.total", "value": 4, "bonusType": "armor" }
+      ]
+    }
+  ]
+}

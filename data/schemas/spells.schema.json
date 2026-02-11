@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spell Pack",
+  "type": "object",
+  "required": ["spells"],
+  "properties": {
+    "spells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "school", "levelByClass", "summary"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "school": { "type": "string" },
+          "subschool": { "type": "string" },
+          "descriptors": { "type": "array", "items": { "type": "string" } },
+          "levelByClass": { "type": "object", "additionalProperties": { "type": "number" } },
+          "castingTime": { "type": "string" },
+          "range": { "type": "string" },
+          "targetArea": { "type": "string" },
+          "duration": { "type": "string" },
+          "save": { "type": "string" },
+          "sr": { "type": "string" },
+          "summary": { "type": "string" },
+          "effectTemplate": { "type": "object" }
+        }
+      }
+    }
+  }
+}

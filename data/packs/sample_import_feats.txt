@@ -1,0 +1,4 @@
+Name	Source	Description
+Improved Initiative	PHB 2000 p.96	Act quickly in combat.
+Power Attack	PHB 2000 p.98	Trade attack bonus for damage.
+Weapon Focus	PHB 2000 p.102	+1 bonus on attack rolls with selected weapon.
