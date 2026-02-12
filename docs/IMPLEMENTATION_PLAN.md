@@ -1,76 +1,57 @@
-# D&D 3E DM Desktop Manager - Implementation Plan
+# D&D 3E DM Desktop Manager - Python Implementation Plan
 
 ## 1) Tech Stack
-1. **Desktop shell**: Electron (Node.js + Chromium desktop app).
-2. **UI**: Vanilla HTML/CSS/JavaScript with responsive DM dashboard layout.
-3. **Storage**: Local JSON campaign files with snapshot backups (`.backups` keep last N).
-4. **Validation**: JSON Schemas for data packs and campaign entities.
-5. **Testing**: Node test runner using assertion scripts (`tests/run-tests.js`).
+1. Desktop GUI: **Python + PySide6**.
+2. Data model + rules engine: Python dataclasses and services.
+3. Storage: local JSON campaigns with snapshot backups.
+4. Validation: JSON schemas under `data/schemas`.
+5. Testing: Python `unittest`.
 
 ## 2) File Structure
-- `main.js`: Electron main process and file dialogs.
-- `preload.js`: IPC bridge.
-- `index.html`, `styles.css`, `src/renderer.js`: GUI and interactions.
-- `src/lib/models.js`: canonical campaign/character model and migration.
-- `src/lib/modifierEngine.js`: stacking rules and derived stat recomputation.
-- `src/lib/txtFeatParser.js`: robust TXT feat parsing and deduping.
-- `src/lib/storage.js`: save/load + backups.
-- `data/schemas/*.schema.json`: JSON schemas for data packs.
-- `data/packs/*.json`: starter/OGL-safe sample data packs.
-- `tests/*.js`: unit tests for calculations and import parsing.
+- `py_app/main.py`: app entry point.
+- `py_app/ui/main_window.py`: desktop GUI.
+- `py_app/core/models.py`: campaign and character entities.
+- `py_app/core/modifier_engine.py`: stacking and derived calculations.
+- `py_app/services/txt_feat_parser.py`: TXT feat import parser.
+- `py_app/services/storage.py`: load/save/backup.
+- `tests_py/`: rule engine and import tests.
 
-## 3) Data Model (implementation-ready)
-Core entities inside campaign JSON:
-- Campaign, Character, ClassLevel, AbilityScore, Skill, Feat, Spell, Item, Effect, Modifier, Note, AttackProfile.
-- Import entities: ImportedSourceFile, FeatImportRow, FeatMechanicsMapping.
+## 3) Data Model Coverage
+Campaign contains:
+- Character list (PC/NPC), notes, round tracker, initiative order, import metadata.
+- Libraries: feats, spells, conditions, items, import mappings.
 
-All totals are derived via `modifierEngine` at runtime.
+Character contains:
+- Identity, abilities, HP system, combat/AC, saves, skills, feats, spells, equipment,
+  special abilities, effects, notes, modifiers, derived stats.
 
-## 4) GUI Layout Plan
-- **Left Sidebar**: searchable character list with PC/NPC tags.
-- **Main Panels**:
-  - Overview (identity + HP + AC + initiative + derived line).
-  - Feats & Features (library, selected feats, mapping wizard).
-  - Effects/Conditions (timers + active toggle + end-round decrement).
-  - Combat Dashboard (initiative order, HP, AC, saves, quick +/- buttons).
-  - Notes (character/session/campaign notes).
-- Keyboard shortcuts for damage/heal/end round/add fatigued.
+## 4) Rules/Modifier Engine
+- Modifiers are structured as: `target`, `value`, `bonusType`, `active`.
+- Stacking rules:
+  - default typed bonus: highest only
+  - dodge/circumstance/untyped/penalty: stack
+- Derived formulas:
+  - ability mod `(score - 10) // 2`
+  - initiative = DEX mod + misc + modifiers
+  - AC total/touch/flat-footed
+  - Fort/Ref/Will from base + ability + misc + modifiers
 
-## 5) Rule/Modifier Engine Design
-- Modifier fields: `target`, `value`, `bonusType`, activation flag/conditions.
-- Stacking table configurable in engine:
-  - default typed bonuses: keep highest.
-  - dodge/circumstance/untyped/penalties: stack.
-- Recompute pipeline:
-  1. Gather base + feat + effect modifiers.
-  2. Apply stacking.
-  3. Compute ability totals/mods.
-  4. Compute initiative, AC breakdown, saves.
+## 5) TXT Feat Import + Mapping
+- Parser supports tab or multi-space separated rows.
+- Detects Name/Source/Description headers robustly.
+- Dedupe: `(Name + Source)`.
+- Imported feats marked `Unmapped` by default.
+- Mapping editor writes modifiers/prereqs into campaign private mappings.
+- External JSON mapping import supported.
+- Demo: Improved Initiative mapped to `initiative +4`.
 
-## 6) TXT Import + Mapping Workflow
-1. User imports TXT (`Name`, `Source`, `Description` tolerant parser).
-2. Parser reads tab or multi-space columns, dedupes by (Name+Source).
-3. Imported rows become feats with mapping status `Unmapped` by default.
-4. If feat name = Improved Initiative, auto-map +4 initiative demonstration.
-5. Rules Mapper wizard lets user define modifier target/value/type and stores mapping.
-6. External feat mechanics JSON can be imported and merged.
+## 6) Effects/Conditions
+- Structured effect entries with source, start round, remaining rounds, modifiers.
+- End-round action decrements durations and expires effects.
+- Demo condition: Fatigued `-2 STR`, `-2 DEX`.
 
-## 7) Import/Export Design
-- Export characters JSON from current campaign.
-- Save/load campaigns via dialogs.
-- Save mapping entries in campaign-private import area.
-- Provide starter schemas + pack templates for feats/spells/conditions/items.
-
-## 8) Migration Strategy
-- `schemaVersion` on campaign root.
-- `migrateCampaign` merges existing files with current defaults.
-- New fields auto-initialized during load.
-
-## 9) Testing Strategy
-- Unit tests:
-  - Ability mod formula and initiative mapping (+4 feat).
-  - Fatigued condition penalties.
-  - TXT parser dedupe/header handling robustness.
-- Smoke tests:
-  - JSON save/load roundtrip.
-
+## 7) Testing Strategy
+- Unit tests for:
+  - Improved Initiative application
+  - Fatigued condition penalties
+  - TXT parsing + dedupe + source preservation

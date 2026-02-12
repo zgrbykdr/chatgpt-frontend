@@ -1,54 +1,55 @@
-# D&D 3E DM Desktop Manager (Electron)
+# D&D 3E DM Desktop Manager (Python + PySide6)
 
-A local-first desktop GUI for running D&D 3.0/3.5 style sessions with fast combat tracking, full character model coverage, modifier-driven rules, and private feat TXT imports.
+This project is now implemented as a **Python desktop GUI application** (not JavaScript/Electron).
 
-## Content Policy
-- Rules/content are separated from code in `data/packs` and imported files.
-- This project ships only minimal starter/SRD-style sample entries.
-- You can privately import additional content as TXT/JSON data packs.
+## What this app does
+- Local-first campaign manager for D&D 3.0/3.5 style sessions.
+- Character management for PCs/NPCs.
+- Modifier-driven derived stats (initiative, AC, saves, ability mods).
+- HP tracking with history + undo.
+- Effects/conditions with round durations.
+- Feat TXT import (`Name`, `Source`, `Description`) with dedupe by `Name+Source`.
+- Feat rules mapping editor (`Mapped` / `Unmapped`).
+- Demonstrations implemented:
+  - **Improved Initiative** => `initiative +4`
+  - **Fatigued** => `-2 STR`, `-2 DEX` with duration.
 
-## Install (non-programmer)
-1. Install Node.js LTS (18+).
-2. Open terminal in this folder.
-3. Run:
-   ```bash
-   npm install
-   ```
+## Content policy
+- Rules/content data are separate from code (`data/packs`, `data/schemas`, imported files).
+- Only starter/SRD-style short summary samples are included.
+- Private user imports are supported via TXT/JSON.
 
-## Run the App
+## Requirements
+- Python 3.10+
+- pip
+
+## Installation
 ```bash
-npm start
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-## Build an Executable
-You can package using Electron Forge or Electron Builder.
-
-Example quick setup:
+## Run
 ```bash
-npm install --save-dev @electron-forge/cli
-npx electron-forge import
-npm run make
+python -m py_app.main
 ```
 
-Build outputs will be in `out/` or `dist/` depending on toolchain.
-
-## Test
+## Run tests
 ```bash
-npm test
+python -m unittest discover -s tests_py
 ```
 
-## What is implemented
-- Campaign + character create/edit/save/load/export.
-- Modifier engine with stacking rules.
-- Derived calculations: ability mods, initiative, AC, saves.
-- Combat dashboard with quick damage/heal.
-- Effects with durations and end-round decrement.
-- Fatigued condition demo (`-2 STR`, `-2 DEX`, duration 10 rounds).
-- Feat TXT importer (dedupe by Name+Source, preserve source).
-- Rules mapping status (`Mapped` / `Unmapped`) and mapper wizard.
-- Improved Initiative demonstration mapping (`initiative +4`).
+## Build executable (optional)
+Use PyInstaller:
+```bash
+pip install pyinstaller
+pyinstaller --noconfirm --windowed --name dnd3e_dm py_app/main.py
+```
+Output binary is generated under `dist/`.
 
-## Data packs and schemas
-- Starter packs: `data/packs/*.json`.
-- JSON schemas: `data/schemas/*.schema.json`.
-
+## Key folders
+- `py_app/` : Python application source
+- `data/packs/` : starter data pack examples
+- `data/schemas/` : JSON schema files
+- `tests_py/` : Python tests
