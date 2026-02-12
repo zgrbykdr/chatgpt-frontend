@@ -150,7 +150,8 @@ class MainWindow(QMainWindow):
 
         for widget in [self.name_edit, self.player_edit, self.race_edit]:
             widget.editingFinished.connect(self.push_overview_changes)
-        for widget in [self.type_combo, self.hp_max, self.hp_current, self.hp_temp, self.hp_nonlethal, self.ac_armor, self.ac_shield, self.ac_natural, self.init_misc]:
+        self.type_combo.currentTextChanged.connect(self.push_overview_changes)
+        for widget in [self.hp_max, self.hp_current, self.hp_temp, self.hp_nonlethal, self.ac_armor, self.ac_shield, self.ac_natural, self.init_misc]:
             widget.valueChanged.connect(self.push_overview_changes)
 
         return w
