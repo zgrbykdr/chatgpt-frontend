@@ -1,6 +1,14 @@
-from PySide6.QtWidgets import QApplication
-from py_app.ui.main_window import MainWindow
+from __future__ import annotations
+
 import sys
+from PySide6.QtWidgets import QApplication
+
+try:
+    # Running from repository root: python -m py_app.main
+    from py_app.ui.main_window import MainWindow
+except ModuleNotFoundError:
+    # Running from inside py_app folder: python -m main
+    from ui.main_window import MainWindow
 
 
 def main() -> int:

@@ -31,8 +31,19 @@ pip install -r requirements.txt
 ```
 
 ## Run
+From repository root (recommended):
 ```bash
 python -m py_app.main
+```
+
+Alternative compatibility entrypoint (also from repository root):
+```bash
+python -m main
+```
+
+If you are already inside the `py_app/` folder, use:
+```bash
+python -m main
 ```
 
 ## Run tests
