@@ -41,6 +41,8 @@ Alternative compatibility entrypoint (also from repository root):
 python -m main
 ```
 
+> Note: use `python -m main` (without `.py`).
+
 If you are already inside the `py_app/` folder, use:
 ```bash
 python -m main

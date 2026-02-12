@@ -9,10 +9,16 @@ from PySide6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QComboBox
 )
 
-from py_app.core.models import Campaign, Character, migrate_campaign
-from py_app.core.modifier_engine import recalc_character
-from py_app.services.storage import save_campaign, load_campaign
-from py_app.services.txt_feat_parser import parse_feat_txt
+try:
+    from py_app.core.models import Campaign, Character
+    from py_app.core.modifier_engine import recalc_character
+    from py_app.services.storage import save_campaign, load_campaign
+    from py_app.services.txt_feat_parser import parse_feat_txt
+except ModuleNotFoundError:
+    from ..core.models import Campaign, Character
+    from ..core.modifier_engine import recalc_character
+    from ..services.storage import save_campaign, load_campaign
+    from ..services.txt_feat_parser import parse_feat_txt
 
 
 STARTER_FEAT = {

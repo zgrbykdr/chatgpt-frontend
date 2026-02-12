@@ -3,7 +3,10 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Tuple
-from py_app.core.models import Campaign, migrate_campaign
+try:
+    from py_app.core.models import Campaign, migrate_campaign
+except ModuleNotFoundError:
+    from ..core.models import Campaign, migrate_campaign
 
 
 def save_campaign(campaign: Campaign, path: Path) -> Campaign:
