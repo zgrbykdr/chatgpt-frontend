@@ -14,8 +14,20 @@ def _norm_header(text: str) -> str:
     return re.sub(r"[^a-z]", "", text.lower())
 
 
+def _normalize_raw_text(raw: str) -> str:
+    """Support normal TXT files and pasted escaped strings containing \\n/\\t."""
+    normalized = raw.replace("\ufeff", "")
+    # If content is pasted as a single escaped line, decode those escapes.
+    if "\\n" in normalized and "\n" not in normalized:
+        normalized = normalized.replace("\\n", "\n")
+    if "\\t" in normalized and "\t" not in normalized:
+        normalized = normalized.replace("\\t", "\t")
+    return normalized
+
+
 def parse_feat_txt(raw: str, file_path: str = "import.txt") -> Dict[str, Any]:
-    lines = [ln.rstrip() for ln in raw.replace("\ufeff", "").splitlines() if ln.strip()]
+    text = _normalize_raw_text(raw)
+    lines = [ln.rstrip() for ln in text.splitlines() if ln.strip()]
     if len(lines) < 2:
         return {"sourceFile": file_path, "rows": [], "errors": ["No data rows found"]}
 
@@ -37,15 +49,17 @@ def parse_feat_txt(raw: str, file_path: str = "import.txt") -> Dict[str, Any]:
         if not name:
             errors.append(f"Row {idx}: missing feat name")
             continue
-        key = (name.lower(), source.lower())
+
+        key = (name.strip().lower(), source.strip().lower())
         if key in dedupe:
             continue
         dedupe.add(key)
+
         rows.append({
             "id": f"imported_{re.sub(r'[^a-z0-9]+', '_', name.lower()).strip('_')}_{idx}",
-            "name": name,
-            "source": source,
-            "summary": summary,
+            "name": name.strip(),
+            "source": source.strip(),
+            "summary": summary.strip(),
             "mappingStatus": "Unmapped",
             "importedFrom": Path(file_path).name,
         })

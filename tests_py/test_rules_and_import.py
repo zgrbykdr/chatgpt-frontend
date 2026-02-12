@@ -1,7 +1,8 @@
 import unittest
-from py_app.core.models import Character
+from py_app.core.models import Character, Campaign
 from py_app.core.modifier_engine import recalc_character
 from py_app.services.txt_feat_parser import parse_feat_txt
+from py_app.services.feat_mapping import apply_mappings_to_feats
 
 
 class RulesEngineTests(unittest.TestCase):
@@ -43,6 +44,30 @@ class RulesEngineTests(unittest.TestCase):
         parsed = parse_feat_txt(raw, "sample.txt")
         self.assertEqual(len(parsed["rows"]), 2)
         self.assertEqual(parsed["rows"][0]["source"], "PHB 2000 p.96")
+
+    def test_txt_parser_accepts_escaped_content(self):
+        raw = "Name\tSource\tDescription\nAbility Focus\tMonster Manual (3.5) (2003), p.303\tChoose one special attack."
+        parsed = parse_feat_txt(raw, "inline.txt")
+        self.assertEqual(len(parsed["rows"]), 1)
+        self.assertEqual(parsed["rows"][0]["name"], "Ability Focus")
+
+    def test_mapping_applies_by_name_and_source(self):
+        feats = [
+            {"id": "imported_ability_focus_1", "name": "Ability Focus", "source": "Monster Manual (3.5) (2003), p.303", "mappingStatus": "Unmapped"},
+            {"id": "imported_ability_focus_2", "name": "Ability Focus", "source": "Monster Manual II (3e) (2002), p.18", "mappingStatus": "Unmapped"},
+        ]
+        mappings = [
+            {
+                "featName": "Ability Focus",
+                "source": "Monster Manual (3.5) (2003), p.303",
+                "modifiers": [{"target": "save.dc.special", "value": 2, "bonusType": "untyped"}],
+                "prerequisites": [],
+            }
+        ]
+        applied = apply_mappings_to_feats(feats, mappings)
+        self.assertEqual(applied, 1)
+        self.assertEqual(feats[0]["mappingStatus"], "Mapped")
+        self.assertEqual(feats[1]["mappingStatus"], "Unmapped")
 
 
 if __name__ == "__main__":

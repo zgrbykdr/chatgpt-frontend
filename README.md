@@ -9,6 +9,7 @@ This project is now implemented as a **Python desktop GUI application** (not Jav
 - HP tracking with history + undo.
 - Effects/conditions with round durations.
 - Feat TXT import (`Name`, `Source`, `Description`) with dedupe by `Name+Source`.
+- Auto-applies existing feat mappings from mapping packs by `featId` or `(Name + Source)`.
 - Feat rules mapping editor (`Mapped` / `Unmapped`).
 - Demonstrations implemented:
   - **Improved Initiative** => `initiative +4`
