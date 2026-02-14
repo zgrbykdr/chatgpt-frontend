@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Feat Mechanics Mapping Pack",
+  "type": "object",
+  "required": ["mappings"],
+  "properties": {
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["featName", "source", "modifiers"],
+        "properties": {
+          "featId": { "type": "string" },
+          "featName": { "type": "string" },
+          "source": { "type": "string" },
+          "prerequisites": { "type": "array", "items": { "type": "object" } },
+          "modifiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["target", "value", "bonusType"],
+              "properties": {
+                "target": { "type": "string" },
+                "value": { "type": "number" },
+                "bonusType": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

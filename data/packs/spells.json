@@ -1,0 +1,27 @@
+{
+  "spells": [
+    {
+      "id": "spell_bless_srd",
+      "name": "Bless",
+      "school": "Enchantment",
+      "subschool": "Compulsion",
+      "descriptors": ["Mind-Affecting"],
+      "levelByClass": { "Cleric": 1, "Paladin": 1 },
+      "castingTime": "1 standard action",
+      "range": "50 ft.",
+      "targetArea": "Allies in a 50-ft burst",
+      "duration": "1 min/level",
+      "save": "None",
+      "sr": "Yes (harmless)",
+      "summary": "Allies gain +1 morale bonus on attack rolls and on saves vs fear.",
+      "effectTemplate": {
+        "type": "condition",
+        "name": "Blessed",
+        "modifiers": [
+          { "target": "attack.melee", "value": 1, "bonusType": "morale" },
+          { "target": "attack.ranged", "value": 1, "bonusType": "morale" }
+        ]
+      }
+    }
+  ]
+}

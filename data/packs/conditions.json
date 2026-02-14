@@ -1,0 +1,15 @@
+{
+  "conditions": [
+    {
+      "id": "condition_fatigued",
+      "name": "Fatigued",
+      "type": "condition",
+      "defaultDurationRounds": 10,
+      "summary": "-2 Strength and -2 Dexterity; cannot run or charge.",
+      "modifiers": [
+        { "target": "ability.STR", "value": -2, "bonusType": "penalty" },
+        { "target": "ability.DEX", "value": -2, "bonusType": "penalty" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "packId": "starter-feats",
+  "version": "1.0.0",
+  "feats": [
+    {
+      "id": "feat_improved_initiative_srd",
+      "name": "Improved Initiative",
+      "source": "SRD 3.5",
+      "summary": "Gain a +4 bonus on initiative checks.",
+      "mappingStatus": "Mapped",
+      "prerequisites": [],
+      "modifiers": [
+        { "target": "initiative", "value": 4, "bonusType": "untyped", "notes": "Improved Initiative" }
+      ]
+    },
+    {
+      "id": "feat_alertness_srd",
+      "name": "Alertness",
+      "source": "SRD 3.5",
+      "summary": "Keen senses and awareness.",
+      "mappingStatus": "Unmapped",
+      "prerequisites": [],
+      "modifiers": []
+    }
+  ]
+}

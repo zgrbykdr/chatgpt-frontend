@@ -1,0 +1,13 @@
+{
+  "mappings": [
+    {
+      "featId": "feat_improved_initiative_srd",
+      "featName": "Improved Initiative",
+      "source": "SRD 3.5",
+      "prerequisites": [],
+      "modifiers": [
+        { "target": "initiative", "value": 4, "bonusType": "untyped" }
+      ]
+    }
+  ]
+}

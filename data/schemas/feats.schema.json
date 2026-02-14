@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Feat Pack",
+  "type": "object",
+  "required": ["packId", "version", "feats"],
+  "properties": {
+    "packId": { "type": "string" },
+    "version": { "type": "string" },
+    "feats": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "source", "mappingStatus"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "source": { "type": "string" },
+          "summary": { "type": "string" },
+          "mappingStatus": { "enum": ["Mapped", "Unmapped"] },
+          "prerequisites": { "type": "array", "items": { "type": "object" } },
+          "modifiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["target", "value", "bonusType"],
+              "properties": {
+                "target": { "type": "string" },
+                "value": { "type": "number" },
+                "bonusType": { "type": "string" },
+                "notes": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
