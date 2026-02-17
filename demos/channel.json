@@ -1,0 +1,44 @@
+{
+  "domain": "channel",
+  "rho": 1.0,
+  "nu": 0.004,
+  "body_force": [0.02, 0.0, 0.0],
+  "mesh": {
+    "nx": 32,
+    "ny": 24,
+    "nz": 24,
+    "lengths": [2.0, 1.0, 1.0],
+    "near_wall_stretching": {
+      "axis": "y",
+      "type": "tanh",
+      "strength": 2.2
+    },
+    "refinement_zones": []
+  },
+  "time": {
+    "cfl_target": 0.5,
+    "t_end": 1.2,
+    "max_steps": 500
+  },
+  "les": {
+    "cs": 0.17,
+    "wall_damping": true,
+    "van_driest_a_plus": 26.0
+  },
+  "convection_scheme": "central",
+  "central_blend": 0.12,
+  "output": {
+    "interval": 25,
+    "directory": "outputs/channel",
+    "prefix": "channel"
+  },
+  "pressure_solver": "bicgstab",
+  "pressure_tol": 1e-6,
+  "pressure_max_iter": 300,
+  "bcs": {
+    "periodic": ["x", "z"],
+    "moving_wall": {
+      "u": 0.0
+    }
+  }
+}

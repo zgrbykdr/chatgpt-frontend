@@ -1,0 +1,45 @@
+{
+  "domain": "sphere",
+  "rho": 1.0,
+  "nu": 0.005,
+  "body_force": [0.01, 0.0, 0.0],
+  "mesh": {
+    "nx": 36,
+    "ny": 24,
+    "nz": 24,
+    "lengths": [2.5, 1.0, 1.0],
+    "refinement_zones": [
+      {
+        "min": [0.8, 0.2, 0.2],
+        "max": [1.4, 0.8, 0.8],
+        "factor": 2.2
+      }
+    ]
+  },
+  "sphere": {
+    "center": [1.1, 0.5, 0.5],
+    "radius": 0.18,
+    "eta": 0.001
+  },
+  "time": {
+    "cfl_target": 0.4,
+    "t_end": 0.6,
+    "max_steps": 300
+  },
+  "les": {
+    "cs": 0.17,
+    "wall_damping": false
+  },
+  "convection_scheme": "upwind",
+  "output": {
+    "interval": 20,
+    "directory": "outputs/sphere",
+    "prefix": "sphere"
+  },
+  "pressure_solver": "bicgstab",
+  "bcs": {
+    "periodic": ["z"],
+    "inflow": {"at": "zmin", "velocity": [0.5, 0.0, 0.0]},
+    "outflow": {"at": "zmax"}
+  }
+}

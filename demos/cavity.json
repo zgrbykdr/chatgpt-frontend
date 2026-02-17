@@ -1,0 +1,49 @@
+{
+  "domain": "cavity",
+  "rho": 1.0,
+  "nu": 0.01,
+  "body_force": [0.0, 0.0, 0.0],
+  "mesh": {
+    "nx": 24,
+    "ny": 24,
+    "nz": 24,
+    "lengths": [1.0, 1.0, 1.0],
+    "near_wall_stretching": {
+      "axis": "y",
+      "type": "tanh",
+      "strength": 1.4
+    },
+    "refinement_zones": [
+      {
+        "min": [0.3, 0.3, 0.3],
+        "max": [0.7, 0.7, 0.7],
+        "factor": 1.7
+      }
+    ]
+  },
+  "time": {
+    "cfl_target": 0.4,
+    "t_end": 1.0,
+    "max_steps": 400
+  },
+  "les": {
+    "cs": 0.17,
+    "wall_damping": true,
+    "van_driest_a_plus": 26.0
+  },
+  "convection_scheme": "upwind",
+  "output": {
+    "interval": 20,
+    "directory": "outputs/cavity",
+    "prefix": "cavity"
+  },
+  "pressure_solver": "cg",
+  "pressure_tol": 1e-6,
+  "pressure_max_iter": 250,
+  "bcs": {
+    "moving_wall": {
+      "u": 1.0
+    },
+    "periodic": []
+  }
+}
