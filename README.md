@@ -6,8 +6,9 @@ Educational, runnable 3D incompressible Navier–Stokes LES solver with:
 - Structured finite-volume-like mesh with nonuniform spacing and auto-mesh refinement weights
 - Periodic/wall/inflow/outflow boundary conditions
 - Pressure Poisson CG / BiCGSTAB with Jacobi preconditioning
-- VTK output for ParaView
-- Built-in demos and operator tests
+- VTK + NPZ outputs for ParaView and native GUI
+- Built-in demos, diagnostics plots, and operator tests
+- **Desktop GUI** for interactive visualization and run control
 
 ## Install
 
@@ -21,7 +22,20 @@ python -m venv .venv && source .venv/bin/activate && pip install -e .
 python run_demo.py demos/cavity.json
 ```
 
-This writes VTK + CSV logs to `outputs/cavity/`.
+This writes VTK/NPZ + CSV logs to `outputs/cavity/`.
+
+## Launch GUI (recommended)
+
+```bash
+python run_gui.py
+```
+
+In the GUI you can:
+- run a demo from its config JSON,
+- browse generated `.npz` snapshots,
+- view scalar slices (`u,v,w,p,nu_t,s_mag,divergence`),
+- overlay in-plane velocity vectors,
+- monitor kinetic energy and divergence trends.
 
 ## Other demos
 
@@ -30,7 +44,7 @@ python run_demo.py demos/channel.json
 python run_demo.py demos/sphere.json
 ```
 
-## Plot diagnostics
+## Plot diagnostics (script)
 
 ```bash
 python plot_results.py demos/cavity.json
@@ -38,6 +52,7 @@ python plot_results.py demos/cavity.json
 
 ## What gets saved
 - `*.vtk` fields: `u, v, w, p, nu_t, S_mag, divergence`
+- `*.npz` snapshot bundles: mesh + fields for quick GUI loading
 - `*_log.csv`: step, time, dt, CFL, pressure residual, kinetic energy, divergence norm, mean `nu_t`
 
 ## Expected qualitative demo behavior

@@ -9,6 +9,7 @@ from .bc import apply_pressure_bcs, apply_velocity_bcs
 from .config import SolverConfig
 from .diagnostics import append_log, compute_diagnostics
 from .io_vtk import write_vtk_rectilinear
+from .io_npz import write_snapshot_npz
 from .mesh import StructuredMesh, generate_mesh
 from .operators import divergence, gradient, laplacian
 from .pressure import solve_pressure
@@ -132,6 +133,19 @@ def run_simulation(cfg: SolverConfig) -> None:
                     "S_mag": mag_s,
                     "divergence": div,
                 },
+            )
+            write_snapshot_npz(
+                out_dir / f"{cfg.output.prefix}_{step:05d}.npz",
+                mesh,
+                u[1:-1, 1:-1, 1:-1],
+                v[1:-1, 1:-1, 1:-1],
+                w[1:-1, 1:-1, 1:-1],
+                p[1:-1, 1:-1, 1:-1],
+                nu_t,
+                mag_s,
+                div,
+                t,
+                step,
             )
 
         if t >= cfg.time.t_end or dt <= 1e-12:
