@@ -1,0 +1,5002 @@
+[
+  {
+    "id": "def_0",
+    "name": "Default Material 0",
+    "conductivity": [
+      [
+        0,
+        0.1
+      ],
+      [
+        100,
+        0.15
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        800
+      ],
+      [
+        100,
+        900
+      ]
+    ],
+    "density": 500
+  },
+  {
+    "id": "def_1",
+    "name": "Default Material 1",
+    "conductivity": [
+      [
+        0,
+        0.11
+      ],
+      [
+        100,
+        0.16
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        802
+      ],
+      [
+        100,
+        902
+      ]
+    ],
+    "density": 503
+  },
+  {
+    "id": "def_2",
+    "name": "Default Material 2",
+    "conductivity": [
+      [
+        0,
+        0.12000000000000001
+      ],
+      [
+        100,
+        0.16999999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        804
+      ],
+      [
+        100,
+        904
+      ]
+    ],
+    "density": 506
+  },
+  {
+    "id": "def_3",
+    "name": "Default Material 3",
+    "conductivity": [
+      [
+        0,
+        0.13
+      ],
+      [
+        100,
+        0.18
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        806
+      ],
+      [
+        100,
+        906
+      ]
+    ],
+    "density": 509
+  },
+  {
+    "id": "def_4",
+    "name": "Default Material 4",
+    "conductivity": [
+      [
+        0,
+        0.14
+      ],
+      [
+        100,
+        0.19
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        808
+      ],
+      [
+        100,
+        908
+      ]
+    ],
+    "density": 512
+  },
+  {
+    "id": "def_5",
+    "name": "Default Material 5",
+    "conductivity": [
+      [
+        0,
+        0.15000000000000002
+      ],
+      [
+        100,
+        0.2
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        810
+      ],
+      [
+        100,
+        910
+      ]
+    ],
+    "density": 515
+  },
+  {
+    "id": "def_6",
+    "name": "Default Material 6",
+    "conductivity": [
+      [
+        0,
+        0.16
+      ],
+      [
+        100,
+        0.21
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        812
+      ],
+      [
+        100,
+        912
+      ]
+    ],
+    "density": 518
+  },
+  {
+    "id": "def_7",
+    "name": "Default Material 7",
+    "conductivity": [
+      [
+        0,
+        0.17
+      ],
+      [
+        100,
+        0.22
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        814
+      ],
+      [
+        100,
+        914
+      ]
+    ],
+    "density": 521
+  },
+  {
+    "id": "def_8",
+    "name": "Default Material 8",
+    "conductivity": [
+      [
+        0,
+        0.18
+      ],
+      [
+        100,
+        0.22999999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        816
+      ],
+      [
+        100,
+        916
+      ]
+    ],
+    "density": 524
+  },
+  {
+    "id": "def_9",
+    "name": "Default Material 9",
+    "conductivity": [
+      [
+        0,
+        0.19
+      ],
+      [
+        100,
+        0.24
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        818
+      ],
+      [
+        100,
+        918
+      ]
+    ],
+    "density": 527
+  },
+  {
+    "id": "def_10",
+    "name": "Default Material 10",
+    "conductivity": [
+      [
+        0,
+        0.2
+      ],
+      [
+        100,
+        0.25
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        820
+      ],
+      [
+        100,
+        920
+      ]
+    ],
+    "density": 530
+  },
+  {
+    "id": "def_11",
+    "name": "Default Material 11",
+    "conductivity": [
+      [
+        0,
+        0.21000000000000002
+      ],
+      [
+        100,
+        0.26
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        822
+      ],
+      [
+        100,
+        922
+      ]
+    ],
+    "density": 533
+  },
+  {
+    "id": "def_12",
+    "name": "Default Material 12",
+    "conductivity": [
+      [
+        0,
+        0.22
+      ],
+      [
+        100,
+        0.27
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        824
+      ],
+      [
+        100,
+        924
+      ]
+    ],
+    "density": 536
+  },
+  {
+    "id": "def_13",
+    "name": "Default Material 13",
+    "conductivity": [
+      [
+        0,
+        0.23
+      ],
+      [
+        100,
+        0.28
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        826
+      ],
+      [
+        100,
+        926
+      ]
+    ],
+    "density": 539
+  },
+  {
+    "id": "def_14",
+    "name": "Default Material 14",
+    "conductivity": [
+      [
+        0,
+        0.24000000000000002
+      ],
+      [
+        100,
+        0.29000000000000004
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        828
+      ],
+      [
+        100,
+        928
+      ]
+    ],
+    "density": 542
+  },
+  {
+    "id": "def_15",
+    "name": "Default Material 15",
+    "conductivity": [
+      [
+        0,
+        0.25
+      ],
+      [
+        100,
+        0.3
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        830
+      ],
+      [
+        100,
+        930
+      ]
+    ],
+    "density": 545
+  },
+  {
+    "id": "def_16",
+    "name": "Default Material 16",
+    "conductivity": [
+      [
+        0,
+        0.26
+      ],
+      [
+        100,
+        0.31
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        832
+      ],
+      [
+        100,
+        932
+      ]
+    ],
+    "density": 548
+  },
+  {
+    "id": "def_17",
+    "name": "Default Material 17",
+    "conductivity": [
+      [
+        0,
+        0.27
+      ],
+      [
+        100,
+        0.32
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        834
+      ],
+      [
+        100,
+        934
+      ]
+    ],
+    "density": 551
+  },
+  {
+    "id": "def_18",
+    "name": "Default Material 18",
+    "conductivity": [
+      [
+        0,
+        0.28
+      ],
+      [
+        100,
+        0.32999999999999996
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        836
+      ],
+      [
+        100,
+        936
+      ]
+    ],
+    "density": 554
+  },
+  {
+    "id": "def_19",
+    "name": "Default Material 19",
+    "conductivity": [
+      [
+        0,
+        0.29000000000000004
+      ],
+      [
+        100,
+        0.33999999999999997
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        838
+      ],
+      [
+        100,
+        938
+      ]
+    ],
+    "density": 557
+  },
+  {
+    "id": "def_20",
+    "name": "Default Material 20",
+    "conductivity": [
+      [
+        0,
+        0.30000000000000004
+      ],
+      [
+        100,
+        0.35
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        840
+      ],
+      [
+        100,
+        940
+      ]
+    ],
+    "density": 560
+  },
+  {
+    "id": "def_21",
+    "name": "Default Material 21",
+    "conductivity": [
+      [
+        0,
+        0.31
+      ],
+      [
+        100,
+        0.36
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        842
+      ],
+      [
+        100,
+        942
+      ]
+    ],
+    "density": 563
+  },
+  {
+    "id": "def_22",
+    "name": "Default Material 22",
+    "conductivity": [
+      [
+        0,
+        0.32
+      ],
+      [
+        100,
+        0.37
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        844
+      ],
+      [
+        100,
+        944
+      ]
+    ],
+    "density": 566
+  },
+  {
+    "id": "def_23",
+    "name": "Default Material 23",
+    "conductivity": [
+      [
+        0,
+        0.33
+      ],
+      [
+        100,
+        0.38
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        846
+      ],
+      [
+        100,
+        946
+      ]
+    ],
+    "density": 569
+  },
+  {
+    "id": "def_24",
+    "name": "Default Material 24",
+    "conductivity": [
+      [
+        0,
+        0.33999999999999997
+      ],
+      [
+        100,
+        0.39
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        848
+      ],
+      [
+        100,
+        948
+      ]
+    ],
+    "density": 572
+  },
+  {
+    "id": "def_25",
+    "name": "Default Material 25",
+    "conductivity": [
+      [
+        0,
+        0.35
+      ],
+      [
+        100,
+        0.4
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        850
+      ],
+      [
+        100,
+        950
+      ]
+    ],
+    "density": 575
+  },
+  {
+    "id": "def_26",
+    "name": "Default Material 26",
+    "conductivity": [
+      [
+        0,
+        0.36
+      ],
+      [
+        100,
+        0.41000000000000003
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        852
+      ],
+      [
+        100,
+        952
+      ]
+    ],
+    "density": 578
+  },
+  {
+    "id": "def_27",
+    "name": "Default Material 27",
+    "conductivity": [
+      [
+        0,
+        0.37
+      ],
+      [
+        100,
+        0.42000000000000004
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        854
+      ],
+      [
+        100,
+        954
+      ]
+    ],
+    "density": 581
+  },
+  {
+    "id": "def_28",
+    "name": "Default Material 28",
+    "conductivity": [
+      [
+        0,
+        0.38
+      ],
+      [
+        100,
+        0.43000000000000005
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        856
+      ],
+      [
+        100,
+        956
+      ]
+    ],
+    "density": 584
+  },
+  {
+    "id": "def_29",
+    "name": "Default Material 29",
+    "conductivity": [
+      [
+        0,
+        0.39
+      ],
+      [
+        100,
+        0.43999999999999995
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        858
+      ],
+      [
+        100,
+        958
+      ]
+    ],
+    "density": 587
+  },
+  {
+    "id": "def_30",
+    "name": "Default Material 30",
+    "conductivity": [
+      [
+        0,
+        0.4
+      ],
+      [
+        100,
+        0.44999999999999996
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        860
+      ],
+      [
+        100,
+        960
+      ]
+    ],
+    "density": 590
+  },
+  {
+    "id": "def_31",
+    "name": "Default Material 31",
+    "conductivity": [
+      [
+        0,
+        0.41000000000000003
+      ],
+      [
+        100,
+        0.45999999999999996
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        862
+      ],
+      [
+        100,
+        962
+      ]
+    ],
+    "density": 593
+  },
+  {
+    "id": "def_32",
+    "name": "Default Material 32",
+    "conductivity": [
+      [
+        0,
+        0.42000000000000004
+      ],
+      [
+        100,
+        0.47
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        864
+      ],
+      [
+        100,
+        964
+      ]
+    ],
+    "density": 596
+  },
+  {
+    "id": "def_33",
+    "name": "Default Material 33",
+    "conductivity": [
+      [
+        0,
+        0.43000000000000005
+      ],
+      [
+        100,
+        0.48
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        866
+      ],
+      [
+        100,
+        966
+      ]
+    ],
+    "density": 599
+  },
+  {
+    "id": "def_34",
+    "name": "Default Material 34",
+    "conductivity": [
+      [
+        0,
+        0.44000000000000006
+      ],
+      [
+        100,
+        0.49
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        868
+      ],
+      [
+        100,
+        968
+      ]
+    ],
+    "density": 602
+  },
+  {
+    "id": "def_35",
+    "name": "Default Material 35",
+    "conductivity": [
+      [
+        0,
+        0.45000000000000007
+      ],
+      [
+        100,
+        0.5
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        870
+      ],
+      [
+        100,
+        970
+      ]
+    ],
+    "density": 605
+  },
+  {
+    "id": "def_36",
+    "name": "Default Material 36",
+    "conductivity": [
+      [
+        0,
+        0.45999999999999996
+      ],
+      [
+        100,
+        0.51
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        872
+      ],
+      [
+        100,
+        972
+      ]
+    ],
+    "density": 608
+  },
+  {
+    "id": "def_37",
+    "name": "Default Material 37",
+    "conductivity": [
+      [
+        0,
+        0.47
+      ],
+      [
+        100,
+        0.52
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        874
+      ],
+      [
+        100,
+        974
+      ]
+    ],
+    "density": 611
+  },
+  {
+    "id": "def_38",
+    "name": "Default Material 38",
+    "conductivity": [
+      [
+        0,
+        0.48
+      ],
+      [
+        100,
+        0.53
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        876
+      ],
+      [
+        100,
+        976
+      ]
+    ],
+    "density": 614
+  },
+  {
+    "id": "def_39",
+    "name": "Default Material 39",
+    "conductivity": [
+      [
+        0,
+        0.49
+      ],
+      [
+        100,
+        0.54
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        878
+      ],
+      [
+        100,
+        978
+      ]
+    ],
+    "density": 617
+  },
+  {
+    "id": "def_40",
+    "name": "Default Material 40",
+    "conductivity": [
+      [
+        0,
+        0.5
+      ],
+      [
+        100,
+        0.55
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        880
+      ],
+      [
+        100,
+        980
+      ]
+    ],
+    "density": 620
+  },
+  {
+    "id": "def_41",
+    "name": "Default Material 41",
+    "conductivity": [
+      [
+        0,
+        0.51
+      ],
+      [
+        100,
+        0.56
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        882
+      ],
+      [
+        100,
+        982
+      ]
+    ],
+    "density": 623
+  },
+  {
+    "id": "def_42",
+    "name": "Default Material 42",
+    "conductivity": [
+      [
+        0,
+        0.52
+      ],
+      [
+        100,
+        0.57
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        884
+      ],
+      [
+        100,
+        984
+      ]
+    ],
+    "density": 626
+  },
+  {
+    "id": "def_43",
+    "name": "Default Material 43",
+    "conductivity": [
+      [
+        0,
+        0.53
+      ],
+      [
+        100,
+        0.58
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        886
+      ],
+      [
+        100,
+        986
+      ]
+    ],
+    "density": 629
+  },
+  {
+    "id": "def_44",
+    "name": "Default Material 44",
+    "conductivity": [
+      [
+        0,
+        0.54
+      ],
+      [
+        100,
+        0.59
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        888
+      ],
+      [
+        100,
+        988
+      ]
+    ],
+    "density": 632
+  },
+  {
+    "id": "def_45",
+    "name": "Default Material 45",
+    "conductivity": [
+      [
+        0,
+        0.55
+      ],
+      [
+        100,
+        0.6
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        890
+      ],
+      [
+        100,
+        990
+      ]
+    ],
+    "density": 635
+  },
+  {
+    "id": "def_46",
+    "name": "Default Material 46",
+    "conductivity": [
+      [
+        0,
+        0.56
+      ],
+      [
+        100,
+        0.61
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        892
+      ],
+      [
+        100,
+        992
+      ]
+    ],
+    "density": 638
+  },
+  {
+    "id": "def_47",
+    "name": "Default Material 47",
+    "conductivity": [
+      [
+        0,
+        0.5700000000000001
+      ],
+      [
+        100,
+        0.62
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        894
+      ],
+      [
+        100,
+        994
+      ]
+    ],
+    "density": 641
+  },
+  {
+    "id": "def_48",
+    "name": "Default Material 48",
+    "conductivity": [
+      [
+        0,
+        0.58
+      ],
+      [
+        100,
+        0.63
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        896
+      ],
+      [
+        100,
+        996
+      ]
+    ],
+    "density": 644
+  },
+  {
+    "id": "def_49",
+    "name": "Default Material 49",
+    "conductivity": [
+      [
+        0,
+        0.59
+      ],
+      [
+        100,
+        0.64
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        898
+      ],
+      [
+        100,
+        998
+      ]
+    ],
+    "density": 647
+  },
+  {
+    "id": "def_50",
+    "name": "Default Material 50",
+    "conductivity": [
+      [
+        0,
+        0.6
+      ],
+      [
+        100,
+        0.65
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        900
+      ],
+      [
+        100,
+        1000
+      ]
+    ],
+    "density": 650
+  },
+  {
+    "id": "def_51",
+    "name": "Default Material 51",
+    "conductivity": [
+      [
+        0,
+        0.61
+      ],
+      [
+        100,
+        0.66
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        902
+      ],
+      [
+        100,
+        1002
+      ]
+    ],
+    "density": 653
+  },
+  {
+    "id": "def_52",
+    "name": "Default Material 52",
+    "conductivity": [
+      [
+        0,
+        0.62
+      ],
+      [
+        100,
+        0.67
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        904
+      ],
+      [
+        100,
+        1004
+      ]
+    ],
+    "density": 656
+  },
+  {
+    "id": "def_53",
+    "name": "Default Material 53",
+    "conductivity": [
+      [
+        0,
+        0.63
+      ],
+      [
+        100,
+        0.68
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        906
+      ],
+      [
+        100,
+        1006
+      ]
+    ],
+    "density": 659
+  },
+  {
+    "id": "def_54",
+    "name": "Default Material 54",
+    "conductivity": [
+      [
+        0,
+        0.64
+      ],
+      [
+        100,
+        0.6900000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        908
+      ],
+      [
+        100,
+        1008
+      ]
+    ],
+    "density": 662
+  },
+  {
+    "id": "def_55",
+    "name": "Default Material 55",
+    "conductivity": [
+      [
+        0,
+        0.65
+      ],
+      [
+        100,
+        0.7000000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        910
+      ],
+      [
+        100,
+        1010
+      ]
+    ],
+    "density": 665
+  },
+  {
+    "id": "def_56",
+    "name": "Default Material 56",
+    "conductivity": [
+      [
+        0,
+        0.66
+      ],
+      [
+        100,
+        0.7100000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        912
+      ],
+      [
+        100,
+        1012
+      ]
+    ],
+    "density": 668
+  },
+  {
+    "id": "def_57",
+    "name": "Default Material 57",
+    "conductivity": [
+      [
+        0,
+        0.67
+      ],
+      [
+        100,
+        0.7200000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        914
+      ],
+      [
+        100,
+        1014
+      ]
+    ],
+    "density": 671
+  },
+  {
+    "id": "def_58",
+    "name": "Default Material 58",
+    "conductivity": [
+      [
+        0,
+        0.6799999999999999
+      ],
+      [
+        100,
+        0.73
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        916
+      ],
+      [
+        100,
+        1016
+      ]
+    ],
+    "density": 674
+  },
+  {
+    "id": "def_59",
+    "name": "Default Material 59",
+    "conductivity": [
+      [
+        0,
+        0.69
+      ],
+      [
+        100,
+        0.74
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        918
+      ],
+      [
+        100,
+        1018
+      ]
+    ],
+    "density": 677
+  },
+  {
+    "id": "def_60",
+    "name": "Default Material 60",
+    "conductivity": [
+      [
+        0,
+        0.7
+      ],
+      [
+        100,
+        0.75
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        920
+      ],
+      [
+        100,
+        1020
+      ]
+    ],
+    "density": 680
+  },
+  {
+    "id": "def_61",
+    "name": "Default Material 61",
+    "conductivity": [
+      [
+        0,
+        0.71
+      ],
+      [
+        100,
+        0.76
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        922
+      ],
+      [
+        100,
+        1022
+      ]
+    ],
+    "density": 683
+  },
+  {
+    "id": "def_62",
+    "name": "Default Material 62",
+    "conductivity": [
+      [
+        0,
+        0.72
+      ],
+      [
+        100,
+        0.77
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        924
+      ],
+      [
+        100,
+        1024
+      ]
+    ],
+    "density": 686
+  },
+  {
+    "id": "def_63",
+    "name": "Default Material 63",
+    "conductivity": [
+      [
+        0,
+        0.73
+      ],
+      [
+        100,
+        0.78
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        926
+      ],
+      [
+        100,
+        1026
+      ]
+    ],
+    "density": 689
+  },
+  {
+    "id": "def_64",
+    "name": "Default Material 64",
+    "conductivity": [
+      [
+        0,
+        0.74
+      ],
+      [
+        100,
+        0.79
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        928
+      ],
+      [
+        100,
+        1028
+      ]
+    ],
+    "density": 692
+  },
+  {
+    "id": "def_65",
+    "name": "Default Material 65",
+    "conductivity": [
+      [
+        0,
+        0.75
+      ],
+      [
+        100,
+        0.8
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        930
+      ],
+      [
+        100,
+        1030
+      ]
+    ],
+    "density": 695
+  },
+  {
+    "id": "def_66",
+    "name": "Default Material 66",
+    "conductivity": [
+      [
+        0,
+        0.76
+      ],
+      [
+        100,
+        0.81
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        932
+      ],
+      [
+        100,
+        1032
+      ]
+    ],
+    "density": 698
+  },
+  {
+    "id": "def_67",
+    "name": "Default Material 67",
+    "conductivity": [
+      [
+        0,
+        0.77
+      ],
+      [
+        100,
+        0.8200000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        934
+      ],
+      [
+        100,
+        1034
+      ]
+    ],
+    "density": 701
+  },
+  {
+    "id": "def_68",
+    "name": "Default Material 68",
+    "conductivity": [
+      [
+        0,
+        0.78
+      ],
+      [
+        100,
+        0.8300000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        936
+      ],
+      [
+        100,
+        1036
+      ]
+    ],
+    "density": 704
+  },
+  {
+    "id": "def_69",
+    "name": "Default Material 69",
+    "conductivity": [
+      [
+        0,
+        0.79
+      ],
+      [
+        100,
+        0.8400000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        938
+      ],
+      [
+        100,
+        1038
+      ]
+    ],
+    "density": 707
+  },
+  {
+    "id": "def_70",
+    "name": "Default Material 70",
+    "conductivity": [
+      [
+        0,
+        0.8
+      ],
+      [
+        100,
+        0.8500000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        940
+      ],
+      [
+        100,
+        1040
+      ]
+    ],
+    "density": 710
+  },
+  {
+    "id": "def_71",
+    "name": "Default Material 71",
+    "conductivity": [
+      [
+        0,
+        0.8099999999999999
+      ],
+      [
+        100,
+        0.86
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        942
+      ],
+      [
+        100,
+        1042
+      ]
+    ],
+    "density": 713
+  },
+  {
+    "id": "def_72",
+    "name": "Default Material 72",
+    "conductivity": [
+      [
+        0,
+        0.82
+      ],
+      [
+        100,
+        0.87
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        944
+      ],
+      [
+        100,
+        1044
+      ]
+    ],
+    "density": 716
+  },
+  {
+    "id": "def_73",
+    "name": "Default Material 73",
+    "conductivity": [
+      [
+        0,
+        0.83
+      ],
+      [
+        100,
+        0.88
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        946
+      ],
+      [
+        100,
+        1046
+      ]
+    ],
+    "density": 719
+  },
+  {
+    "id": "def_74",
+    "name": "Default Material 74",
+    "conductivity": [
+      [
+        0,
+        0.84
+      ],
+      [
+        100,
+        0.89
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        948
+      ],
+      [
+        100,
+        1048
+      ]
+    ],
+    "density": 722
+  },
+  {
+    "id": "def_75",
+    "name": "Default Material 75",
+    "conductivity": [
+      [
+        0,
+        0.85
+      ],
+      [
+        100,
+        0.9
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        950
+      ],
+      [
+        100,
+        1050
+      ]
+    ],
+    "density": 725
+  },
+  {
+    "id": "def_76",
+    "name": "Default Material 76",
+    "conductivity": [
+      [
+        0,
+        0.86
+      ],
+      [
+        100,
+        0.91
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        952
+      ],
+      [
+        100,
+        1052
+      ]
+    ],
+    "density": 728
+  },
+  {
+    "id": "def_77",
+    "name": "Default Material 77",
+    "conductivity": [
+      [
+        0,
+        0.87
+      ],
+      [
+        100,
+        0.92
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        954
+      ],
+      [
+        100,
+        1054
+      ]
+    ],
+    "density": 731
+  },
+  {
+    "id": "def_78",
+    "name": "Default Material 78",
+    "conductivity": [
+      [
+        0,
+        0.88
+      ],
+      [
+        100,
+        0.93
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        956
+      ],
+      [
+        100,
+        1056
+      ]
+    ],
+    "density": 734
+  },
+  {
+    "id": "def_79",
+    "name": "Default Material 79",
+    "conductivity": [
+      [
+        0,
+        0.89
+      ],
+      [
+        100,
+        0.9400000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        958
+      ],
+      [
+        100,
+        1058
+      ]
+    ],
+    "density": 737
+  },
+  {
+    "id": "def_80",
+    "name": "Default Material 80",
+    "conductivity": [
+      [
+        0,
+        0.9
+      ],
+      [
+        100,
+        0.9500000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        960
+      ],
+      [
+        100,
+        1060
+      ]
+    ],
+    "density": 740
+  },
+  {
+    "id": "def_81",
+    "name": "Default Material 81",
+    "conductivity": [
+      [
+        0,
+        0.91
+      ],
+      [
+        100,
+        0.9600000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        962
+      ],
+      [
+        100,
+        1062
+      ]
+    ],
+    "density": 743
+  },
+  {
+    "id": "def_82",
+    "name": "Default Material 82",
+    "conductivity": [
+      [
+        0,
+        0.92
+      ],
+      [
+        100,
+        0.9700000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        964
+      ],
+      [
+        100,
+        1064
+      ]
+    ],
+    "density": 746
+  },
+  {
+    "id": "def_83",
+    "name": "Default Material 83",
+    "conductivity": [
+      [
+        0,
+        0.93
+      ],
+      [
+        100,
+        0.9800000000000001
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        966
+      ],
+      [
+        100,
+        1066
+      ]
+    ],
+    "density": 749
+  },
+  {
+    "id": "def_84",
+    "name": "Default Material 84",
+    "conductivity": [
+      [
+        0,
+        0.94
+      ],
+      [
+        100,
+        0.99
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        968
+      ],
+      [
+        100,
+        1068
+      ]
+    ],
+    "density": 752
+  },
+  {
+    "id": "def_85",
+    "name": "Default Material 85",
+    "conductivity": [
+      [
+        0,
+        0.95
+      ],
+      [
+        100,
+        1.0
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        970
+      ],
+      [
+        100,
+        1070
+      ]
+    ],
+    "density": 755
+  },
+  {
+    "id": "def_86",
+    "name": "Default Material 86",
+    "conductivity": [
+      [
+        0,
+        0.96
+      ],
+      [
+        100,
+        1.01
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        972
+      ],
+      [
+        100,
+        1072
+      ]
+    ],
+    "density": 758
+  },
+  {
+    "id": "def_87",
+    "name": "Default Material 87",
+    "conductivity": [
+      [
+        0,
+        0.97
+      ],
+      [
+        100,
+        1.02
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        974
+      ],
+      [
+        100,
+        1074
+      ]
+    ],
+    "density": 761
+  },
+  {
+    "id": "def_88",
+    "name": "Default Material 88",
+    "conductivity": [
+      [
+        0,
+        0.98
+      ],
+      [
+        100,
+        1.03
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        976
+      ],
+      [
+        100,
+        1076
+      ]
+    ],
+    "density": 764
+  },
+  {
+    "id": "def_89",
+    "name": "Default Material 89",
+    "conductivity": [
+      [
+        0,
+        0.99
+      ],
+      [
+        100,
+        1.04
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        978
+      ],
+      [
+        100,
+        1078
+      ]
+    ],
+    "density": 767
+  },
+  {
+    "id": "def_90",
+    "name": "Default Material 90",
+    "conductivity": [
+      [
+        0,
+        1.0
+      ],
+      [
+        100,
+        1.05
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        980
+      ],
+      [
+        100,
+        1080
+      ]
+    ],
+    "density": 770
+  },
+  {
+    "id": "def_91",
+    "name": "Default Material 91",
+    "conductivity": [
+      [
+        0,
+        1.01
+      ],
+      [
+        100,
+        1.06
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        982
+      ],
+      [
+        100,
+        1082
+      ]
+    ],
+    "density": 773
+  },
+  {
+    "id": "def_92",
+    "name": "Default Material 92",
+    "conductivity": [
+      [
+        0,
+        1.02
+      ],
+      [
+        100,
+        1.07
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        984
+      ],
+      [
+        100,
+        1084
+      ]
+    ],
+    "density": 776
+  },
+  {
+    "id": "def_93",
+    "name": "Default Material 93",
+    "conductivity": [
+      [
+        0,
+        1.03
+      ],
+      [
+        100,
+        1.08
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        986
+      ],
+      [
+        100,
+        1086
+      ]
+    ],
+    "density": 779
+  },
+  {
+    "id": "def_94",
+    "name": "Default Material 94",
+    "conductivity": [
+      [
+        0,
+        1.04
+      ],
+      [
+        100,
+        1.09
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        988
+      ],
+      [
+        100,
+        1088
+      ]
+    ],
+    "density": 782
+  },
+  {
+    "id": "def_95",
+    "name": "Default Material 95",
+    "conductivity": [
+      [
+        0,
+        1.05
+      ],
+      [
+        100,
+        1.1
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        990
+      ],
+      [
+        100,
+        1090
+      ]
+    ],
+    "density": 785
+  },
+  {
+    "id": "def_96",
+    "name": "Default Material 96",
+    "conductivity": [
+      [
+        0,
+        1.06
+      ],
+      [
+        100,
+        1.1099999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        992
+      ],
+      [
+        100,
+        1092
+      ]
+    ],
+    "density": 788
+  },
+  {
+    "id": "def_97",
+    "name": "Default Material 97",
+    "conductivity": [
+      [
+        0,
+        1.07
+      ],
+      [
+        100,
+        1.1199999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        994
+      ],
+      [
+        100,
+        1094
+      ]
+    ],
+    "density": 791
+  },
+  {
+    "id": "def_98",
+    "name": "Default Material 98",
+    "conductivity": [
+      [
+        0,
+        1.08
+      ],
+      [
+        100,
+        1.13
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        996
+      ],
+      [
+        100,
+        1096
+      ]
+    ],
+    "density": 794
+  },
+  {
+    "id": "def_99",
+    "name": "Default Material 99",
+    "conductivity": [
+      [
+        0,
+        1.09
+      ],
+      [
+        100,
+        1.14
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        998
+      ],
+      [
+        100,
+        1098
+      ]
+    ],
+    "density": 797
+  },
+  {
+    "id": "def_100",
+    "name": "Default Material 100",
+    "conductivity": [
+      [
+        0,
+        1.1
+      ],
+      [
+        100,
+        1.15
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1000
+      ],
+      [
+        100,
+        1100
+      ]
+    ],
+    "density": 800
+  },
+  {
+    "id": "def_101",
+    "name": "Default Material 101",
+    "conductivity": [
+      [
+        0,
+        1.11
+      ],
+      [
+        100,
+        1.16
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1002
+      ],
+      [
+        100,
+        1102
+      ]
+    ],
+    "density": 803
+  },
+  {
+    "id": "def_102",
+    "name": "Default Material 102",
+    "conductivity": [
+      [
+        0,
+        1.12
+      ],
+      [
+        100,
+        1.17
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1004
+      ],
+      [
+        100,
+        1104
+      ]
+    ],
+    "density": 806
+  },
+  {
+    "id": "def_103",
+    "name": "Default Material 103",
+    "conductivity": [
+      [
+        0,
+        1.1300000000000001
+      ],
+      [
+        100,
+        1.18
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1006
+      ],
+      [
+        100,
+        1106
+      ]
+    ],
+    "density": 809
+  },
+  {
+    "id": "def_104",
+    "name": "Default Material 104",
+    "conductivity": [
+      [
+        0,
+        1.1400000000000001
+      ],
+      [
+        100,
+        1.19
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1008
+      ],
+      [
+        100,
+        1108
+      ]
+    ],
+    "density": 812
+  },
+  {
+    "id": "def_105",
+    "name": "Default Material 105",
+    "conductivity": [
+      [
+        0,
+        1.1500000000000001
+      ],
+      [
+        100,
+        1.2
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1010
+      ],
+      [
+        100,
+        1110
+      ]
+    ],
+    "density": 815
+  },
+  {
+    "id": "def_106",
+    "name": "Default Material 106",
+    "conductivity": [
+      [
+        0,
+        1.1600000000000001
+      ],
+      [
+        100,
+        1.21
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1012
+      ],
+      [
+        100,
+        1112
+      ]
+    ],
+    "density": 818
+  },
+  {
+    "id": "def_107",
+    "name": "Default Material 107",
+    "conductivity": [
+      [
+        0,
+        1.1700000000000002
+      ],
+      [
+        100,
+        1.22
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1014
+      ],
+      [
+        100,
+        1114
+      ]
+    ],
+    "density": 821
+  },
+  {
+    "id": "def_108",
+    "name": "Default Material 108",
+    "conductivity": [
+      [
+        0,
+        1.1800000000000002
+      ],
+      [
+        100,
+        1.23
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1016
+      ],
+      [
+        100,
+        1116
+      ]
+    ],
+    "density": 824
+  },
+  {
+    "id": "def_109",
+    "name": "Default Material 109",
+    "conductivity": [
+      [
+        0,
+        1.1900000000000002
+      ],
+      [
+        100,
+        1.24
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1018
+      ],
+      [
+        100,
+        1118
+      ]
+    ],
+    "density": 827
+  },
+  {
+    "id": "def_110",
+    "name": "Default Material 110",
+    "conductivity": [
+      [
+        0,
+        1.2000000000000002
+      ],
+      [
+        100,
+        1.25
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1020
+      ],
+      [
+        100,
+        1120
+      ]
+    ],
+    "density": 830
+  },
+  {
+    "id": "def_111",
+    "name": "Default Material 111",
+    "conductivity": [
+      [
+        0,
+        1.2100000000000002
+      ],
+      [
+        100,
+        1.26
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1022
+      ],
+      [
+        100,
+        1122
+      ]
+    ],
+    "density": 833
+  },
+  {
+    "id": "def_112",
+    "name": "Default Material 112",
+    "conductivity": [
+      [
+        0,
+        1.2200000000000002
+      ],
+      [
+        100,
+        1.27
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1024
+      ],
+      [
+        100,
+        1124
+      ]
+    ],
+    "density": 836
+  },
+  {
+    "id": "def_113",
+    "name": "Default Material 113",
+    "conductivity": [
+      [
+        0,
+        1.2300000000000002
+      ],
+      [
+        100,
+        1.28
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1026
+      ],
+      [
+        100,
+        1126
+      ]
+    ],
+    "density": 839
+  },
+  {
+    "id": "def_114",
+    "name": "Default Material 114",
+    "conductivity": [
+      [
+        0,
+        1.2400000000000002
+      ],
+      [
+        100,
+        1.29
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1028
+      ],
+      [
+        100,
+        1128
+      ]
+    ],
+    "density": 842
+  },
+  {
+    "id": "def_115",
+    "name": "Default Material 115",
+    "conductivity": [
+      [
+        0,
+        1.2500000000000002
+      ],
+      [
+        100,
+        1.3
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1030
+      ],
+      [
+        100,
+        1130
+      ]
+    ],
+    "density": 845
+  },
+  {
+    "id": "def_116",
+    "name": "Default Material 116",
+    "conductivity": [
+      [
+        0,
+        1.26
+      ],
+      [
+        100,
+        1.3099999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1032
+      ],
+      [
+        100,
+        1132
+      ]
+    ],
+    "density": 848
+  },
+  {
+    "id": "def_117",
+    "name": "Default Material 117",
+    "conductivity": [
+      [
+        0,
+        1.27
+      ],
+      [
+        100,
+        1.3199999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1034
+      ],
+      [
+        100,
+        1134
+      ]
+    ],
+    "density": 851
+  },
+  {
+    "id": "def_118",
+    "name": "Default Material 118",
+    "conductivity": [
+      [
+        0,
+        1.28
+      ],
+      [
+        100,
+        1.3299999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1036
+      ],
+      [
+        100,
+        1136
+      ]
+    ],
+    "density": 854
+  },
+  {
+    "id": "def_119",
+    "name": "Default Material 119",
+    "conductivity": [
+      [
+        0,
+        1.29
+      ],
+      [
+        100,
+        1.3399999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1038
+      ],
+      [
+        100,
+        1138
+      ]
+    ],
+    "density": 857
+  },
+  {
+    "id": "def_120",
+    "name": "Default Material 120",
+    "conductivity": [
+      [
+        0,
+        1.3
+      ],
+      [
+        100,
+        1.3499999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1040
+      ],
+      [
+        100,
+        1140
+      ]
+    ],
+    "density": 860
+  },
+  {
+    "id": "def_121",
+    "name": "Default Material 121",
+    "conductivity": [
+      [
+        0,
+        1.31
+      ],
+      [
+        100,
+        1.3599999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1042
+      ],
+      [
+        100,
+        1142
+      ]
+    ],
+    "density": 863
+  },
+  {
+    "id": "def_122",
+    "name": "Default Material 122",
+    "conductivity": [
+      [
+        0,
+        1.32
+      ],
+      [
+        100,
+        1.3699999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1044
+      ],
+      [
+        100,
+        1144
+      ]
+    ],
+    "density": 866
+  },
+  {
+    "id": "def_123",
+    "name": "Default Material 123",
+    "conductivity": [
+      [
+        0,
+        1.33
+      ],
+      [
+        100,
+        1.38
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1046
+      ],
+      [
+        100,
+        1146
+      ]
+    ],
+    "density": 869
+  },
+  {
+    "id": "def_124",
+    "name": "Default Material 124",
+    "conductivity": [
+      [
+        0,
+        1.34
+      ],
+      [
+        100,
+        1.39
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1048
+      ],
+      [
+        100,
+        1148
+      ]
+    ],
+    "density": 872
+  },
+  {
+    "id": "def_125",
+    "name": "Default Material 125",
+    "conductivity": [
+      [
+        0,
+        1.35
+      ],
+      [
+        100,
+        1.4
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1050
+      ],
+      [
+        100,
+        1150
+      ]
+    ],
+    "density": 875
+  },
+  {
+    "id": "def_126",
+    "name": "Default Material 126",
+    "conductivity": [
+      [
+        0,
+        1.36
+      ],
+      [
+        100,
+        1.41
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1052
+      ],
+      [
+        100,
+        1152
+      ]
+    ],
+    "density": 878
+  },
+  {
+    "id": "def_127",
+    "name": "Default Material 127",
+    "conductivity": [
+      [
+        0,
+        1.37
+      ],
+      [
+        100,
+        1.42
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1054
+      ],
+      [
+        100,
+        1154
+      ]
+    ],
+    "density": 881
+  },
+  {
+    "id": "def_128",
+    "name": "Default Material 128",
+    "conductivity": [
+      [
+        0,
+        1.3800000000000001
+      ],
+      [
+        100,
+        1.43
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1056
+      ],
+      [
+        100,
+        1156
+      ]
+    ],
+    "density": 884
+  },
+  {
+    "id": "def_129",
+    "name": "Default Material 129",
+    "conductivity": [
+      [
+        0,
+        1.3900000000000001
+      ],
+      [
+        100,
+        1.44
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1058
+      ],
+      [
+        100,
+        1158
+      ]
+    ],
+    "density": 887
+  },
+  {
+    "id": "def_130",
+    "name": "Default Material 130",
+    "conductivity": [
+      [
+        0,
+        1.4000000000000001
+      ],
+      [
+        100,
+        1.45
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1060
+      ],
+      [
+        100,
+        1160
+      ]
+    ],
+    "density": 890
+  },
+  {
+    "id": "def_131",
+    "name": "Default Material 131",
+    "conductivity": [
+      [
+        0,
+        1.4100000000000001
+      ],
+      [
+        100,
+        1.46
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1062
+      ],
+      [
+        100,
+        1162
+      ]
+    ],
+    "density": 893
+  },
+  {
+    "id": "def_132",
+    "name": "Default Material 132",
+    "conductivity": [
+      [
+        0,
+        1.4200000000000002
+      ],
+      [
+        100,
+        1.47
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1064
+      ],
+      [
+        100,
+        1164
+      ]
+    ],
+    "density": 896
+  },
+  {
+    "id": "def_133",
+    "name": "Default Material 133",
+    "conductivity": [
+      [
+        0,
+        1.4300000000000002
+      ],
+      [
+        100,
+        1.48
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1066
+      ],
+      [
+        100,
+        1166
+      ]
+    ],
+    "density": 899
+  },
+  {
+    "id": "def_134",
+    "name": "Default Material 134",
+    "conductivity": [
+      [
+        0,
+        1.4400000000000002
+      ],
+      [
+        100,
+        1.49
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1068
+      ],
+      [
+        100,
+        1168
+      ]
+    ],
+    "density": 902
+  },
+  {
+    "id": "def_135",
+    "name": "Default Material 135",
+    "conductivity": [
+      [
+        0,
+        1.4500000000000002
+      ],
+      [
+        100,
+        1.5
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1070
+      ],
+      [
+        100,
+        1170
+      ]
+    ],
+    "density": 905
+  },
+  {
+    "id": "def_136",
+    "name": "Default Material 136",
+    "conductivity": [
+      [
+        0,
+        1.4600000000000002
+      ],
+      [
+        100,
+        1.51
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1072
+      ],
+      [
+        100,
+        1172
+      ]
+    ],
+    "density": 908
+  },
+  {
+    "id": "def_137",
+    "name": "Default Material 137",
+    "conductivity": [
+      [
+        0,
+        1.4700000000000002
+      ],
+      [
+        100,
+        1.52
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1074
+      ],
+      [
+        100,
+        1174
+      ]
+    ],
+    "density": 911
+  },
+  {
+    "id": "def_138",
+    "name": "Default Material 138",
+    "conductivity": [
+      [
+        0,
+        1.4800000000000002
+      ],
+      [
+        100,
+        1.53
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1076
+      ],
+      [
+        100,
+        1176
+      ]
+    ],
+    "density": 914
+  },
+  {
+    "id": "def_139",
+    "name": "Default Material 139",
+    "conductivity": [
+      [
+        0,
+        1.4900000000000002
+      ],
+      [
+        100,
+        1.54
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1078
+      ],
+      [
+        100,
+        1178
+      ]
+    ],
+    "density": 917
+  },
+  {
+    "id": "def_140",
+    "name": "Default Material 140",
+    "conductivity": [
+      [
+        0,
+        1.5000000000000002
+      ],
+      [
+        100,
+        1.55
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1080
+      ],
+      [
+        100,
+        1180
+      ]
+    ],
+    "density": 920
+  },
+  {
+    "id": "def_141",
+    "name": "Default Material 141",
+    "conductivity": [
+      [
+        0,
+        1.51
+      ],
+      [
+        100,
+        1.5599999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1082
+      ],
+      [
+        100,
+        1182
+      ]
+    ],
+    "density": 923
+  },
+  {
+    "id": "def_142",
+    "name": "Default Material 142",
+    "conductivity": [
+      [
+        0,
+        1.52
+      ],
+      [
+        100,
+        1.5699999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1084
+      ],
+      [
+        100,
+        1184
+      ]
+    ],
+    "density": 926
+  },
+  {
+    "id": "def_143",
+    "name": "Default Material 143",
+    "conductivity": [
+      [
+        0,
+        1.53
+      ],
+      [
+        100,
+        1.5799999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1086
+      ],
+      [
+        100,
+        1186
+      ]
+    ],
+    "density": 929
+  },
+  {
+    "id": "def_144",
+    "name": "Default Material 144",
+    "conductivity": [
+      [
+        0,
+        1.54
+      ],
+      [
+        100,
+        1.5899999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1088
+      ],
+      [
+        100,
+        1188
+      ]
+    ],
+    "density": 932
+  },
+  {
+    "id": "def_145",
+    "name": "Default Material 145",
+    "conductivity": [
+      [
+        0,
+        1.55
+      ],
+      [
+        100,
+        1.5999999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1090
+      ],
+      [
+        100,
+        1190
+      ]
+    ],
+    "density": 935
+  },
+  {
+    "id": "def_146",
+    "name": "Default Material 146",
+    "conductivity": [
+      [
+        0,
+        1.56
+      ],
+      [
+        100,
+        1.6099999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1092
+      ],
+      [
+        100,
+        1192
+      ]
+    ],
+    "density": 938
+  },
+  {
+    "id": "def_147",
+    "name": "Default Material 147",
+    "conductivity": [
+      [
+        0,
+        1.57
+      ],
+      [
+        100,
+        1.6199999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1094
+      ],
+      [
+        100,
+        1194
+      ]
+    ],
+    "density": 941
+  },
+  {
+    "id": "def_148",
+    "name": "Default Material 148",
+    "conductivity": [
+      [
+        0,
+        1.58
+      ],
+      [
+        100,
+        1.63
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1096
+      ],
+      [
+        100,
+        1196
+      ]
+    ],
+    "density": 944
+  },
+  {
+    "id": "def_149",
+    "name": "Default Material 149",
+    "conductivity": [
+      [
+        0,
+        1.59
+      ],
+      [
+        100,
+        1.64
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1098
+      ],
+      [
+        100,
+        1198
+      ]
+    ],
+    "density": 947
+  },
+  {
+    "id": "def_150",
+    "name": "Default Material 150",
+    "conductivity": [
+      [
+        0,
+        1.6
+      ],
+      [
+        100,
+        1.65
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1100
+      ],
+      [
+        100,
+        1200
+      ]
+    ],
+    "density": 950
+  },
+  {
+    "id": "def_151",
+    "name": "Default Material 151",
+    "conductivity": [
+      [
+        0,
+        1.61
+      ],
+      [
+        100,
+        1.66
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1102
+      ],
+      [
+        100,
+        1202
+      ]
+    ],
+    "density": 953
+  },
+  {
+    "id": "def_152",
+    "name": "Default Material 152",
+    "conductivity": [
+      [
+        0,
+        1.62
+      ],
+      [
+        100,
+        1.67
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1104
+      ],
+      [
+        100,
+        1204
+      ]
+    ],
+    "density": 956
+  },
+  {
+    "id": "def_153",
+    "name": "Default Material 153",
+    "conductivity": [
+      [
+        0,
+        1.6300000000000001
+      ],
+      [
+        100,
+        1.68
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1106
+      ],
+      [
+        100,
+        1206
+      ]
+    ],
+    "density": 959
+  },
+  {
+    "id": "def_154",
+    "name": "Default Material 154",
+    "conductivity": [
+      [
+        0,
+        1.6400000000000001
+      ],
+      [
+        100,
+        1.69
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1108
+      ],
+      [
+        100,
+        1208
+      ]
+    ],
+    "density": 962
+  },
+  {
+    "id": "def_155",
+    "name": "Default Material 155",
+    "conductivity": [
+      [
+        0,
+        1.6500000000000001
+      ],
+      [
+        100,
+        1.7
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1110
+      ],
+      [
+        100,
+        1210
+      ]
+    ],
+    "density": 965
+  },
+  {
+    "id": "def_156",
+    "name": "Default Material 156",
+    "conductivity": [
+      [
+        0,
+        1.6600000000000001
+      ],
+      [
+        100,
+        1.71
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1112
+      ],
+      [
+        100,
+        1212
+      ]
+    ],
+    "density": 968
+  },
+  {
+    "id": "def_157",
+    "name": "Default Material 157",
+    "conductivity": [
+      [
+        0,
+        1.6700000000000002
+      ],
+      [
+        100,
+        1.72
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1114
+      ],
+      [
+        100,
+        1214
+      ]
+    ],
+    "density": 971
+  },
+  {
+    "id": "def_158",
+    "name": "Default Material 158",
+    "conductivity": [
+      [
+        0,
+        1.6800000000000002
+      ],
+      [
+        100,
+        1.73
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1116
+      ],
+      [
+        100,
+        1216
+      ]
+    ],
+    "density": 974
+  },
+  {
+    "id": "def_159",
+    "name": "Default Material 159",
+    "conductivity": [
+      [
+        0,
+        1.6900000000000002
+      ],
+      [
+        100,
+        1.74
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1118
+      ],
+      [
+        100,
+        1218
+      ]
+    ],
+    "density": 977
+  },
+  {
+    "id": "def_160",
+    "name": "Default Material 160",
+    "conductivity": [
+      [
+        0,
+        1.7000000000000002
+      ],
+      [
+        100,
+        1.75
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1120
+      ],
+      [
+        100,
+        1220
+      ]
+    ],
+    "density": 980
+  },
+  {
+    "id": "def_161",
+    "name": "Default Material 161",
+    "conductivity": [
+      [
+        0,
+        1.7100000000000002
+      ],
+      [
+        100,
+        1.76
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1122
+      ],
+      [
+        100,
+        1222
+      ]
+    ],
+    "density": 983
+  },
+  {
+    "id": "def_162",
+    "name": "Default Material 162",
+    "conductivity": [
+      [
+        0,
+        1.7200000000000002
+      ],
+      [
+        100,
+        1.77
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1124
+      ],
+      [
+        100,
+        1224
+      ]
+    ],
+    "density": 986
+  },
+  {
+    "id": "def_163",
+    "name": "Default Material 163",
+    "conductivity": [
+      [
+        0,
+        1.7300000000000002
+      ],
+      [
+        100,
+        1.78
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1126
+      ],
+      [
+        100,
+        1226
+      ]
+    ],
+    "density": 989
+  },
+  {
+    "id": "def_164",
+    "name": "Default Material 164",
+    "conductivity": [
+      [
+        0,
+        1.7400000000000002
+      ],
+      [
+        100,
+        1.79
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1128
+      ],
+      [
+        100,
+        1228
+      ]
+    ],
+    "density": 992
+  },
+  {
+    "id": "def_165",
+    "name": "Default Material 165",
+    "conductivity": [
+      [
+        0,
+        1.7500000000000002
+      ],
+      [
+        100,
+        1.8
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1130
+      ],
+      [
+        100,
+        1230
+      ]
+    ],
+    "density": 995
+  },
+  {
+    "id": "def_166",
+    "name": "Default Material 166",
+    "conductivity": [
+      [
+        0,
+        1.7600000000000002
+      ],
+      [
+        100,
+        1.81
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1132
+      ],
+      [
+        100,
+        1232
+      ]
+    ],
+    "density": 998
+  },
+  {
+    "id": "def_167",
+    "name": "Default Material 167",
+    "conductivity": [
+      [
+        0,
+        1.77
+      ],
+      [
+        100,
+        1.8199999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1134
+      ],
+      [
+        100,
+        1234
+      ]
+    ],
+    "density": 1001
+  },
+  {
+    "id": "def_168",
+    "name": "Default Material 168",
+    "conductivity": [
+      [
+        0,
+        1.78
+      ],
+      [
+        100,
+        1.8299999999999998
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1136
+      ],
+      [
+        100,
+        1236
+      ]
+    ],
+    "density": 1004
+  },
+  {
+    "id": "def_169",
+    "name": "Default Material 169",
+    "conductivity": [
+      [
+        0,
+        1.79
+      ],
+      [
+        100,
+        1.8399999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1138
+      ],
+      [
+        100,
+        1238
+      ]
+    ],
+    "density": 1007
+  },
+  {
+    "id": "def_170",
+    "name": "Default Material 170",
+    "conductivity": [
+      [
+        0,
+        1.8
+      ],
+      [
+        100,
+        1.8499999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1140
+      ],
+      [
+        100,
+        1240
+      ]
+    ],
+    "density": 1010
+  },
+  {
+    "id": "def_171",
+    "name": "Default Material 171",
+    "conductivity": [
+      [
+        0,
+        1.81
+      ],
+      [
+        100,
+        1.8599999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1142
+      ],
+      [
+        100,
+        1242
+      ]
+    ],
+    "density": 1013
+  },
+  {
+    "id": "def_172",
+    "name": "Default Material 172",
+    "conductivity": [
+      [
+        0,
+        1.82
+      ],
+      [
+        100,
+        1.8699999999999999
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1144
+      ],
+      [
+        100,
+        1244
+      ]
+    ],
+    "density": 1016
+  },
+  {
+    "id": "def_173",
+    "name": "Default Material 173",
+    "conductivity": [
+      [
+        0,
+        1.83
+      ],
+      [
+        100,
+        1.88
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1146
+      ],
+      [
+        100,
+        1246
+      ]
+    ],
+    "density": 1019
+  },
+  {
+    "id": "def_174",
+    "name": "Default Material 174",
+    "conductivity": [
+      [
+        0,
+        1.84
+      ],
+      [
+        100,
+        1.89
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1148
+      ],
+      [
+        100,
+        1248
+      ]
+    ],
+    "density": 1022
+  },
+  {
+    "id": "def_175",
+    "name": "Default Material 175",
+    "conductivity": [
+      [
+        0,
+        1.85
+      ],
+      [
+        100,
+        1.9
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1150
+      ],
+      [
+        100,
+        1250
+      ]
+    ],
+    "density": 1025
+  },
+  {
+    "id": "def_176",
+    "name": "Default Material 176",
+    "conductivity": [
+      [
+        0,
+        1.86
+      ],
+      [
+        100,
+        1.91
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1152
+      ],
+      [
+        100,
+        1252
+      ]
+    ],
+    "density": 1028
+  },
+  {
+    "id": "def_177",
+    "name": "Default Material 177",
+    "conductivity": [
+      [
+        0,
+        1.87
+      ],
+      [
+        100,
+        1.92
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1154
+      ],
+      [
+        100,
+        1254
+      ]
+    ],
+    "density": 1031
+  },
+  {
+    "id": "def_178",
+    "name": "Default Material 178",
+    "conductivity": [
+      [
+        0,
+        1.8800000000000001
+      ],
+      [
+        100,
+        1.93
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1156
+      ],
+      [
+        100,
+        1256
+      ]
+    ],
+    "density": 1034
+  },
+  {
+    "id": "def_179",
+    "name": "Default Material 179",
+    "conductivity": [
+      [
+        0,
+        1.8900000000000001
+      ],
+      [
+        100,
+        1.94
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1158
+      ],
+      [
+        100,
+        1258
+      ]
+    ],
+    "density": 1037
+  },
+  {
+    "id": "def_180",
+    "name": "Default Material 180",
+    "conductivity": [
+      [
+        0,
+        1.9000000000000001
+      ],
+      [
+        100,
+        1.95
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1160
+      ],
+      [
+        100,
+        1260
+      ]
+    ],
+    "density": 1040
+  },
+  {
+    "id": "def_181",
+    "name": "Default Material 181",
+    "conductivity": [
+      [
+        0,
+        1.9100000000000001
+      ],
+      [
+        100,
+        1.96
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1162
+      ],
+      [
+        100,
+        1262
+      ]
+    ],
+    "density": 1043
+  },
+  {
+    "id": "def_182",
+    "name": "Default Material 182",
+    "conductivity": [
+      [
+        0,
+        1.9200000000000002
+      ],
+      [
+        100,
+        1.97
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1164
+      ],
+      [
+        100,
+        1264
+      ]
+    ],
+    "density": 1046
+  },
+  {
+    "id": "def_183",
+    "name": "Default Material 183",
+    "conductivity": [
+      [
+        0,
+        1.9300000000000002
+      ],
+      [
+        100,
+        1.98
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1166
+      ],
+      [
+        100,
+        1266
+      ]
+    ],
+    "density": 1049
+  },
+  {
+    "id": "def_184",
+    "name": "Default Material 184",
+    "conductivity": [
+      [
+        0,
+        1.9400000000000002
+      ],
+      [
+        100,
+        1.99
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1168
+      ],
+      [
+        100,
+        1268
+      ]
+    ],
+    "density": 1052
+  },
+  {
+    "id": "def_185",
+    "name": "Default Material 185",
+    "conductivity": [
+      [
+        0,
+        1.9500000000000002
+      ],
+      [
+        100,
+        2.0
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1170
+      ],
+      [
+        100,
+        1270
+      ]
+    ],
+    "density": 1055
+  },
+  {
+    "id": "def_186",
+    "name": "Default Material 186",
+    "conductivity": [
+      [
+        0,
+        1.9600000000000002
+      ],
+      [
+        100,
+        2.0100000000000002
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1172
+      ],
+      [
+        100,
+        1272
+      ]
+    ],
+    "density": 1058
+  },
+  {
+    "id": "def_187",
+    "name": "Default Material 187",
+    "conductivity": [
+      [
+        0,
+        1.9700000000000002
+      ],
+      [
+        100,
+        2.02
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1174
+      ],
+      [
+        100,
+        1274
+      ]
+    ],
+    "density": 1061
+  },
+  {
+    "id": "def_188",
+    "name": "Default Material 188",
+    "conductivity": [
+      [
+        0,
+        1.9800000000000002
+      ],
+      [
+        100,
+        2.0300000000000002
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1176
+      ],
+      [
+        100,
+        1276
+      ]
+    ],
+    "density": 1064
+  },
+  {
+    "id": "def_189",
+    "name": "Default Material 189",
+    "conductivity": [
+      [
+        0,
+        1.9900000000000002
+      ],
+      [
+        100,
+        2.04
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1178
+      ],
+      [
+        100,
+        1278
+      ]
+    ],
+    "density": 1067
+  },
+  {
+    "id": "def_190",
+    "name": "Default Material 190",
+    "conductivity": [
+      [
+        0,
+        2.0
+      ],
+      [
+        100,
+        2.0500000000000003
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1180
+      ],
+      [
+        100,
+        1280
+      ]
+    ],
+    "density": 1070
+  },
+  {
+    "id": "def_191",
+    "name": "Default Material 191",
+    "conductivity": [
+      [
+        0,
+        2.0100000000000002
+      ],
+      [
+        100,
+        2.06
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1182
+      ],
+      [
+        100,
+        1282
+      ]
+    ],
+    "density": 1073
+  },
+  {
+    "id": "def_192",
+    "name": "Default Material 192",
+    "conductivity": [
+      [
+        0,
+        2.02
+      ],
+      [
+        100,
+        2.07
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1184
+      ],
+      [
+        100,
+        1284
+      ]
+    ],
+    "density": 1076
+  },
+  {
+    "id": "def_193",
+    "name": "Default Material 193",
+    "conductivity": [
+      [
+        0,
+        2.03
+      ],
+      [
+        100,
+        2.08
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1186
+      ],
+      [
+        100,
+        1286
+      ]
+    ],
+    "density": 1079
+  },
+  {
+    "id": "def_194",
+    "name": "Default Material 194",
+    "conductivity": [
+      [
+        0,
+        2.04
+      ],
+      [
+        100,
+        2.09
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1188
+      ],
+      [
+        100,
+        1288
+      ]
+    ],
+    "density": 1082
+  },
+  {
+    "id": "def_195",
+    "name": "Default Material 195",
+    "conductivity": [
+      [
+        0,
+        2.05
+      ],
+      [
+        100,
+        2.1
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1190
+      ],
+      [
+        100,
+        1290
+      ]
+    ],
+    "density": 1085
+  },
+  {
+    "id": "def_196",
+    "name": "Default Material 196",
+    "conductivity": [
+      [
+        0,
+        2.06
+      ],
+      [
+        100,
+        2.11
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1192
+      ],
+      [
+        100,
+        1292
+      ]
+    ],
+    "density": 1088
+  },
+  {
+    "id": "def_197",
+    "name": "Default Material 197",
+    "conductivity": [
+      [
+        0,
+        2.07
+      ],
+      [
+        100,
+        2.12
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1194
+      ],
+      [
+        100,
+        1294
+      ]
+    ],
+    "density": 1091
+  },
+  {
+    "id": "def_198",
+    "name": "Default Material 198",
+    "conductivity": [
+      [
+        0,
+        2.08
+      ],
+      [
+        100,
+        2.13
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1196
+      ],
+      [
+        100,
+        1296
+      ]
+    ],
+    "density": 1094
+  },
+  {
+    "id": "def_199",
+    "name": "Default Material 199",
+    "conductivity": [
+      [
+        0,
+        2.09
+      ],
+      [
+        100,
+        2.14
+      ]
+    ],
+    "heat_capacity": [
+      [
+        0,
+        1198
+      ],
+      [
+        100,
+        1298
+      ]
+    ],
+    "density": 1097
+  }
+]

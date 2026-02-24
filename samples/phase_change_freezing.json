@@ -1,0 +1,20 @@
+{
+  "name": "Phase Change Slab",
+  "width": 1.0,
+  "height": 1.0,
+  "initial_temperature": 2,
+  "materials": [
+    {"id":"pcm","name":"Moist Soil","conductivity":[[0,1.0],[100,1.1]],"heat_capacity":[[0,1800],[100,1900]],"density":1700,
+      "phase_change":{"latent_heat":280000,"t_solidus":-1,"t_liquidus":1}}
+  ],
+  "rectangles": [{"id":"r1","x":0,"y":0,"width":1,"height":1,"material_id":"pcm","priority":0,"heat_source":0}],
+  "boundaries": [
+    {"side":"left","type":"fixed_temp","schedule":{"type":"constant","value":-10}},
+    {"side":"right","type":"fixed_temp","schedule":{"type":"constant","value":5}},
+    {"side":"top","type":"flux","schedule":{"type":"constant","value":0}},
+    {"side":"bottom","type":"flux","schedule":{"type":"constant","value":0}}
+  ],
+  "probes": [{"id":"mid","x":0.5,"y":0.5}],
+  "mesh": {"nx":40,"ny":40},
+  "solver": {"mode":"transient","t_end":43200,"output_interval":1800}
+}

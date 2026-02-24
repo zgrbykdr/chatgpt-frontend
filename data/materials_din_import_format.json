@@ -1,0 +1,10 @@
+{
+  "format": "DIN-like",
+  "fields": [
+    "id",
+    "name",
+    "k_10",
+    "rho",
+    "cp"
+  ]
+}

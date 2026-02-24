@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "thermal2d"
+version = "0.1.0"
+description = "2D thermal simulation desktop app"
+requires-python = ">=3.10"
+dependencies = ["numpy", "PySide6", "ezdxf"]
+
+[project.scripts]
+simulate = "thermal2d.cli:main"
+thermal2d-gui = "thermal2d.gui.app:run_gui"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
