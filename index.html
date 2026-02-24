@@ -1,12 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT Panel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AetherMap Studio — Fantasy Cartography</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-    <div id="root"></div>
-    <script src="script.js"></script>
+<body class="theme-dark">
+  <header class="topbar">
+    <h1>AetherMap Studio</h1>
+    <div class="topbar-actions">
+      <button id="themeToggle">Toggle Theme</button>
+      <button id="undoBtn">Undo</button>
+      <button id="redoBtn">Redo</button>
+      <button id="saveVersionBtn">Save Version</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel left">
+      <section>
+        <h2>World Generator</h2>
+        <label>Seed <input id="seedInput" type="number" value="1337" /></label>
+        <label>Water % <input id="waterInput" type="range" min="20" max="80" value="48" /><span id="waterValue">48</span></label>
+        <label>Style
+          <select id="stylePreset">
+            <option value="parchment">Classic parchment medieval</option>
+            <option value="vibrant">Vibrant high-fantasy</option>
+            <option value="grimdark">Dark grimdark</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="inked">Inked atlas</option>
+          </select>
+        </label>
+        <label>Canvas Size
+          <select id="canvasPreset">
+            <option value="2048x1152">Regional (2K, 16:9)</option>
+            <option value="3840x2160">Continental (4K, 16:9)</option>
+            <option value="7680x4320" selected>8K print (16:9)</option>
+            <option value="16384x8192">16K world (2:1)</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+        <div class="inline-fields" id="customSizeFields" hidden>
+          <label>W <input id="customWidth" type="number" value="8192" min="512" max="30000"></label>
+          <label>H <input id="customHeight" type="number" value="4096" min="512" max="30000"></label>
+        </div>
+        <label>Scale Unit
+          <select id="scaleUnit"><option>miles</option><option>kilometers</option></select>
+        </label>
+        <label>Map Width in Unit <input id="mapDistance" type="number" value="2200" min="100" max="20000"></label>
+        <button id="generateBtn" class="primary">Generate Continent</button>
+      </section>
+
+      <section>
+        <h2>Brush & Heightmap</h2>
+        <label>Tool
+          <select id="toolMode">
+            <option value="pan">Pan / Navigate</option>
+            <option value="heightRaise">Raise terrain</option>
+            <option value="heightLower">Lower terrain</option>
+            <option value="measure">Distance measure</option>
+            <option value="placeAsset">Place asset</option>
+            <option value="moveAsset">Move asset</option>
+            <option value="eraseAsset">Erase asset</option>
+            <option value="placeLabel">Place custom label</option>
+          </select>
+        </label>
+        <label>Brush Radius <input id="brushRadius" type="range" min="2" max="80" value="22"><span id="brushValue">22</span></label>
+        <label>Brush Strength <input id="brushStrength" type="range" min="1" max="100" value="28"><span id="strengthValue">28</span></label>
+        <button id="runErosionBtn">Run Erosion Pass</button>
+      </section>
+
+
+      <section>
+        <h2>Manual Drawing Studio</h2>
+        <label>Asset Type
+          <select id="assetType">
+            <option value="mountain">Mountain</option>
+            <option value="hill">Hill</option>
+            <option value="forest">Forest Cluster</option>
+            <option value="city">City</option>
+            <option value="village">Village</option>
+            <option value="ruin">Ruin</option>
+            <option value="ship">Ship</option>
+            <option value="monster">Sea Monster</option>
+            <option value="compass">Compass Rose</option>
+            <option value="banner">Banner</option>
+          </select>
+        </label>
+        <label>Asset Size <input id="assetSize" type="range" min="6" max="80" value="24"><span id="assetSizeValue">24</span></label>
+        <label>Custom Label <input id="customLabelInput" type="text" value="New Realm" /></label>
+        <button id="regenPaletteBtn">Adaptive Palette Regenerate</button>
+      </section>
+
+      <section>
+        <h2>Export</h2>
+        <div class="export-grid">
+          <button data-export="png">PNG</button>
+          <button data-export="jpg">JPG</button>
+          <button data-export="tiff">TIFF</button>
+          <button data-export="pdf">PDF</button>
+          <button data-export="project">Project (.aethermap)</button>
+          <button data-export="heightmap">Heightmap PNG</button>
+          <button data-export="vtt">VTT Grid PNG</button>
+        </div>
+        <label>DPI <input id="dpiInput" type="number" value="300" min="72" max="1200"></label>
+        <label><input id="losslessCheck" type="checkbox" checked> Lossless when supported</label>
+      </section>
+    </aside>
+
+    <section class="viewport-wrap">
+      <div class="canvas-toolbar">
+        <label>Zoom <input id="zoomRange" type="range" min="25" max="400" value="100"><span id="zoomValue">100%</span></label>
+        <label>Grid
+          <select id="gridMode">
+            <option value="none">Hidden</option>
+            <option value="hex">Hex</option>
+            <option value="square">Square</option>
+          </select>
+        </label>
+        <span id="measureReadout">Distance: --</span>
+      </div>
+      <div class="viewport" id="viewport">
+        <canvas id="mapCanvas" width="1600" height="900"></canvas>
+      </div>
+    </section>
+
+    <aside class="panel right">
+      <section>
+        <h2>Layers</h2>
+        <div id="layerList"></div>
+      </section>
+
+      <section>
+        <h2>Political & Culture</h2>
+        <label>Theme Pack
+          <select id="civTheme">
+            <option>Elven Dominion</option>
+            <option>Dwarven Holds</option>
+            <option>Human Empire</option>
+            <option>Orcish Wastes</option>
+            <option>Mixed Frontier</option>
+          </select>
+        </label>
+        <button id="genBordersBtn">Generate Borders</button>
+        <button id="genLabelsBtn">Generate Labels</button>
+      </section>
+
+      <section>
+        <h2>Name Bank</h2>
+        <div id="nameBank" class="name-bank"></div>
+      </section>
+
+      <section>
+        <h2>Version History</h2>
+        <div id="versionList" class="version-list"></div>
+      </section>
+    </aside>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
