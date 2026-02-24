@@ -1,0 +1,19 @@
+{
+  "name": "Simple Wall Steady",
+  "width": 1.0,
+  "height": 1.0,
+  "initial_temperature": 20,
+  "materials": [
+    {"id":"m1","name":"Brick","conductivity":[[0,0.7],[100,0.7]],"heat_capacity":[[0,840],[100,840]],"density":1700}
+  ],
+  "rectangles": [{"id":"r1","x":0,"y":0,"width":1,"height":1,"material_id":"m1","priority":0,"heat_source":0}],
+  "boundaries": [
+    {"side":"left","type":"fixed_temp","schedule":{"type":"constant","value":20}},
+    {"side":"right","type":"fixed_temp","schedule":{"type":"constant","value":0}},
+    {"side":"top","type":"flux","schedule":{"type":"constant","value":0}},
+    {"side":"bottom","type":"flux","schedule":{"type":"constant","value":0}}
+  ],
+  "probes": [{"id":"c","x":0.5,"y":0.5}],
+  "mesh": {"nx":40,"ny":40},
+  "solver": {"mode":"steady"}
+}
