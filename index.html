@@ -60,11 +60,37 @@
             <option value="heightRaise">Raise terrain</option>
             <option value="heightLower">Lower terrain</option>
             <option value="measure">Distance measure</option>
+            <option value="placeAsset">Place asset</option>
+            <option value="moveAsset">Move asset</option>
+            <option value="eraseAsset">Erase asset</option>
+            <option value="placeLabel">Place custom label</option>
           </select>
         </label>
         <label>Brush Radius <input id="brushRadius" type="range" min="2" max="80" value="22"><span id="brushValue">22</span></label>
         <label>Brush Strength <input id="brushStrength" type="range" min="1" max="100" value="28"><span id="strengthValue">28</span></label>
         <button id="runErosionBtn">Run Erosion Pass</button>
+      </section>
+
+
+      <section>
+        <h2>Manual Drawing Studio</h2>
+        <label>Asset Type
+          <select id="assetType">
+            <option value="mountain">Mountain</option>
+            <option value="hill">Hill</option>
+            <option value="forest">Forest Cluster</option>
+            <option value="city">City</option>
+            <option value="village">Village</option>
+            <option value="ruin">Ruin</option>
+            <option value="ship">Ship</option>
+            <option value="monster">Sea Monster</option>
+            <option value="compass">Compass Rose</option>
+            <option value="banner">Banner</option>
+          </select>
+        </label>
+        <label>Asset Size <input id="assetSize" type="range" min="6" max="80" value="24"><span id="assetSizeValue">24</span></label>
+        <label>Custom Label <input id="customLabelInput" type="text" value="New Realm" /></label>
+        <button id="regenPaletteBtn">Adaptive Palette Regenerate</button>
       </section>
 
       <section>

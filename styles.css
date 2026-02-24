@@ -54,3 +54,5 @@ button.primary { background: linear-gradient(135deg, #2b61d2, #4f9cff); border:n
 .name-bank, .version-list { max-height: 180px; overflow:auto; background: var(--panel-soft); border:1px solid var(--border); border-radius:8px; padding:6px; font-size:.8rem; }
 .name-chip { display:inline-block; padding:3px 7px; margin:3px; border-radius:999px; border:1px solid var(--border); }
 .version-item { display:flex; justify-content:space-between; margin:5px 0; }
+
+input[type="text"] { width: 145px; background: var(--panel-soft); border:1px solid var(--border); color:var(--text); border-radius:6px; padding:4px; }
