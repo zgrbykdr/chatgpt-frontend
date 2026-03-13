@@ -11,8 +11,10 @@ class DiceLabPanel(QWidget):
         self.data = data_manager
         self.campaign = campaign
         self.expr = QLineEdit("1d20+0")
-        self.history = QTextEdit(); self.history.setReadOnly(True)
-        self.target = QSpinBox(); self.target.setRange(1, 100)
+        self.history = QTextEdit()
+        self.history.setReadOnly(True)
+        self.target = QSpinBox()
+        self.target.setRange(1, 200)
         self.target.setValue(15)
         self._build()
 
@@ -28,12 +30,15 @@ class DiceLabPanel(QWidget):
         expr_row = QHBoxLayout()
         roll_btn = QPushButton("Roll Expression")
         roll_btn.clicked.connect(lambda: self.quick_roll(self.expr.text()))
-        expr_row.addWidget(self.expr); expr_row.addWidget(roll_btn)
+        expr_row.addWidget(self.expr)
+        expr_row.addWidget(roll_btn)
         layout.addLayout(expr_row)
 
         stats_btn = QPushButton("Simulate 1000 Rolls")
         stats_btn.clicked.connect(self.simulate)
-        layout.addWidget(QLabel("Target Number")); layout.addWidget(self.target); layout.addWidget(stats_btn)
+        layout.addWidget(QLabel("Target Number"))
+        layout.addWidget(self.target)
+        layout.addWidget(stats_btn)
         layout.addWidget(self.history, 1)
 
     def quick_roll(self, expression: str) -> None:
@@ -41,8 +46,8 @@ class DiceLabPanel(QWidget):
             parsed = parse_dice_expression(expression)
             rolls = [random.randint(1, parsed["sides"]) for _ in range(parsed["count"])]
             total = sum(rolls) + parsed["mod"]
-            tag = d20_outcome_text(rolls[0]) if parsed["sides"] == 20 and parsed["count"] == 1 else ""
-            self.history.append(f"{expression} => rolls {rolls} mod {parsed['mod']} total {total} {tag}")
+            natural_tag = d20_outcome_text(rolls[0]) if parsed["sides"] == 20 and parsed["count"] == 1 else ""
+            self.history.append(f"{expression} => rolls {rolls} mod {parsed['mod']} total {total} {natural_tag}")
         except Exception as exc:
             self.history.append(f"Invalid expression '{expression}': {exc}")
 
@@ -58,8 +63,16 @@ class DiceLabPanel(QWidget):
                 totals.append(total)
                 if total >= target:
                     success += 1
+
+            expected_value = parsed["count"] * (parsed["sides"] + 1) / 2 + parsed["mod"]
+            min_total = parsed["count"] * 1 + parsed["mod"]
+            max_total = parsed["count"] * parsed["sides"] + parsed["mod"]
+            avg = sum(totals) / len(totals)
+
             self.history.append(
-                f"Sim {expression}: avg={sum(totals)/len(totals):.2f}, min={min(totals)}, max={max(totals)}, P(>={target})={success/10:.1f}%"
+                f"Sim {expression}: avg={avg:.2f}, expected={expected_value:.2f}, "
+                f"min={min(totals)} (theoretical {min_total}), max={max(totals)} (theoretical {max_total}), "
+                f"P(>={target})={success/10:.1f}%"
             )
         except Exception as exc:
             self.history.append(f"Simulation error: {exc}")

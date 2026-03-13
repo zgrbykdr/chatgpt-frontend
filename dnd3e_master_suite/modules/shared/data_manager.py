@@ -40,7 +40,10 @@ class DataManager:
             "startup_campaign": "sample_campaign",
             "debug_logging": False,
         }
-        return {**defaults, **safe_json_read(self.settings_path, {})}
+        loaded = safe_json_read(self.settings_path, {})
+        if not isinstance(loaded, dict):
+            loaded = {}
+        return {**defaults, **loaded}
 
     def save_settings(self, settings: Dict[str, Any]) -> None:
         safe_json_write(self.settings_path, settings)
