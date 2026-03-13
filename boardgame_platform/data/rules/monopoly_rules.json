@@ -1,0 +1,14 @@
+{
+  "starting_money": 1500,
+  "go_reward": 200,
+  "jail_square": 10,
+  "go_to_jail_square": 30,
+  "max_players": 8,
+  "free_parking_rule": false,
+  "double_roll_extra_turn": true,
+  "jail_exit_methods": {
+    "pay_money": 50,
+    "use_card": true,
+    "wait_turns": 3
+  }
+}

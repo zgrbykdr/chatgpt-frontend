@@ -1,0 +1,11 @@
+{
+  "name": "Community Chest",
+  "cards": [
+    {"title": "Bank error in your favor", "description": "Collect 200.", "actions": [{"type": "receive_money", "value": 200}]},
+    {"title": "Doctor's fees", "description": "Pay 50.", "actions": [{"type": "pay_money", "value": 50}]},
+    {"title": "From sale of stock", "description": "Collect 50.", "actions": [{"type": "receive_money", "value": 50}]},
+    {"title": "Go to Jail", "description": "Do not pass GO.", "actions": [{"type": "go_to_jail"}]},
+    {"title": "Grand Opera Night", "description": "Collect 50 from every player.", "actions": [{"type": "receive_from_all_players", "value": 50}]},
+    {"title": "Income tax refund", "description": "Collect 20.", "actions": [{"type": "receive_money", "value": 20}]}
+  ]
+}
