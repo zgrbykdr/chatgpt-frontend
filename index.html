@@ -1,12 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT Panel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monopoly Studio</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div id="root"></div>
-    <script src="script.js"></script>
+  <div class="app-shell">
+    <header class="top-bar">
+      <h1>Monopoly Studio</h1>
+      <p>Play classic Monopoly instantly or design your own board-game variant.</p>
+    </header>
+
+    <main class="main-grid">
+      <section class="board-panel">
+        <div id="board" class="board"></div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="card panel">
+          <h2>Game Controls</h2>
+          <div class="control-grid">
+            <button id="startDefaultBtn">Start Default Monopoly</button>
+            <button id="rollBtn">Roll Dice</button>
+            <button id="buyBtn">Buy Property</button>
+            <button id="endTurnBtn">End Turn</button>
+            <button id="saveBtn">Save</button>
+            <button id="loadBtn">Load</button>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <h2>Players</h2>
+          <div id="players"></div>
+        </section>
+
+        <section class="card panel">
+          <h2>Turn Details</h2>
+          <div id="turnInfo"></div>
+        </section>
+
+        <section class="card panel">
+          <h2>Log</h2>
+          <div id="log" class="log"></div>
+        </section>
+      </aside>
+    </main>
+
+    <section class="editor-layout">
+      <section class="card panel">
+        <h2>Custom Board Creator</h2>
+        <p>Create/edit squares and actions. JSON is persisted in save data.</p>
+        <div class="editor-controls">
+          <label>Square Name <input id="squareName" placeholder="Custom Square" /></label>
+          <label>Type
+            <select id="squareType">
+              <option value="property">Property</option>
+              <option value="tax">Tax</option>
+              <option value="chance">Deck Draw</option>
+              <option value="community">Deck Draw</option>
+              <option value="jail">Jail</option>
+              <option value="goToJail">Go To Jail</option>
+              <option value="freeParking">Free Parking</option>
+              <option value="go">Go</option>
+              <option value="custom">Custom</option>
+            </select>
+          </label>
+          <label>Price / Amount <input id="squareAmount" type="number" value="0" /></label>
+          <label>Deck Name <input id="squareDeck" placeholder="chance" /></label>
+        </div>
+        <details>
+          <summary>Square action JSON (optional)</summary>
+          <textarea id="squareAction" rows="5" placeholder='[{"type":"move","steps":3}]'></textarea>
+        </details>
+        <div class="control-grid">
+          <button id="addSquareBtn">Add Square To End</button>
+          <button id="rebuildBoardBtn">Start Game With Custom Board</button>
+        </div>
+      </section>
+
+      <section class="card panel">
+        <h2>Card Deck Editor</h2>
+        <div class="editor-controls">
+          <label>Deck Name <input id="deckName" placeholder="chance" /></label>
+          <label>Card Text <input id="cardText" placeholder="Advance to GO" /></label>
+        </div>
+        <details>
+          <summary>Card effects JSON</summary>
+          <textarea id="cardEffects" rows="5" placeholder='[{"type":"goTo","position":0}]'></textarea>
+        </details>
+        <div class="control-grid">
+          <button id="addCardBtn">Add Card</button>
+          <button id="removeDeckBtn">Remove Deck</button>
+          <button id="listDecksBtn">List Decks In Log</button>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
