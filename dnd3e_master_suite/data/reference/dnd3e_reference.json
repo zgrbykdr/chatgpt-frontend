@@ -1,0 +1,14 @@
+{
+  "races": ["Human", "Elf", "Dwarf", "Halfling", "Gnome", "Half-Orc", "Half-Elf"],
+  "classes": ["Fighter", "Rogue", "Wizard", "Cleric", "Ranger", "Bard", "Paladin", "Monk", "Barbarian", "Sorcerer", "Druid"],
+  "prestige_class_examples": ["Arcane Archer", "Shadowdancer", "Loremaster"],
+  "alignments": ["Lawful Good", "Neutral Good", "Chaotic Good", "Lawful Neutral", "True Neutral", "Chaotic Neutral", "Lawful Evil", "Neutral Evil", "Chaotic Evil"],
+  "conditions": ["Stunned", "Prone", "Blinded", "Grappled", "Fatigued", "Flat-footed", "Entangled"],
+  "factions": [
+    {"name": "Ashen Lantern", "alignment": "Neutral"},
+    {"name": "Emberfall Watch", "alignment": "Lawful Neutral"},
+    {"name": "Silent Coin Guild", "alignment": "Neutral Evil"}
+  ],
+  "deities": ["Aureth", "Myrra of Dawn", "Vekor the Judge", "Nysra the Veiled"],
+  "encounter_environments": ["ruined keep", "marsh path", "city alley", "underground shrine", "forest crossroads"]
+}

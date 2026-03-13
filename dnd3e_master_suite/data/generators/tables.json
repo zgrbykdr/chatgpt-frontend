@@ -1,0 +1,27 @@
+{
+  "quest_hooks": [
+    "Escort a relic scholar through hostile ruins",
+    "Investigate vanished miners near an ancient crypt",
+    "Recover temple records stolen by masked raiders"
+  ],
+  "monster_groups": [
+    "Goblin skirmishers with wolf support",
+    "Cult fanatics with undead attendants",
+    "Hobgoblin soldiers led by an adept"
+  ],
+  "loot_table": [
+    "Potion bundle, silver rings, old battle map",
+    "Masterwork weapon, coin purse, coded letter",
+    "Wand fragment, ceremonial mask, gemstone cache"
+  ],
+  "trap_hooks": [
+    "Pressure plate dart launcher",
+    "Collapsing stair segment",
+    "Runic alarm linked to nearby guards"
+  ],
+  "settlement_templates": [
+    "Trade-post town with tense guild rivalry",
+    "Temple-centered village with strict curfew",
+    "Frontier fort town under monster threat"
+  ]
+}

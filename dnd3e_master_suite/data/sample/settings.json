@@ -1,0 +1,10 @@
+{
+  "theme": "dark",
+  "autosave": true,
+  "default_save_path": "saves/campaigns",
+  "sound_dir": "assets/sounds",
+  "token_dir": "assets/tokens",
+  "grid_size": 40,
+  "startup_campaign": "sample_campaign",
+  "debug_logging": false
+}
