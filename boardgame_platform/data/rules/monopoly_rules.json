@@ -1,0 +1,12 @@
+{
+  "starting_money": 1500,
+  "go_reward": 200,
+  "jail_square": 10,
+  "go_to_jail_square": 30,
+  "free_parking_rule": false,
+  "max_players": 8,
+  "allow_auctions": true,
+  "allow_mortgage": true,
+  "house_limit": 32,
+  "hotel_limit": 12
+}
