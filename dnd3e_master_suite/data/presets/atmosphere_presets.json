@@ -1,0 +1,5 @@
+[
+  {"name": "tavern", "description": "Warm chatter and lutes", "music_file": "tavern.mp3", "ambience_file": "tavern.mp3", "music_volume": 70, "ambience_volume": 50},
+  {"name": "dungeon", "description": "Echoing stone and distant drips", "music_file": "dungeon.mp3", "ambience_file": "dungeon.mp3", "music_volume": 60, "ambience_volume": 65},
+  {"name": "battle", "description": "Fast tempo combat pressure", "music_file": "battle.mp3", "ambience_file": "battle.mp3", "music_volume": 80, "ambience_volume": 40}
+]
