@@ -1,0 +1,54 @@
+{
+  "name": "community_chest",
+  "cards": [
+    {
+      "title": "Doctor's fees",
+      "description": "Pay $50.",
+      "actions": [
+        {
+          "type": "pay_money",
+          "value": 50
+        }
+      ]
+    },
+    {
+      "title": "From sale of stock",
+      "description": "Collect $50.",
+      "actions": [
+        {
+          "type": "receive_money",
+          "value": 50
+        }
+      ]
+    },
+    {
+      "title": "Get Out of Jail Free",
+      "description": "Keep this card until needed.",
+      "actions": [
+        {
+          "type": "grant_card",
+          "card": "jail_free"
+        }
+      ]
+    },
+    {
+      "title": "Grand Opera Night",
+      "description": "Collect $50 from every player.",
+      "actions": [
+        {
+          "type": "receive_from_all_players",
+          "value": 50
+        }
+      ]
+    },
+    {
+      "title": "Go to Jail",
+      "description": "Go directly to jail.",
+      "actions": [
+        {
+          "type": "go_to_jail"
+        }
+      ]
+    }
+  ]
+}

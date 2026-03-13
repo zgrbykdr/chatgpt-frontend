@@ -1,0 +1,598 @@
+{
+  "board": {
+    "name": "Classic Monopoly",
+    "theme": "classic",
+    "size": 40,
+    "squares": [
+      {
+        "id": 0,
+        "name": "GO",
+        "type": "start",
+        "actions": []
+      },
+      {
+        "id": 1,
+        "name": "Mediterranean Avenue",
+        "type": "property",
+        "price": 60,
+        "group": "brown",
+        "rent": [
+          2,
+          10,
+          30,
+          90,
+          160,
+          250
+        ],
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "actions": []
+      },
+      {
+        "id": 2,
+        "name": "Community Chest",
+        "type": "card_draw",
+        "deck": "community_chest",
+        "actions": [
+          {
+            "type": "draw_card",
+            "deck": "community_chest"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Baltic Avenue",
+        "type": "property",
+        "price": 60,
+        "group": "brown",
+        "rent": [
+          4,
+          20,
+          60,
+          180,
+          320,
+          450
+        ],
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "actions": []
+      },
+      {
+        "id": 4,
+        "name": "Income Tax",
+        "type": "tax",
+        "tax": 200,
+        "actions": []
+      },
+      {
+        "id": 5,
+        "name": "Reading Railroad",
+        "type": "railroad",
+        "price": 200,
+        "group": "railroad",
+        "rent": [
+          25,
+          50,
+          100,
+          200
+        ],
+        "actions": []
+      },
+      {
+        "id": 6,
+        "name": "Oriental Avenue",
+        "type": "property",
+        "price": 100,
+        "group": "light_blue",
+        "rent": [
+          6,
+          30,
+          90,
+          270,
+          400,
+          550
+        ],
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "actions": []
+      },
+      {
+        "id": 7,
+        "name": "Chance",
+        "type": "card_draw",
+        "deck": "chance",
+        "actions": [
+          {
+            "type": "draw_card",
+            "deck": "chance"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "name": "Vermont Avenue",
+        "type": "property",
+        "price": 100,
+        "group": "light_blue",
+        "rent": [
+          6,
+          30,
+          90,
+          270,
+          400,
+          550
+        ],
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "actions": []
+      },
+      {
+        "id": 9,
+        "name": "Connecticut Avenue",
+        "type": "property",
+        "price": 120,
+        "group": "light_blue",
+        "rent": [
+          8,
+          40,
+          100,
+          300,
+          450,
+          600
+        ],
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "actions": []
+      },
+      {
+        "id": 10,
+        "name": "Jail",
+        "type": "jail",
+        "actions": []
+      },
+      {
+        "id": 11,
+        "name": "St. Charles Place",
+        "type": "property",
+        "price": 140,
+        "group": "pink",
+        "rent": [
+          10,
+          50,
+          150,
+          450,
+          625,
+          750
+        ],
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "actions": []
+      },
+      {
+        "id": 12,
+        "name": "Electric Company",
+        "type": "utility",
+        "price": 150,
+        "group": "utility",
+        "actions": []
+      },
+      {
+        "id": 13,
+        "name": "States Avenue",
+        "type": "property",
+        "price": 140,
+        "group": "pink",
+        "rent": [
+          10,
+          50,
+          150,
+          450,
+          625,
+          750
+        ],
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "actions": []
+      },
+      {
+        "id": 14,
+        "name": "Virginia Avenue",
+        "type": "property",
+        "price": 160,
+        "group": "pink",
+        "rent": [
+          12,
+          60,
+          180,
+          500,
+          700,
+          900
+        ],
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "actions": []
+      },
+      {
+        "id": 15,
+        "name": "Pennsylvania Railroad",
+        "type": "railroad",
+        "price": 200,
+        "group": "railroad",
+        "rent": [
+          25,
+          50,
+          100,
+          200
+        ],
+        "actions": []
+      },
+      {
+        "id": 16,
+        "name": "St. James Place",
+        "type": "property",
+        "price": 180,
+        "group": "orange",
+        "rent": [
+          14,
+          70,
+          200,
+          550,
+          750,
+          950
+        ],
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "actions": []
+      },
+      {
+        "id": 17,
+        "name": "Community Chest",
+        "type": "card_draw",
+        "deck": "community_chest",
+        "actions": [
+          {
+            "type": "draw_card",
+            "deck": "community_chest"
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "name": "Tennessee Avenue",
+        "type": "property",
+        "price": 180,
+        "group": "orange",
+        "rent": [
+          14,
+          70,
+          200,
+          550,
+          750,
+          950
+        ],
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "actions": []
+      },
+      {
+        "id": 19,
+        "name": "New York Avenue",
+        "type": "property",
+        "price": 200,
+        "group": "orange",
+        "rent": [
+          16,
+          80,
+          220,
+          600,
+          800,
+          1000
+        ],
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "actions": []
+      },
+      {
+        "id": 20,
+        "name": "Free Parking",
+        "type": "free_parking",
+        "actions": []
+      },
+      {
+        "id": 21,
+        "name": "Kentucky Avenue",
+        "type": "property",
+        "price": 220,
+        "group": "red",
+        "rent": [
+          18,
+          90,
+          250,
+          700,
+          875,
+          1050
+        ],
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "actions": []
+      },
+      {
+        "id": 22,
+        "name": "Chance",
+        "type": "card_draw",
+        "deck": "chance",
+        "actions": [
+          {
+            "type": "draw_card",
+            "deck": "chance"
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "name": "Indiana Avenue",
+        "type": "property",
+        "price": 220,
+        "group": "red",
+        "rent": [
+          18,
+          90,
+          250,
+          700,
+          875,
+          1050
+        ],
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "actions": []
+      },
+      {
+        "id": 24,
+        "name": "Illinois Avenue",
+        "type": "property",
+        "price": 240,
+        "group": "red",
+        "rent": [
+          20,
+          100,
+          300,
+          750,
+          925,
+          1100
+        ],
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "actions": []
+      },
+      {
+        "id": 25,
+        "name": "B. & O. Railroad",
+        "type": "railroad",
+        "price": 200,
+        "group": "railroad",
+        "rent": [
+          25,
+          50,
+          100,
+          200
+        ],
+        "actions": []
+      },
+      {
+        "id": 26,
+        "name": "Atlantic Avenue",
+        "type": "property",
+        "price": 260,
+        "group": "yellow",
+        "rent": [
+          22,
+          110,
+          330,
+          800,
+          975,
+          1150
+        ],
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "actions": []
+      },
+      {
+        "id": 27,
+        "name": "Ventnor Avenue",
+        "type": "property",
+        "price": 260,
+        "group": "yellow",
+        "rent": [
+          22,
+          110,
+          330,
+          800,
+          975,
+          1150
+        ],
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "actions": []
+      },
+      {
+        "id": 28,
+        "name": "Water Works",
+        "type": "utility",
+        "price": 150,
+        "group": "utility",
+        "actions": []
+      },
+      {
+        "id": 29,
+        "name": "Marvin Gardens",
+        "type": "property",
+        "price": 280,
+        "group": "yellow",
+        "rent": [
+          24,
+          120,
+          360,
+          850,
+          1025,
+          1200
+        ],
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "actions": []
+      },
+      {
+        "id": 30,
+        "name": "Go To Jail",
+        "type": "go_to_jail",
+        "actions": [
+          {
+            "type": "go_to_jail"
+          }
+        ]
+      },
+      {
+        "id": 31,
+        "name": "Pacific Avenue",
+        "type": "property",
+        "price": 300,
+        "group": "green",
+        "rent": [
+          26,
+          130,
+          390,
+          900,
+          1100,
+          1275
+        ],
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "actions": []
+      },
+      {
+        "id": 32,
+        "name": "North Carolina Avenue",
+        "type": "property",
+        "price": 300,
+        "group": "green",
+        "rent": [
+          26,
+          130,
+          390,
+          900,
+          1100,
+          1275
+        ],
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "actions": []
+      },
+      {
+        "id": 33,
+        "name": "Community Chest",
+        "type": "card_draw",
+        "deck": "community_chest",
+        "actions": [
+          {
+            "type": "draw_card",
+            "deck": "community_chest"
+          }
+        ]
+      },
+      {
+        "id": 34,
+        "name": "Pennsylvania Avenue",
+        "type": "property",
+        "price": 320,
+        "group": "green",
+        "rent": [
+          28,
+          150,
+          450,
+          1000,
+          1200,
+          1400
+        ],
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "actions": []
+      },
+      {
+        "id": 35,
+        "name": "Short Line",
+        "type": "railroad",
+        "price": 200,
+        "group": "railroad",
+        "rent": [
+          25,
+          50,
+          100,
+          200
+        ],
+        "actions": []
+      },
+      {
+        "id": 36,
+        "name": "Chance",
+        "type": "card_draw",
+        "deck": "chance",
+        "actions": [
+          {
+            "type": "draw_card",
+            "deck": "chance"
+          }
+        ]
+      },
+      {
+        "id": 37,
+        "name": "Park Place",
+        "type": "property",
+        "price": 350,
+        "group": "dark_blue",
+        "rent": [
+          35,
+          175,
+          500,
+          1100,
+          1300,
+          1500
+        ],
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "actions": []
+      },
+      {
+        "id": 38,
+        "name": "Luxury Tax",
+        "type": "tax",
+        "tax": 100,
+        "actions": []
+      },
+      {
+        "id": 39,
+        "name": "Boardwalk",
+        "type": "property",
+        "price": 400,
+        "group": "dark_blue",
+        "rent": [
+          50,
+          200,
+          600,
+          1400,
+          1700,
+          2000
+        ],
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "actions": []
+      }
+    ]
+  },
+  "rules": {
+    "starting_money": 1500,
+    "go_reward": 200,
+    "jail_square": 10,
+    "go_to_jail_square": 30,
+    "free_parking_rule": false
+  }
+}
