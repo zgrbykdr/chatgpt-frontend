@@ -117,7 +117,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
             end
             app.FMUPath = fullfile(p,f);
             app.FMUPathEditField.Value = app.FMUPath;
-            app.appendStatus("Loading FMU: " + app.FMUPath);
+            app.appendStatus(sprintf('Loading FMU: %s', app.FMUPath));
 
             try
                 app.FMUObject = app.safeFMUImport(app.FMUPath);
@@ -125,7 +125,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
                 app.populateVariablesTable();
                 app.appendStatus("FMU loaded and variables extracted.");
             catch ME
-                app.appendStatus("FMU load failed: " + ME.message);
+                app.appendStatus(sprintf('FMU load failed: %s', ME.message));
                 uialert(app.UIFigure, ME.message, 'FMU Load Error');
             end
         end
@@ -289,7 +289,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
                 n = max(10, round(app.NumSamplesEditField.Value));
                 method = string(app.SamplingMethodDropDown.Value);
 
-                app.appendStatus("Generating samples: method=" + method + ", n=" + n);
+                app.appendStatus(sprintf('Generating samples: method=%s, n=%d', method, n));
                 X = app.createSamples(n, numel(app.ActiveInputNames), method);
                 [Xscaled, lb, ub] = app.scaleSamplesToBounds(X);
 
@@ -298,9 +298,9 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
                 app.SampleY = Y(okMask,:);
 
                 app.appendStatus(sprintf('Sampling completed. %d/%d successful evaluations.', sum(okMask), n));
-                app.appendStatus("Detected bounds (inferred): [" + join(string(lb),',') + "] to [" + join(string(ub),',') + "]");
+                app.appendStatus(sprintf('Detected bounds (inferred): [%s] to [%s]', strjoin(string(lb),','), strjoin(string(ub),',')));
             catch ME
-                app.appendStatus("Sampling failed: " + ME.message);
+                app.appendStatus(sprintf('Sampling failed: %s', ME.message));
                 uialert(app.UIFigure, ME.message, 'Sampling Error');
             end
         end
@@ -428,14 +428,14 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
             end
 
             method = string(app.GSAMethodDropDown.Value);
-            app.appendStatus('Running GSA with method: ' + method);
+            app.appendStatus(sprintf('Running GSA with method: %s', method));
             try
                 imp = app.computeImportance(app.SampleX, app.SampleY, method, app.ActiveInputNames);
                 app.ImportanceScores = imp;
                 app.ImportanceTable.Data = [cellstr(imp.Variable), num2cell(imp.Importance)];
                 app.appendStatus('GSA completed.');
             catch ME
-                app.appendStatus('GSA failed: ' + ME.message);
+                app.appendStatus(sprintf('GSA failed: %s', ME.message));
             end
         end
 
@@ -492,7 +492,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
                 app.updatePlots();
                 app.appendStatus(sprintf('Best model: %s (R2=%.4f, RMSE=%.4g).', app.BestModel.Type, app.BestModel.R2, app.BestModel.RMSE));
             catch ME
-                app.appendStatus('Fitting failed: ' + ME.message);
+                app.appendStatus(sprintf('Fitting failed: %s', ME.message));
                 uialert(app.UIFigure, ME.message, 'Fitting Error');
             end
         end
@@ -852,7 +852,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
                 app.updatePlots();
                 app.appendStatus('Reverse engineering completed successfully.');
             catch ME
-                app.appendStatus('Reverse engineering aborted: ' + ME.message);
+                app.appendStatus(sprintf('Reverse engineering aborted: %s', ME.message));
             end
         end
 
@@ -922,7 +922,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
             fid = fopen(fp,'w');
             fwrite(fid, txt);
             fclose(fid);
-            app.appendStatus('Exported function: ' + fp);
+            app.appendStatus(sprintf('Exported function: %s', fp));
         end
 
         function txt = generateExportFunctionText(app)
