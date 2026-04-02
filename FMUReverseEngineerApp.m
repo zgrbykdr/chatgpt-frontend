@@ -19,6 +19,8 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
         LoadFMUButton               matlab.ui.control.Button
         RunButton                   matlab.ui.control.Button
         FMUPathEditField            matlab.ui.control.EditField
+        OutputVariableDropDown      matlab.ui.control.DropDown
+        OutputModeDropDown          matlab.ui.control.DropDown
         VariablesTable              matlab.ui.control.Table
         RefreshVariablesButton      matlab.ui.control.Button
         StatusTextArea              matlab.ui.control.TextArea
@@ -64,16 +66,19 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
 
         ActiveInputNames string = string.empty
         ActiveOutputName string = ""
+        ActiveOutputNames string = string.empty
         FixedInputs struct = struct()
 
         SampleX double = []
         SampleY double = []
+        SampleYByOutput struct = struct()
         ImportanceScores table
 
         BestModel struct = struct('Type','', 'PredictFcn',[], 'Expr','', ...
                                   'Params',[], 'R2',-inf, 'RMSE',inf, ...
                                   'AIC',inf, 'BIC',inf, 'IsPiecewise',false, ...
                                   'Piecewise',[])
+        BestModelsByOutput struct = struct()
 
         LastPredictions double = []
         TimeSeriesMode logical = false
@@ -96,6 +101,8 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
 
             app.FittingResultsTable.ColumnName = {'Model','R2','RMSE','AIC','BIC','Expression'};
             app.FittingResultsTable.Data = cell(0,6);
+            app.OutputVariableDropDown.Items = {''};
+            app.OutputVariableDropDown.Value = '';
         end
 
         function appendStatus(app, msg)
@@ -228,6 +235,22 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
 
             data = [num2cell(useCol), cellstr(mv.Name), cellstr(mv.Causality), cellstr(mv.Type), num2cell(fixedCol)];
             app.VariablesTable.Data = data;
+            app.updateOutputSelectorsFromModel();
+        end
+
+        function updateOutputSelectorsFromModel(app)
+            if isempty(app.ModelVariables)
+                app.OutputVariableDropDown.Items = {''};
+                app.OutputVariableDropDown.Value = '';
+                return;
+            end
+            isOut = lower(string(app.ModelVariables.Causality)) == "output";
+            outs = cellstr(app.ModelVariables.Name(isOut));
+            if isempty(outs)
+                outs = {''};
+            end
+            app.OutputVariableDropDown.Items = outs;
+            app.OutputVariableDropDown.Value = outs{1};
         end
 
         function onRefreshVariables(app, ~, ~)
@@ -239,7 +262,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
             app.appendStatus('Variable table refreshed.');
         end
 
-        function [inputNames, outputName, fixedInputs] = parseVariableSelections(app)
+        function [inputNames, outputNames, fixedInputs] = parseVariableSelections(app)
             d = app.VariablesTable.Data;
             if isempty(d)
                 error('Variable table is empty.');
@@ -280,12 +303,18 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
                 error('No output variable found in FMU metadata.');
             end
 
-            outputName = outputCandidates(1);
+            outputNames = outputCandidates;
         end
 
         function onGenerateSamples(app, ~, ~)
             try
-                [app.ActiveInputNames, app.ActiveOutputName, app.FixedInputs] = app.parseVariableSelections();
+                [app.ActiveInputNames, allOutputs, app.FixedInputs] = app.parseVariableSelections();
+                app.ActiveOutputNames = allOutputs;
+                if ~isempty(app.OutputVariableDropDown.Items)
+                    selectedOutput = string(app.OutputVariableDropDown.Value);
+                else
+                    selectedOutput = allOutputs(1);
+                end
                 n = max(10, round(app.NumSamplesEditField.Value));
                 method = string(app.SamplingMethodDropDown.Value);
 
@@ -293,11 +322,34 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
                 X = app.createSamples(n, numel(app.ActiveInputNames), method);
                 [Xscaled, lb, ub] = app.scaleSamplesToBounds(X);
 
-                [Y, okMask] = app.runFMUBatch(Xscaled, app.ActiveInputNames, app.ActiveOutputName, app.FixedInputs);
-                app.SampleX = Xscaled(okMask,:);
-                app.SampleY = Y(okMask,:);
+                outputMode = string(app.OutputModeDropDown.Value);
+                if outputMode == "All Outputs"
+                    targets = allOutputs;
+                else
+                    targets = selectedOutput;
+                end
 
-                app.appendStatus(sprintf('Sampling completed. %d/%d successful evaluations.', sum(okMask), n));
+                app.SampleYByOutput = struct();
+                commonMask = true(n,1);
+                for oi = 1:numel(targets)
+                    outName = targets(oi);
+                    [Ytmp, okMask] = app.runFMUBatch(Xscaled, app.ActiveInputNames, outName, app.FixedInputs);
+                    app.SampleYByOutput.(matlab.lang.makeValidName(char(outName))) = Ytmp;
+                    commonMask = commonMask & okMask;
+                end
+
+                app.SampleX = Xscaled(commonMask,:);
+                app.ActiveOutputName = targets(1);
+                app.SampleY = app.SampleYByOutput.(matlab.lang.makeValidName(char(app.ActiveOutputName)));
+                app.SampleY = app.SampleY(commonMask,:);
+
+                fn = fieldnames(app.SampleYByOutput);
+                for i = 1:numel(fn)
+                    yi = app.SampleYByOutput.(fn{i});
+                    app.SampleYByOutput.(fn{i}) = yi(commonMask,:);
+                end
+
+                app.appendStatus(sprintf('Sampling completed for %d output(s). %d/%d successful evaluations.', numel(targets), sum(commonMask), n));
                 app.appendStatus(sprintf('Detected bounds (inferred): [%s] to [%s]', strjoin(string(lb),','), strjoin(string(ub),',')));
             catch ME
                 app.appendStatus(sprintf('Sampling failed: %s', ME.message));
@@ -422,7 +474,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
         end
 
         function onRunGSA(app, ~, ~)
-            if isempty(app.SampleX) || isempty(app.SampleY)
+            if isempty(app.SampleX)
                 app.appendStatus('No sample dataset available. Generate samples first.');
                 return;
             end
@@ -430,7 +482,9 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
             method = string(app.GSAMethodDropDown.Value);
             app.appendStatus(sprintf('Running GSA with method: %s', method));
             try
-                imp = app.computeImportance(app.SampleX, app.SampleY, method, app.ActiveInputNames);
+                outName = string(app.OutputVariableDropDown.Value);
+                y = app.getYForOutput(outName);
+                imp = app.computeImportance(app.SampleX, y, method, app.ActiveInputNames);
                 app.ImportanceScores = imp;
                 app.ImportanceTable.Data = [cellstr(imp.Variable), num2cell(imp.Importance)];
                 app.appendStatus('GSA completed.');
@@ -480,17 +534,47 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
         end
 
         function onFitNow(app, ~, ~)
-            if isempty(app.SampleX) || isempty(app.SampleY)
+            if isempty(app.SampleX)
                 app.appendStatus('No sample dataset to fit.');
                 return;
             end
             try
                 app.appendStatus('Starting multi-stage fitting pipeline...');
-                app.BestModel = app.runFittingPipeline(app.SampleX, app.SampleY, app.ActiveInputNames, app.ActiveOutputName);
+                outputMode = string(app.OutputModeDropDown.Value);
+                if outputMode == "All Outputs"
+                    targets = app.ActiveOutputNames;
+                else
+                    targets = string(app.OutputVariableDropDown.Value);
+                end
+
+                app.BestModelsByOutput = struct();
+                eqLines = strings(0,1);
+                summaryData = cell(numel(targets),6);
+                for i = 1:numel(targets)
+                    outName = targets(i);
+                    y = app.getYForOutput(outName);
+                    mdl = app.runFittingPipeline(app.SampleX, y, app.ActiveInputNames, outName);
+                    key = matlab.lang.makeValidName(char(outName));
+                    app.BestModelsByOutput.(key) = mdl;
+                    summaryData{i,1} = outName + " :: " + mdl.Type;
+                    summaryData{i,2} = mdl.R2;
+                    summaryData{i,3} = mdl.RMSE;
+                    summaryData{i,4} = mdl.AIC;
+                    summaryData{i,5} = mdl.BIC;
+                    summaryData{i,6} = mdl.Expr;
+                    eqLines(end+1) = "==== " + outName + " ===="; %#ok<AGROW>
+                    eqLines(end+1) = string(mdl.Expr); %#ok<AGROW>
+                end
+
+                app.FittingResultsTable.Data = summaryData;
+                app.EquationTextArea.Value = cellstr(eqLines);
+
+                app.ActiveOutputName = targets(1);
+                app.BestModel = app.BestModelsByOutput.(matlab.lang.makeValidName(char(app.ActiveOutputName)));
+                app.SampleY = app.getYForOutput(app.ActiveOutputName);
                 app.LastPredictions = app.BestModel.PredictFcn(app.SampleX);
-                app.updateEquationViewer();
                 app.updatePlots();
-                app.appendStatus(sprintf('Best model: %s (R2=%.4f, RMSE=%.4g).', app.BestModel.Type, app.BestModel.R2, app.BestModel.RMSE));
+                app.appendStatus(sprintf('Fitting completed for %d output(s).', numel(targets)));
             catch ME
                 app.appendStatus(sprintf('Fitting failed: %s', ME.message));
                 uialert(app.UIFigure, ME.message, 'Fitting Error');
@@ -844,6 +928,39 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
             app.FittingResultsTable.Data = data;
         end
 
+        function y = getYForOutput(app, outName)
+            y = app.SampleY;
+            if isempty(app.SampleYByOutput)
+                return;
+            end
+            key = matlab.lang.makeValidName(char(outName));
+            if isfield(app.SampleYByOutput, key)
+                y = app.SampleYByOutput.(key);
+            end
+        end
+
+        function onOutputChanged(app, ~, ~)
+            if isempty(app.OutputVariableDropDown.Items)
+                return;
+            end
+            app.ActiveOutputName = string(app.OutputVariableDropDown.Value);
+            app.SampleY = app.getYForOutput(app.ActiveOutputName);
+            app.refreshSelectedOutputViews();
+        end
+
+        function refreshSelectedOutputViews(app)
+            if isempty(app.ActiveOutputName)
+                return;
+            end
+            key = matlab.lang.makeValidName(char(app.ActiveOutputName));
+            if isfield(app.BestModelsByOutput, key)
+                app.BestModel = app.BestModelsByOutput.(key);
+                app.LastPredictions = app.BestModel.PredictFcn(app.SampleX);
+                app.updateEquationViewer();
+                app.updatePlots();
+            end
+        end
+
         function onRunReverseEngineering(app, ~, ~)
             % Fully automatic orchestration in one click.
             try
@@ -859,20 +976,31 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
         end
 
         function onRunPiecewise(app, ~, ~)
-            if isempty(app.SampleX) || isempty(app.SampleY) || isempty(app.BestModel.PredictFcn)
+            if isempty(app.SampleX)
+                return;
+            end
+            outName = string(app.OutputVariableDropDown.Value);
+            y = app.getYForOutput(outName);
+            key = matlab.lang.makeValidName(char(outName));
+            if isfield(app.BestModelsByOutput, key)
+                app.BestModel = app.BestModelsByOutput.(key);
+            end
+            if isempty(app.BestModel.PredictFcn)
                 return;
             end
             if app.BestModel.R2 < app.PiecewiseThresholdField.Value
                 app.appendStatus(sprintf('Global R2=%.4f below threshold %.3f -> enforcing piecewise fitting.', ...
                     app.BestModel.R2, app.PiecewiseThresholdField.Value));
-                pw = app.fitPiecewiseModel(app.SampleX, app.SampleY, app.ActiveInputNames, app.ActiveOutputName, app.BestModel);
+                pw = app.fitPiecewiseModel(app.SampleX, y, app.ActiveInputNames, outName, app.BestModel);
                 if pw.R2 >= app.BestModel.R2
                     app.BestModel = pw;
-                    app.LastPredictions = app.BestModel.PredictFcn(app.SampleX);
-                    app.updateEquationViewer();
-                    app.updatePlots();
+                    app.BestModelsByOutput.(key) = pw;
                 end
             end
+            app.SampleY = y;
+            app.LastPredictions = app.BestModel.PredictFcn(app.SampleX);
+            app.updateEquationViewer();
+            app.updatePlots();
             app.PiecewiseInfoTextArea.Value = app.BestModel.Expr;
         end
 
@@ -887,6 +1015,7 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
         end
 
         function onRefreshPlots(app, ~, ~)
+            app.onOutputChanged([],[]);
             app.updatePlots();
         end
 
@@ -991,9 +1120,9 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
 
             % Tab 1
             app.TabFMU = uitab(app.TabGroup,'Title','FMU Interface & Config');
-            g1 = uigridlayout(app.TabFMU,[5 4]);
-            g1.RowHeight = {35,35,'1x','1x','1x'};
-            g1.ColumnWidth = {150,'1x',150,150};
+            g1 = uigridlayout(app.TabFMU,[6 4]);
+            g1.RowHeight = {35,35,35,'1x','1x','1x'};
+            g1.ColumnWidth = {170,'1x',180,180};
 
             app.LoadFMUButton = uibutton(g1,'Text','Load FMU','ButtonPushedFcn',@app.onLoadFMU);
             app.LoadFMUButton.Layout.Row = 1; app.LoadFMUButton.Layout.Column = 1;
@@ -1001,17 +1130,23 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
             app.FMUPathEditField = uieditfield(g1,'text');
             app.FMUPathEditField.Layout.Row = 1; app.FMUPathEditField.Layout.Column = [2 4];
 
+            app.OutputVariableDropDown = uidropdown(g1,'Items',{' '},'ValueChangedFcn',@app.onOutputChanged);
+            app.OutputVariableDropDown.Layout.Row = 2; app.OutputVariableDropDown.Layout.Column = 1;
+
+            app.OutputModeDropDown = uidropdown(g1,'Items',{'Selected Output','All Outputs'},'Value','Selected Output');
+            app.OutputModeDropDown.Layout.Row = 2; app.OutputModeDropDown.Layout.Column = 3;
+
             app.RefreshVariablesButton = uibutton(g1,'Text','Refresh Variables','ButtonPushedFcn',@app.onRefreshVariables);
-            app.RefreshVariablesButton.Layout.Row = 2; app.RefreshVariablesButton.Layout.Column = 1;
+            app.RefreshVariablesButton.Layout.Row = 3; app.RefreshVariablesButton.Layout.Column = 1;
 
             app.RunButton = uibutton(g1,'Text','Run Reverse Engineering','ButtonPushedFcn',@app.onRunReverseEngineering);
-            app.RunButton.Layout.Row = 2; app.RunButton.Layout.Column = [3 4];
+            app.RunButton.Layout.Row = 3; app.RunButton.Layout.Column = [3 4];
 
             app.VariablesTable = uitable(g1);
-            app.VariablesTable.Layout.Row = [3 4]; app.VariablesTable.Layout.Column = [1 4];
+            app.VariablesTable.Layout.Row = [4 5]; app.VariablesTable.Layout.Column = [1 4];
 
             app.StatusTextArea = uitextarea(g1);
-            app.StatusTextArea.Layout.Row = 5; app.StatusTextArea.Layout.Column = [1 4];
+            app.StatusTextArea.Layout.Row = 6; app.StatusTextArea.Layout.Column = [1 4];
 
             % Tab 2
             app.TabSampling = uitab(app.TabGroup,'Title','Intelligence & Sampling');
