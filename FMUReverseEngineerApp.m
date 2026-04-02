@@ -498,7 +498,9 @@ classdef FMUReverseEngineerApp < matlab.apps.AppBase
         end
 
         function best = runFittingPipeline(app, X, Y, inputNames, outputName)
-            candidates = struct('Type',{},'PredictFcn',{},'Expr',{},'Params',{},'R2',{},'RMSE',{},'AIC',{},'BIC',{});
+            candidates = struct('Type',{},'PredictFcn',{},'Expr',{},'Params',{}, ...
+                                'R2',{},'RMSE',{},'AIC',{},'BIC',{}, ...
+                                'IsPiecewise',{},'Piecewise',{});
 
             % 1) Linear / Polynomial (degree 1-5)
             for deg = 1:5
