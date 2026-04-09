@@ -38,7 +38,8 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             drawnow limitrate
         end
 
-        function onImport(app,~)
+        function onImport(app,varargin)
+            %#ok<INUSD> % varargin absorbs src/event callback args across MATLAB releases.
             [f,p] = uigetfile({'*.fmu','FMU Files (*.fmu)'}, 'Select FMU');
             if isequal(f,0), return; end
             fmuPath = fullfile(p,f);
@@ -49,7 +50,8 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             app.log(['FMU imported: ' fmuPath]);
         end
 
-        function onRun(app,~)
+        function onRun(app,varargin)
+            %#ok<INUSD> % varargin absorbs src/event callback args across MATLAB releases.
             mode = lower(app.ModeDropDown.Value);
             app.StatusLabel.Text = 'Running workflow...';
             app.log(['Starting workflow mode: ' mode]);
