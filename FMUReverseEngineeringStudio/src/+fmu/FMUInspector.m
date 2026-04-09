@@ -8,6 +8,7 @@ classdef FMUInspector
 
         function meta = inspect(obj, fmuPath)
             arguments, obj, fmuPath (1,1) string, end
+            obj.Logger.info("FMUInspector implementation: " + string(mfilename('fullpath')));
             meta = struct('path',fmuPath,'variables',[],'fmuType','Unknown','modelName','','capabilities',struct());
             temp = tempname; mkdir(temp);
             c = onCleanup(@() rmdir(temp,'s'));

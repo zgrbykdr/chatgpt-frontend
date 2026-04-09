@@ -24,7 +24,9 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
     methods (Access = private)
         function startup(app)
             root = fileparts(fileparts(mfilename('fullpath')));
-            addpath(genpath(fullfile(root,'src')));
+            % Put project sources at the beginning to avoid package shadowing
+            % by other similarly named folders already on the MATLAB path.
+            addpath(genpath(fullfile(root,'src')),'-begin');
             app.Logger = logging.Logger(fullfile(root,'logs'));
             app.ProjectManager = project.ProjectManager(root, app.Logger);
             app.WorkflowManager = appcore.WorkflowManager(app.ProjectManager, app.Logger);

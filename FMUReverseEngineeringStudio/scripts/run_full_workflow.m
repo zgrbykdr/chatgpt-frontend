@@ -1,6 +1,6 @@
 % run_full_workflow - one-command automatic workflow.
 root = fileparts(fileparts(mfilename('fullpath')));
-addpath(genpath(fullfile(root,'src')));
+addpath(genpath(fullfile(root,'src')),'-begin');
 logger = logging.Logger(fullfile(root,'logs'));
 pm = project.ProjectManager(root, logger);
 
