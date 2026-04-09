@@ -72,10 +72,13 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             toolbar.Layout.Row = 1; toolbar.Layout.Column = [1 2];
             toolbar.ColumnWidth = {120,120,140,140,'1x',180};
 
+            % NOTE: Bind callbacks through anonymous functions so the
+            % AppBase method handle does not receive extra UI callback
+            % arguments that can trigger "Too many input arguments".
             app.ImportButton = uibutton(toolbar,'Text','Import FMU',...
-                'ButtonPushedFcn',@app.onImport);
+                'ButtonPushedFcn',@(src,event)app.onImport(src,event));
             app.RunButton = uibutton(toolbar,'Text','Run Workflow',...
-                'ButtonPushedFcn',@app.onRun);
+                'ButtonPushedFcn',@(src,event)app.onRun(src,event));
             app.ModeDropDown = uidropdown(toolbar,'Items',{'automatic','semi','manual'},...
                 'Value','automatic');
             app.StatusLabel = uilabel(toolbar,'Text','Ready','HorizontalAlignment','right');
