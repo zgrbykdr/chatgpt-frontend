@@ -1,0 +1,6 @@
+mode: manual
+manual:
+  selected_inputs: []
+  selected_outputs: []
+  experiment_plan: null
+  allowed_model_families: [simple, sparse, symbolic]

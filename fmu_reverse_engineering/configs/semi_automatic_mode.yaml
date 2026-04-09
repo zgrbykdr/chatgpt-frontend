@@ -1,0 +1,6 @@
+mode: semi_automatic
+overrides:
+  force_constants: {}
+  variable_ranges: {}
+priorities:
+  explainable_first: true
