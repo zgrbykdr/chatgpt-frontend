@@ -1,0 +1,11 @@
+{
+  "mode": "automatic",
+  "parallel": true,
+  "maxRuns": 200,
+  "weights": {
+    "accuracy": 0.45,
+    "interpretability": 0.25,
+    "runtime": 0.15,
+    "robustness": 0.15
+  }
+}
