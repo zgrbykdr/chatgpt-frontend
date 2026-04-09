@@ -1,0 +1,34 @@
+project:
+  name: fmu_reverse_engineering
+  random_seed: 42
+  artifacts_dir: artifacts
+
+workflow:
+  mode: automatic
+  target_outputs: []
+
+execution:
+  parallel_workers: 4
+  timeout_seconds: 60
+
+model_search:
+  prefer_interpretable: true
+  enabled_families:
+    - simple
+    - sparse
+    - probabilistic
+    - tree
+    - neural
+    - dynamic
+  max_candidates_per_output: 30
+
+evaluation:
+  weights:
+    rmse: 0.35
+    complexity: 0.20
+    robustness: 0.20
+    runtime: 0.15
+    interpretability: 0.10
+
+exports:
+  formats: [json, html, csv]

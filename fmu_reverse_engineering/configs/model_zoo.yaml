@@ -1,0 +1,12 @@
+simple:
+  enabled: [constant, linear, polynomial, rational, spline]
+sparse:
+  enabled: [lasso, ridge, elastic_net, sindy]
+probabilistic:
+  enabled: [gaussian_process, bayesian_linear]
+tree:
+  enabled: [decision_tree, random_forest, gradient_boosting]
+neural:
+  enabled: [mlp]
+dynamic:
+  enabled: [arx, narx, state_space]
