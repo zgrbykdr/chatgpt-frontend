@@ -45,7 +45,17 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             [f,p] = uigetfile({'*.fmu','FMU Files (*.fmu)'}, 'Select FMU');
             if isequal(f,0), return; end
             fmuPath = fullfile(p,f);
-            app.ProjectManager.loadFMU(fmuPath);
+            try
+                app.ProjectManager.loadFMU(fmuPath);
+            catch ME
+                app.log("Primary loadFMU failed: " + string(ME.message));
+                if contains(string(ME.message), "Subscripted assignment between dissimilar structures")
+                    app.log("Applying GUI-level fallback FMU metadata parsing.");
+                    app.applyImportFallback(fmuPath);
+                else
+                    rethrow(ME);
+                end
+            end
             tbl = app.ProjectManager.getVariableCatalogTable();
             app.VarTable.Data = tbl;
             app.StatusLabel.Text = sprintf('Loaded: %s',f);
@@ -99,6 +109,16 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             app.ScoreTable = uitable(rg);
             app.LogArea = uitextarea(rg,'Editable','off');
         end
+
+        function applyImportFallback(app, fmuPath)
+            app.ProjectManager.FMUPath = string(fmuPath);
+            app.ProjectManager.Metadata = localFallbackInspectFMU(string(fmuPath));
+            builder = metadata.VariableCatalogBuilder(app.Logger);
+            app.ProjectManager.VariableCatalog = builder.build(app.ProjectManager.Metadata);
+            infer = ranges.RangeInferenceEngine(app.Logger);
+            app.ProjectManager.RangeState = infer.inferInitialRanges( ...
+                app.ProjectManager.VariableCatalog, app.ProjectManager.Metadata);
+        end
     end
 
     methods (Access = public)
@@ -111,4 +131,58 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             if isvalid(app.UIFigure), delete(app.UIFigure); end
         end
     end
+end
+
+function meta = localFallbackInspectFMU(fmuPath)
+% GUI-level import fallback for environments resolving stale inspector code.
+meta = struct('path',fmuPath,'variables',[],'fmuType','Unknown','modelName','','capabilities',struct());
+temp = tempname; mkdir(temp);
+cleanup = onCleanup(@() rmdir(temp,'s'));
+unzip(fmuPath,temp);
+xmlPath = fullfile(temp,'modelDescription.xml');
+if ~isfile(xmlPath), error('FMU missing modelDescription.xml'); end
+d = xmlread(xmlPath);
+root = d.getDocumentElement;
+meta.modelName = string(root.getAttribute('modelName'));
+if root.getElementsByTagName('CoSimulation').getLength > 0
+    meta.fmuType = 'CoSimulation';
+elseif root.getElementsByTagName('ModelExchange').getLength > 0
+    meta.fmuType = 'ModelExchange';
+end
+tpl = struct('name',"",'valueReference',NaN,'causality',"",'variability',"", ...
+    'description',"",'startValue',NaN,'minValue',NaN,'maxValue',NaN, ...
+    'nominalValue',NaN,'unit',"",'dataType',"real");
+nodes = root.getElementsByTagName('ScalarVariable');
+records = repmat(tpl,0,1);
+for i=0:nodes.getLength-1
+    node = nodes.item(i); rec = tpl;
+    rec.name = string(node.getAttribute('name'));
+    rec.valueReference = str2double(char(node.getAttribute('valueReference')));
+    rec.causality = string(node.getAttribute('causality'));
+    rec.variability = string(node.getAttribute('variability'));
+    rec.description = string(node.getAttribute('description'));
+    kids = node.getChildNodes;
+    for k=0:kids.getLength-1
+        child = kids.item(k);
+        if child.getNodeType~=1, continue; end
+        rec.dataType = lower(string(child.getNodeName));
+        if child.hasAttributes
+            attrs = child.getAttributes;
+            for a=0:attrs.getLength-1
+                at = attrs.item(a);
+                key = lower(string(at.getName)); value = char(at.getValue);
+                switch key
+                    case "start", rec.startValue = str2double(value);
+                    case "min", rec.minValue = str2double(value);
+                    case "max", rec.maxValue = str2double(value);
+                    case "nominal", rec.nominalValue = str2double(value);
+                    case "unit", rec.unit = string(value);
+                end
+            end
+        end
+    end
+    records(end+1,1) = rec; %#ok<AGROW>
+end
+meta.variables = records;
+clear cleanup
 end
