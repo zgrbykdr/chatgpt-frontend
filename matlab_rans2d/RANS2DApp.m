@@ -12,14 +12,16 @@ mainGL = uigridlayout(app.fig,[1 2]);
 mainGL.ColumnWidth = {420,'1x'};
 
 left = uipanel(mainGL,'Title','Setup and Controls');
-left.Layout.Column = 1;
+left.Layout.Row = 1; left.Layout.Column = 1;
 leftGL = uigridlayout(left,[28 2]);
 leftGL.RowHeight = [repmat({24},1,26),{28},{28}];
 leftGL.ColumnWidth = {170,'1x'};
 
     function edt = addNum(r, label, val)
-        uilabel(leftGL,'Text',label,'Layout',struct('Row',r,'Column',1));
-        edt = uieditfield(leftGL,'numeric','Value',val,'Layout',struct('Row',r,'Column',2));
+        lbl = uilabel(leftGL,'Text',label);
+        lbl.Layout.Row = r; lbl.Layout.Column = 1;
+        edt = uieditfield(leftGL,'numeric','Value',val);
+        edt.Layout.Row = r; edt.Layout.Column = 2;
     end
 
 app.ui.Lx = addNum(1,'Domain length Lx',app.case.Lx);
@@ -32,25 +34,29 @@ app.ui.Ux = addNum(7,'Inlet Ux',app.case.bc.inlet.Ux);
 app.ui.Uy = addNum(8,'Inlet Uy',app.case.bc.inlet.Uy);
 app.ui.pout = addNum(9,'Outlet pressure',app.case.bc.outlet.p);
 
-uilabel(leftGL,'Text','Turbulence model','Layout',struct('Row',10,'Column',1));
-app.ui.model = uidropdown(leftGL,'Items',{'Laminar','Standard k-epsilon','RNG k-epsilon','Realizable k-epsilon','Standard k-omega','SST k-omega'},...
-    'Value',app.case.model,'Layout',struct('Row',10,'Column',2));
+lbl = uilabel(leftGL,'Text','Turbulence model');
+lbl.Layout.Row = 10; lbl.Layout.Column = 1;
+app.ui.model = uidropdown(leftGL,'Items',{'Laminar','Standard k-epsilon','RNG k-epsilon','Realizable k-epsilon','Standard k-omega','SST k-omega'},'Value',app.case.model);
+app.ui.model.Layout.Row = 10; app.ui.model.Layout.Column = 2;
 
 app.ui.I = addNum(11,'Turbulence intensity',app.case.bc.inlet.intensity);
 app.ui.Lt = addNum(12,'Length scale',app.case.bc.inlet.lengthScale);
 app.ui.Dh = addNum(13,'Hydraulic diameter',app.case.bc.inlet.Dh);
 
-uilabel(leftGL,'Text','Turbulence input','Layout',struct('Row',14,'Column',1));
-app.ui.turbIn = uidropdown(leftGL,'Items',{'I-L','I-Dh'},'Value',app.case.bc.inlet.turbulenceInput,...
-    'Layout',struct('Row',14,'Column',2));
+lbl = uilabel(leftGL,'Text','Turbulence input');
+lbl.Layout.Row = 14; lbl.Layout.Column = 1;
+app.ui.turbIn = uidropdown(leftGL,'Items',{'I-L','I-Dh'},'Value',app.case.bc.inlet.turbulenceInput);
+app.ui.turbIn.Layout.Row = 14; app.ui.turbIn.Layout.Column = 2;
 
-uilabel(leftGL,'Text','Discretization','Layout',struct('Row',15,'Column',1));
-app.ui.scheme = uidropdown(leftGL,'Items',{'First-order upwind','Second-order upwind'},'Value',app.case.scheme,...
-    'Layout',struct('Row',15,'Column',2));
+lbl = uilabel(leftGL,'Text','Discretization');
+lbl.Layout.Row = 15; lbl.Layout.Column = 1;
+app.ui.scheme = uidropdown(leftGL,'Items',{'First-order upwind','Second-order upwind'},'Value',app.case.scheme);
+app.ui.scheme.Layout.Row = 15; app.ui.scheme.Layout.Column = 2;
 
-uilabel(leftGL,'Text','Pressure-velocity','Layout',struct('Row',16,'Column',1));
-app.ui.pv = uidropdown(leftGL,'Items',{'SIMPLE','SIMPLEC'},'Value',app.case.pvCoupling,...
-    'Layout',struct('Row',16,'Column',2));
+lbl = uilabel(leftGL,'Text','Pressure-velocity');
+lbl.Layout.Row = 16; lbl.Layout.Column = 1;
+app.ui.pv = uidropdown(leftGL,'Items',{'SIMPLE','SIMPLEC'},'Value',app.case.pvCoupling);
+app.ui.pv.Layout.Row = 16; app.ui.pv.Layout.Column = 2;
 
 app.ui.urfU = addNum(17,'URF u',app.case.urf.u);
 app.ui.urfV = addNum(18,'URF v',app.case.urf.v);
@@ -61,15 +67,21 @@ app.ui.urfO = addNum(22,'URF omega',app.case.urf.omega);
 app.ui.maxIter = addNum(23,'Max iteration',app.case.maxIter);
 app.ui.tol = addNum(24,'Residual tolerance',app.case.tol);
 
-uilabel(leftGL,'Text','Top BC','Layout',struct('Row',25,'Column',1));
-app.ui.topBC = uidropdown(leftGL,'Items',{'wall','symmetry'},'Value',app.case.bc.top.type,'Layout',struct('Row',25,'Column',2));
-uilabel(leftGL,'Text','Bottom BC','Layout',struct('Row',26,'Column',1));
-app.ui.botBC = uidropdown(leftGL,'Items',{'wall','symmetry'},'Value',app.case.bc.bottom.type,'Layout',struct('Row',26,'Column',2));
+lbl = uilabel(leftGL,'Text','Top BC');
+lbl.Layout.Row = 25; lbl.Layout.Column = 1;
+app.ui.topBC = uidropdown(leftGL,'Items',{'wall','symmetry'},'Value',app.case.bc.top.type);
+app.ui.topBC.Layout.Row = 25; app.ui.topBC.Layout.Column = 2;
 
-app.ui.sample = uidropdown(leftGL,'Items',{'Laminar channel flow','Turbulent channel flow (k-epsilon)','Turbulent channel flow (k-omega)','Backward-facing step','Flat plate boundary layer'},...
-    'Value','Laminar channel flow','Layout',struct('Row',27,'Column',[1 2]));
+lbl = uilabel(leftGL,'Text','Bottom BC');
+lbl.Layout.Row = 26; lbl.Layout.Column = 1;
+app.ui.botBC = uidropdown(leftGL,'Items',{'wall','symmetry'},'Value',app.case.bc.bottom.type);
+app.ui.botBC.Layout.Row = 26; app.ui.botBC.Layout.Column = 2;
 
-btnGL = uigridlayout(leftGL,[1 6]); btnGL.Layout.Row = 28; btnGL.Layout.Column = [1 2];
+app.ui.sample = uidropdown(leftGL,'Items',{'Laminar channel flow','Turbulent channel flow (k-epsilon)','Turbulent channel flow (k-omega)','Backward-facing step','Flat plate boundary layer'},'Value','Laminar channel flow');
+app.ui.sample.Layout.Row = 27; app.ui.sample.Layout.Column = [1 2];
+
+btnGL = uigridlayout(leftGL,[1 6]);
+btnGL.Layout.Row = 28; btnGL.Layout.Column = [1 2];
 btnGL.ColumnWidth = {'1x','1x','1x','1x','1x','1x'};
 uibutton(btnGL,'Text','Load sample','ButtonPushedFcn',@onLoadSample);
 uibutton(btnGL,'Text','Save case','ButtonPushedFcn',@onSaveCase);
@@ -78,7 +90,7 @@ uibutton(btnGL,'Text','Reset','ButtonPushedFcn',@onReset);
 uibutton(btnGL,'Text','Start','BackgroundColor',[0.75 0.95 0.75],'ButtonPushedFcn',@onStart);
 uibutton(btnGL,'Text','Stop','BackgroundColor',[0.95 0.75 0.75],'ButtonPushedFcn',@onStop);
 
-rightTab = uitabgroup(mainGL); rightTab.Layout.Column = 2;
+rightTab = uitabgroup(mainGL); rightTab.Layout.Row = 1; rightTab.Layout.Column = 2;
 
 tabRuntime = uitab(rightTab,'Title','Runtime');
 runGL = uigridlayout(tabRuntime,[2 2]); runGL.RowHeight = {260,'1x'};
