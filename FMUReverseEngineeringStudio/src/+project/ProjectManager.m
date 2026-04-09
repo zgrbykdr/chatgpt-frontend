@@ -21,17 +21,11 @@ classdef ProjectManager < handle
         function loadFMU(obj, fmuPath)
             arguments, obj, fmuPath (1,1) string, end
             obj.FMUPath = fmuPath;
-            inspector = fmu.FMUInspector(obj.Logger);
-            try
-                obj.Metadata = inspector.inspect(fmuPath);
-            catch ME
-                if contains(ME.message, 'Subscripted assignment between dissimilar structures')
-                    obj.Logger.warn("Primary FMU inspector failed with struct mismatch. Falling back to robust parser.");
-                    obj.Metadata = fallbackInspectFMU(fmuPath, obj.Logger);
-                else
-                    rethrow(ME);
-                end
-            end
+            % Permanent fix: use robust parser as primary import path.
+            % This avoids environment-specific/class-shadowing failures seen
+            % in some MATLAB installations where an older FMUInspector class
+            % causes "Subscripted assignment between dissimilar structures".
+            obj.Metadata = fallbackInspectFMU(fmuPath, obj.Logger);
             builder = metadata.VariableCatalogBuilder(obj.Logger);
             obj.VariableCatalog = builder.build(obj.Metadata);
             infer = ranges.RangeInferenceEngine(obj.Logger);
