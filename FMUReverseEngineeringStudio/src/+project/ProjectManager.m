@@ -21,6 +21,9 @@ classdef ProjectManager < handle
         function loadFMU(obj, fmuPath)
             arguments, obj, fmuPath (1,1) string, end
             obj.FMUPath = fmuPath;
+            obj.Logger.info("ProjectManager.loadFMU implementation: " + string(mfilename('fullpath')));
+            obj.Logger.info("Resolved project.ProjectManager: " + string(which('project.ProjectManager')));
+            obj.Logger.info("Resolved fmu.FMUInspector: " + string(which('fmu.FMUInspector')));
             % Permanent fix: use robust parser as primary import path.
             % This avoids environment-specific/class-shadowing failures seen
             % in some MATLAB installations where an older FMUInspector class

@@ -30,6 +30,8 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             app.Logger = logging.Logger(fullfile(root,'logs'));
             app.ProjectManager = project.ProjectManager(root, app.Logger);
             app.WorkflowManager = appcore.WorkflowManager(app.ProjectManager, app.Logger);
+            app.log("Resolved project.ProjectManager: " + string(which('project.ProjectManager')));
+            app.log("Resolved fmu.FMUInspector: " + string(which('fmu.FMUInspector')));
             app.StatusLabel.Text = 'Ready';
             app.log('FMU Reverse Engineering Studio initialized.');
         end
@@ -45,10 +47,15 @@ classdef FMUReverseEngineeringStudioApp < matlab.apps.AppBase
             [f,p] = uigetfile({'*.fmu','FMU Files (*.fmu)'}, 'Select FMU');
             if isequal(f,0), return; end
             fmuPath = fullfile(p,f);
+            app.log("Import requested. FMU path: " + string(fmuPath));
+            app.log("Resolved project.ProjectManager at import: " + string(which('project.ProjectManager')));
+            app.log("Resolved fmu.FMUInspector at import: " + string(which('fmu.FMUInspector')));
             try
                 app.ProjectManager.loadFMU(fmuPath);
             catch ME
                 app.log("Primary loadFMU failed: " + string(ME.message));
+                app.log("Error stack trace:");
+                app.log(string(getReport(ME, 'extended', 'hyperlinks', 'off')));
                 if contains(string(ME.message), "Subscripted assignment between dissimilar structures")
                     app.log("Applying GUI-level fallback FMU metadata parsing.");
                     app.applyImportFallback(fmuPath);
