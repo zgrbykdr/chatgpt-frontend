@@ -37,7 +37,7 @@ classdef FMUInspector
                 'nominalValue',NaN, ...
                 'unit',"", ...
                 'dataType',"real");
-            v = repmat(template, n, 1);
+            records = cell(n,1);
             for i=0:n-1
                 node = vars.item(i);
                 rec = template;
@@ -64,10 +64,26 @@ classdef FMUInspector
                         end
                     end
                 end
-                v(i+1)=rec;
+                records{i+1} = normalizeRecord(template, rec);
             end
-            meta.variables = v;
+            if isempty(records)
+                meta.variables = repmat(template, 0, 1);
+            else
+                meta.variables = vertcat(records{:});
+            end
             obj.Logger.info("FMU inspected. Variables: " + n);
         end
     end
+end
+
+function out = normalizeRecord(template, rec)
+% Normalize any partially-populated record to an exact template shape.
+out = template;
+tplFields = fieldnames(template);
+for i = 1:numel(tplFields)
+    f = tplFields{i};
+    if isfield(rec, f)
+        out.(f) = rec.(f);
+    end
+end
 end
