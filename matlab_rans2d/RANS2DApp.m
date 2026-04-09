@@ -13,8 +13,8 @@ mainGL.ColumnWidth = {420,'1x'};
 
 left = uipanel(mainGL,'Title','Setup and Controls');
 left.Layout.Row = 1; left.Layout.Column = 1;
-leftGL = uigridlayout(left,[28 2]);
-leftGL.RowHeight = [repmat({24},1,26),{28},{28}];
+leftGL = uigridlayout(left,[29 2]);
+leftGL.RowHeight = [repmat({24},1,26),{20},{28},{58}];
 leftGL.ColumnWidth = {170,'1x'};
 
     function edt = addNum(r, label, val)
@@ -77,26 +77,40 @@ lbl.Layout.Row = 26; lbl.Layout.Column = 1;
 app.ui.botBC = uidropdown(leftGL,'Items',{'wall','symmetry'},'Value',app.case.bc.bottom.type);
 app.ui.botBC.Layout.Row = 26; app.ui.botBC.Layout.Column = 2;
 
-app.ui.sample = uidropdown(leftGL,'Items',{'Laminar channel flow','Turbulent channel flow (k-epsilon)','Turbulent channel flow (k-omega)','Backward-facing step','Flat plate boundary layer'},'Value','Laminar channel flow');
-app.ui.sample.Layout.Row = 27; app.ui.sample.Layout.Column = [1 2];
+lbl = uilabel(leftGL,'Text','Case Controls','FontWeight','bold');
+lbl.Layout.Row = 27; lbl.Layout.Column = [1 2];
 
-btnGL = uigridlayout(leftGL,[1 6]);
-btnGL.Layout.Row = 28; btnGL.Layout.Column = [1 2];
-btnGL.ColumnWidth = {'1x','1x','1x','1x','1x','1x'};
-uibutton(btnGL,'Text','Load sample','ButtonPushedFcn',@onLoadSample);
-uibutton(btnGL,'Text','Save case','ButtonPushedFcn',@onSaveCase);
-uibutton(btnGL,'Text','Load case','ButtonPushedFcn',@onLoadCase);
-uibutton(btnGL,'Text','Reset','ButtonPushedFcn',@onReset);
-uibutton(btnGL,'Text','Start','BackgroundColor',[0.75 0.95 0.75],'ButtonPushedFcn',@onStart);
-uibutton(btnGL,'Text','Stop','BackgroundColor',[0.95 0.75 0.75],'ButtonPushedFcn',@onStop);
+app.ui.sample = uidropdown(leftGL,'Items',{'Laminar channel flow','Turbulent channel flow (k-epsilon)','Turbulent channel flow (k-omega)','Backward-facing step','Flat plate boundary layer'},'Value','Laminar channel flow');
+app.ui.sample.Layout.Row = 28; app.ui.sample.Layout.Column = [1 2];
+
+btnGL = uigridlayout(leftGL,[2 3]);
+btnGL.Layout.Row = 29; btnGL.Layout.Column = [1 2];
+btnGL.RowHeight = {'1x','1x'};
+btnGL.ColumnWidth = {'1x','1x','1x'};
+app.ui.btnLoadSample = uibutton(btnGL,'Text','Load Sample','ButtonPushedFcn',@onLoadSample);
+app.ui.btnSaveCase = uibutton(btnGL,'Text','Save Case','ButtonPushedFcn',@onSaveCase);
+app.ui.btnLoadCase = uibutton(btnGL,'Text','Load Case','ButtonPushedFcn',@onLoadCase);
+app.ui.btnReset = uibutton(btnGL,'Text','Reset','ButtonPushedFcn',@onReset);
+app.ui.btnStart = uibutton(btnGL,'Text','Start','BackgroundColor',[0.75 0.95 0.75],'ButtonPushedFcn',@onStart);
+app.ui.btnStop = uibutton(btnGL,'Text','Stop','BackgroundColor',[0.95 0.75 0.75],'ButtonPushedFcn',@onStop);
 
 rightTab = uitabgroup(mainGL); rightTab.Layout.Row = 1; rightTab.Layout.Column = 2;
 
 tabRuntime = uitab(rightTab,'Title','Runtime');
-runGL = uigridlayout(tabRuntime,[2 2]); runGL.RowHeight = {260,'1x'};
-app.ui.status = uitextarea(runGL,'Editable','off'); app.ui.status.Layout.Row = 1; app.ui.status.Layout.Column = 1;
-app.ui.summary = uitextarea(runGL,'Editable','off'); app.ui.summary.Layout.Row = 1; app.ui.summary.Layout.Column = 2;
-app.ui.resAx = uiaxes(runGL); app.ui.resAx.Layout.Row = 2; app.ui.resAx.Layout.Column = [1 2];
+runGL = uigridlayout(tabRuntime,[3 2]);
+runGL.RowHeight = {34,220,'1x'};
+runGL.ColumnWidth = {'1x','1x'};
+
+toolbar = uigridlayout(runGL,[1 3]);
+toolbar.Layout.Row = 1; toolbar.Layout.Column = [1 2];
+toolbar.ColumnWidth = {140,140,'1x'};
+app.ui.btnExport = uibutton(toolbar,'Text','Export Results','ButtonPushedFcn',@onExport);
+app.ui.btnClearLog = uibutton(toolbar,'Text','Clear Log','ButtonPushedFcn',@onClearLog);
+app.ui.toolbarInfo = uilabel(toolbar,'Text','Run simulation then export MAT/CSV.','HorizontalAlignment','right');
+
+app.ui.status = uitextarea(runGL,'Editable','off'); app.ui.status.Layout.Row = 2; app.ui.status.Layout.Column = 1;
+app.ui.summary = uitextarea(runGL,'Editable','off'); app.ui.summary.Layout.Row = 2; app.ui.summary.Layout.Column = 2;
+app.ui.resAx = uiaxes(runGL); app.ui.resAx.Layout.Row = 3; app.ui.resAx.Layout.Column = [1 2];
 set(app.ui.resAx,'YScale','log'); grid(app.ui.resAx,'on'); title(app.ui.resAx,'Residual History');
 
 app.ui.status.Value = {'Ready.'};
@@ -115,8 +129,6 @@ app.ui.streamAx = uiaxes(spGL); app.ui.profileAx = uiaxes(spGL);
 tabWall = uitab(rightTab,'Title','y+ / Wall Shear');
 wallGL = uigridlayout(tabWall,[1 2]);
 app.ui.yplusAx = uiaxes(wallGL); app.ui.tauwAx = uiaxes(wallGL);
-
-uibutton(tabRuntime,'Text','Export Results','Position',[10 10 120 26],'ButtonPushedFcn',@onExport);
 
 setappdata(app.fig,'appData',app);
 
@@ -197,6 +209,11 @@ setappdata(app.fig,'appData',app);
         app.stopFlag = true;
         setappdata(app.fig,'appData',app);
         appendStatus('Stop requested by user.');
+    end
+
+    function onClearLog(~,~)
+        app = getappdata(app.fig,'appData');
+        app.ui.status.Value = {'Log cleared.'};
     end
 
     function tf = getStopFlag()
