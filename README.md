@@ -29,6 +29,17 @@ startup
 result = run_case('examples/channel_flow/case_config.json');
 ```
 
+## GUI Workbench
+
+Launch the Fluent-like MATLAB GUI control hub:
+
+```matlab
+main_gui
+```
+
+The GUI provides direct access to configuration, geometry, meshing, quality,
+solver, turbulence, orchestration, postprocessing, and self-validation.
+
 ### Resume an interrupted run
 
 ```matlab
