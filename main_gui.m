@@ -51,20 +51,28 @@ cfgGrid = uigridlayout(cfgTab,[5 4]);
 cfgGrid.RowHeight = {30,30,30,30,'1x'};
 cfgGrid.ColumnWidth = {150,200,150,200};
 
-uilabel(cfgGrid,'Text','Solver Type').Layout.Row=1; 
+lblSolver = uilabel(cfgGrid,'Text','Solver Type');
+lblSolver.Layout.Row=1;
+lblSolver.Layout.Column=1;
 app.cfgSolverType = uidropdown(cfgGrid,'Items',{'SIMPLE','SIMPLEC','PISO'},'Value',app.state.cfg.solver.solver_type);
 app.cfgSolverType.Layout.Row=1; app.cfgSolverType.Layout.Column=2;
 
-uilabel(cfgGrid,'Text','Time Mode').Layout.Row=1; uilabel(cfgGrid,'Text','Time Mode').Layout.Column=3;
+lblTimeMode = uilabel(cfgGrid,'Text','Time Mode');
+lblTimeMode.Layout.Row=1;
+lblTimeMode.Layout.Column=3;
 app.cfgTimeMode = uidropdown(cfgGrid,'Items',{'steady','transient'},'Value',app.state.cfg.solver.time_mode);
 app.cfgTimeMode.Layout.Row=1; app.cfgTimeMode.Layout.Column=4;
 
-uilabel(cfgGrid,'Text','Turbulence').Layout.Row=2;
+lblTurb = uilabel(cfgGrid,'Text','Turbulence');
+lblTurb.Layout.Row=2;
+lblTurb.Layout.Column=1;
 app.cfgTurb = uidropdown(cfgGrid,'Items',{'spalart_allmaras','k_epsilon_standard','k_epsilon_rng','k_epsilon_realizable','k_omega_standard','k_omega_sst'}, ...
     'Value',app.state.cfg.turbulence.model);
 app.cfgTurb.Layout.Row=2; app.cfgTurb.Layout.Column=2;
 
-uilabel(cfgGrid,'Text','Global Size').Layout.Row=2; uilabel(cfgGrid,'Text','Global Size').Layout.Column=3;
+lblGlobalSize = uilabel(cfgGrid,'Text','Global Size');
+lblGlobalSize.Layout.Row=2;
+lblGlobalSize.Layout.Column=3;
 app.cfgGlobalSize = uieditfield(cfgGrid,'numeric','Value',app.state.cfg.meshing.global_size);
 app.cfgGlobalSize.Layout.Row=2; app.cfgGlobalSize.Layout.Column=4;
 
