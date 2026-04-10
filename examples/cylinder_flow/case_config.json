@@ -1,0 +1,27 @@
+{
+  "geometry": {
+    "mode": "import",
+    "file_path": "examples/cylinder_flow/geometry_points.csv",
+    "scale": 1.0
+  },
+  "meshing": {
+    "global_size": 0.12,
+    "growth_rate": 1.2,
+    "local_sizing_rules": [
+      {
+        "name": "near_body_refine",
+        "target_entities": ["boundary"],
+        "size": 0.05,
+        "growth_rate": 1.1,
+        "enabled": true
+      }
+    ]
+  },
+  "solver": {
+    "time_mode": "transient",
+    "solver_type": "PISO"
+  },
+  "turbulence": {
+    "model": "spalart_allmaras"
+  }
+}

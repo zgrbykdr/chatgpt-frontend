@@ -1,0 +1,27 @@
+{
+  "geometry": {
+    "mode": "import",
+    "file_path": "examples/backward_facing_step/geometry_points.csv",
+    "scale": 1.0
+  },
+  "meshing": {
+    "global_size": 0.08,
+    "growth_rate": 1.25,
+    "local_sizing_rules": [
+      {
+        "name": "step_refine",
+        "target_entities": ["interior"],
+        "size": 0.04,
+        "growth_rate": 1.12,
+        "enabled": true
+      }
+    ]
+  },
+  "solver": {
+    "time_mode": "steady",
+    "solver_type": "SIMPLEC"
+  },
+  "turbulence": {
+    "model": "k_epsilon_rng"
+  }
+}
