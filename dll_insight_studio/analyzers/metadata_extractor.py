@@ -56,8 +56,16 @@ class MetadataExtractor:
         if not hasattr(pe, "FileInfo"):
             return version
         for file_info in pe.FileInfo:
-            if file_info.Key == b"StringFileInfo":
-                for st in file_info.StringTable:
-                    for key, value in st.entries.items():
-                        version[key.decode(errors="ignore")] = value.decode(errors="ignore")
+            entries = file_info if isinstance(file_info, list) else [file_info]
+            for entry in entries:
+                key_attr = getattr(entry, "Key", b"")
+                if key_attr != b"StringFileInfo":
+                    continue
+                string_tables = getattr(entry, "StringTable", [])
+                for table in string_tables:
+                    table_entries = getattr(table, "entries", {})
+                    for key, value in table_entries.items():
+                        decoded_key = key.decode(errors="ignore") if isinstance(key, bytes) else str(key)
+                        decoded_value = value.decode(errors="ignore") if isinstance(value, bytes) else str(value)
+                        version[decoded_key] = decoded_value
         return version
