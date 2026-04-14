@@ -1,0 +1,10 @@
+{
+  "workspace_root": "./workspace_projects",
+  "default_mode": "Guided",
+  "default_depth": "Standard",
+  "autosave_interval_seconds": 30,
+  "report": {
+    "include_logs": true,
+    "include_guidance_history": true
+  }
+}
