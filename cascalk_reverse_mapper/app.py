@@ -131,6 +131,10 @@ class StudioWindow(QMainWindow):
             layout.addWidget(browse)
             layout.addWidget(run_btn)
             self.import_log = text
+        elif name == "Welcome / Home":
+            btn = QPushButton("🚀 One-Click Semi-Auto Run")
+            btn.clicked.connect(self._one_click_semi_auto)
+            layout.addWidget(btn)
         elif name == "Package Overview":
             btn = QPushButton("Refresh Summary")
             btn.clicked.connect(self._refresh_overview)
@@ -403,6 +407,18 @@ class StudioWindow(QMainWindow):
             "Use Project Import first, then review XML/DLL/Interface/Variable screens,\n"
             "run probing and sensitivity, generate lookup exports, then export reports."
         )
+
+    def _one_click_semi_auto(self):
+        if not self.current_project_id:
+            self._active_text("Welcome / Home").setPlainText(
+                "Önce Project Import ekranından CasCalc.zip/folder içe aktarın, sonra One-Click çalıştırın."
+            )
+            return
+        self.progress.setValue(35)
+        result = self.manager.run_one_click_semi_auto(self.current_project_id)
+        self.progress.setValue(100)
+        self.status.showMessage("One-click semi-auto workflow completed.")
+        self._active_text("Welcome / Home").setPlainText(json.dumps(result, indent=2))
 
 
 def main():

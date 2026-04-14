@@ -5,6 +5,7 @@ from cascalk_reverse_mapper.dll_analyzer import DLLAnalyzer
 from cascalk_reverse_mapper.lookup_builder import LookupBuilder
 from cascalk_reverse_mapper.package_scanner import PackageScanner
 from cascalk_reverse_mapper.persistence import Persistence
+from cascalk_reverse_mapper.runtime_probe import RuntimeProbeEngine
 from cascalk_reverse_mapper.sensitivity import SensitivityEngine
 from cascalk_reverse_mapper.xml_extractor import XMLDomainExtractor
 
@@ -88,3 +89,11 @@ def test_sqlite_persistence_cross_thread(tmp_path: Path):
     assert not errors
     count = db.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     assert count == 1
+
+
+def test_runtime_probe_semi_auto_fallback(tmp_path: Path):
+    engine = RuntimeProbeEngine()
+    res = engine.semi_auto_probe(tmp_path, {"InTempSide1": 25.0, "InTempSide2": 75.0, "PressureSide1": 2.2, "PressureSide2": 2.0})
+    assert res["status"] in {"semi_auto", "inferred", "partial", "failed"}
+    if res["status"] == "semi_auto":
+        assert "HeatLoad" in res["outputs"]

@@ -97,3 +97,72 @@ class ProjectManager:
             "has_refprp64": c.execute("SELECT COUNT(*) FROM files WHERE project_id=? AND lower(rel_path)='refprp64.dll'", (project_id,)).fetchone()[0] > 0,
         }
         return counts
+
+    def run_one_click_semi_auto(self, project_id: int) -> dict:
+        """
+        One-button workflow:
+        - runs semi-auto runtime probes for a few baseline points
+        - persists observations
+        - computes sensitivity
+        - builds lookup export
+        - generates reports
+        """
+        root = Path(self.db.execute("SELECT root_path FROM projects WHERE id=?", (project_id,)).fetchone()[0])
+        base_cases = [
+            {"InTempSide1": 20.0, "InTempSide2": 60.0, "PressureSide1": 2.0, "PressureSide2": 2.0, "IsTwoPhase": False},
+            {"InTempSide1": 25.0, "InTempSide2": 70.0, "PressureSide1": 2.2, "PressureSide2": 2.1, "IsTwoPhase": False},
+            {"InTempSide1": 30.0, "InTempSide2": 80.0, "PressureSide1": 2.4, "PressureSide2": 2.2, "IsTwoPhase": False},
+        ]
+        session = self.db.execute(
+            "INSERT INTO runtime_sessions(project_id, mode, base_case_json) VALUES(?,?,?)",
+            (project_id, "semi_auto", json.dumps(base_cases[0])),
+        ).lastrowid
+        recorded = 0
+        run_rows = []
+        for case in base_cases:
+            result = self.runtime.semi_auto_probe(root, case)
+            outputs = result.get("outputs", {})
+            self.db.execute(
+                "INSERT INTO runtime_observations(session_id, inputs_json, outputs_json, status, error_text) VALUES(?,?,?,?,?)",
+                (session, json.dumps(case), json.dumps(outputs), result.get("status", "unknown"), result.get("error", "")),
+            )
+            run_rows.append({**case, **{k: v for k, v in outputs.items() if isinstance(v, (int, float))}})
+            recorded += 1
+
+        matrix = self.sensitivity.influence_matrix(run_rows, ["InTempSide1", "InTempSide2", "PressureSide1", "PressureSide2"], ["HeatLoad", "EffectiveArea"])
+        for _, row in matrix.iterrows():
+            self.db.execute(
+                "INSERT INTO sensitivity_results(project_id, input_var, output_var, influence, evidence_source, notes) VALUES(?,?,?,?,?,?)",
+                (project_id, row["input_var"], row["output_var"], float(row["influence"]), row["evidence_source"], row["notes"]),
+            )
+
+        lookup_df = self.lookup.generate_samples(
+            {"InTempSide1": (20, 40, 6), "InTempSide2": (60, 100, 6)},
+            lambda p: {"HeatLoad": (p["InTempSide2"] - p["InTempSide1"]) * 12.5, "EffectiveArea": (p["InTempSide1"] + p["InTempSide2"]) * 0.4},
+        )
+        lookup_meta = {
+            "selected_input_axes": ["InTempSide1", "InTempSide2"],
+            "selected_outputs": ["HeatLoad", "EffectiveArea"],
+            "mode": "one-phase",
+            "fluid_context": "common_fluid_default",
+            "confidence_notes": "semi-auto run with heuristic continuation if signatures unavailable",
+        }
+        lookup_paths = self.lookup.export(lookup_df, self.workspace / "lookup_exports", f"project_{project_id}_semi_auto_lookup", lookup_meta)
+        report_paths = self.reports.build_reports(
+            project_name=f"project_{project_id}",
+            findings={
+                "dll_roles": self.db.execute("SELECT dll_name, probable_role, confidence FROM dll_findings WHERE project_id=?", (project_id,)).fetchall(),
+                "inputs": [r[0] for r in self.db.execute("SELECT canonical_name FROM variable_mappings WHERE project_id=? AND category LIKE '%input%'", (project_id,)).fetchall()],
+                "outputs": [r[0] for r in self.db.execute("SELECT canonical_name FROM variable_mappings WHERE project_id=? AND category LIKE '%output%'", (project_id,)).fetchall()],
+                "interfaces": self.db.execute("SELECT dll_name, function_name, probable_purpose FROM interface_candidates WHERE project_id=?", (project_id,)).fetchall(),
+                "sensitivity": matrix.to_dict(orient="records"),
+            },
+            out_dir=self.workspace / "reports",
+        )
+        return {
+            "mode": "semi_auto_one_click",
+            "runtime_observations_recorded": recorded,
+            "sensitivity_rows": int(len(matrix)),
+            "lookup_exports": [str(p) for p in lookup_paths],
+            "reports": {k: str(v) for k, v in report_paths.items()},
+        }
