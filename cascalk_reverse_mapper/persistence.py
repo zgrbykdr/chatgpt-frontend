@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+import threading
 from pathlib import Path
 from typing import Iterable
 
@@ -28,19 +29,24 @@ CREATE TABLE IF NOT EXISTS logs(id INTEGER PRIMARY KEY, project_id INTEGER, leve
 class Persistence:
     def __init__(self, db_path: Path):
         self.db_path = Path(db_path)
-        self.conn = sqlite3.connect(self.db_path)
+        # GUI actions and background import workers both access persistence.
+        # check_same_thread=False allows this, and the lock serializes access.
+        self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        self._lock = threading.RLock()
         self.conn.execute("PRAGMA foreign_keys=ON")
         self.conn.executescript(SCHEMA)
         self.conn.commit()
 
     def execute(self, sql: str, params: tuple = ()):
-        cur = self.conn.cursor()
-        cur.execute(sql, params)
-        self.conn.commit()
-        return cur
+        with self._lock:
+            cur = self.conn.cursor()
+            cur.execute(sql, params)
+            self.conn.commit()
+            return cur
 
     def executemany(self, sql: str, rows: Iterable[tuple]):
-        cur = self.conn.cursor()
-        cur.executemany(sql, list(rows))
-        self.conn.commit()
-        return cur
+        with self._lock:
+            cur = self.conn.cursor()
+            cur.executemany(sql, list(rows))
+            self.conn.commit()
+            return cur

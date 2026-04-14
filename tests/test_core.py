@@ -1,4 +1,5 @@
 from pathlib import Path
+from threading import Thread
 
 from cascalk_reverse_mapper.dll_analyzer import DLLAnalyzer
 from cascalk_reverse_mapper.lookup_builder import LookupBuilder
@@ -66,5 +67,24 @@ def test_sensitivity_and_lookup_exports(tmp_path: Path):
 def test_sqlite_persistence(tmp_path: Path):
     db = Persistence(tmp_path / "db.sqlite3")
     db.execute("INSERT INTO projects(name, root_path) VALUES(?,?)", ("x", "/tmp"))
+    count = db.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
+    assert count == 1
+
+
+def test_sqlite_persistence_cross_thread(tmp_path: Path):
+    db = Persistence(tmp_path / "db_thread.sqlite3")
+    errors = []
+
+    def worker():
+        try:
+            db.execute("INSERT INTO projects(name, root_path) VALUES(?,?)", ("threaded", "/tmp/thread"))
+        except Exception as exc:  # pragma: no cover
+            errors.append(exc)
+
+    t = Thread(target=worker)
+    t.start()
+    t.join()
+
+    assert not errors
     count = db.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     assert count == 1
