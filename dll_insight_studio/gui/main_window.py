@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (
 )
 
 from dll_insight_studio.models.entities import ProjectConfig
+from dll_insight_studio.analyzers.string_intelligence import is_meaningful_text
 from dll_insight_studio.services.application_context import ApplicationContext
 
 
@@ -405,7 +406,11 @@ class MainWindow(QMainWindow):
         self.guidance_target.clear()
         scope = self.guidance_scope.currentText()
         if scope == "String Label Decision":
-            low_conf_strings = [s for s in self.state.analysis.get("strings", []) if s.get("confidence", 0) < 0.65][:80]
+            low_conf_strings = [
+                s
+                for s in self.state.analysis.get("strings", [])
+                if s.get("confidence", 0) < 0.65 and is_meaningful_text(s.get("value", ""))
+            ][:80]
             for s in low_conf_strings:
                 self.guidance_target.addItem(f"STR::{s['value']}")
         else:

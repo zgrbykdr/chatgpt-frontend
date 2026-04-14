@@ -18,11 +18,32 @@ CATEGORIES = {
 }
 
 
+def is_meaningful_text(value: str) -> bool:
+    if len(value.strip()) < 3:
+        return False
+    letters = sum(ch.isalpha() for ch in value)
+    digits = sum(ch.isdigit() for ch in value)
+    spaces = sum(ch.isspace() for ch in value)
+    visible = sum(ch.isprintable() for ch in value)
+    punctuation = len(value) - letters - digits - spaces
+    if visible < max(3, int(len(value) * 0.9)):
+        return False
+    if letters == 0 and digits < 2:
+        return False
+    punct_ratio = punctuation / max(1, len(value))
+    if punct_ratio > 0.45 and letters < 4:
+        return False
+    return True
+
+
 class StringIntelligenceEngine:
     def classify(self, values: list[str], manual_labels: dict[str, str] | None = None) -> list[dict[str, Any]]:
         labels = manual_labels or {}
         output = []
         for value in values:
+            if not is_meaningful_text(value):
+                output.append({"value": value, "category": "Noise/Encoded", "confidence": 0.05, "source": "auto"})
+                continue
             if value in labels:
                 output.append({"value": value, "category": labels[value], "confidence": 0.99, "source": "user"})
                 continue

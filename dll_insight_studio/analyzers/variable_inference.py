@@ -2,11 +2,19 @@ from __future__ import annotations
 
 from typing import Any
 
+from dll_insight_studio.analyzers.string_intelligence import is_meaningful_text
+
 
 class VariableInferenceEngine:
     def infer(self, functions: list[dict[str, Any]], strings: list[dict[str, Any]], identity: dict[str, Any]) -> list[dict[str, Any]]:
         variables = []
-        candidates = [s for s in strings if s["category"] in {"Possible Inputs", "Possible Outputs", "Possible States", "Possible Parameters", "Units"}]
+        candidates = [
+            s
+            for s in strings
+            if s["category"] in {"Possible Inputs", "Possible Outputs", "Possible States", "Possible Parameters", "Units"}
+            and s.get("confidence", 0) >= 0.45
+            and is_meaningful_text(s.get("value", ""))
+        ]
         for idx, s in enumerate(candidates[:200]):
             cat_map = {
                 "Possible Inputs": "input",
