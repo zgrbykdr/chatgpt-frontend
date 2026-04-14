@@ -55,6 +55,13 @@ Or on Windows, double-click or run:
 launch_dll_insight_studio.bat
 ```
 
+
+Direct file execution is also supported:
+```bash
+python dll_insight_studio/app.py
+python dll_insight_studio/__main__.py
+```
+
 ## Troubleshooting: `ModuleNotFoundError: No module named 'dll_insight_studio'`
 This means Python cannot see the package path yet. Fix it by:
 1. `cd` into the repository root.
