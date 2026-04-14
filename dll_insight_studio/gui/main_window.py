@@ -75,6 +75,7 @@ class SessionState:
     project_id: int | None = None
     project_dir: Path | None = None
     dll_path: Path | None = None
+    original_dll_dir: Path | None = None
     exe_path: Path | None = None
     db: Any | None = None
     repo: Any | None = None
@@ -282,6 +283,7 @@ class MainWindow(QMainWindow):
             self.state.repo = repo
             self.state.project_dir = project_dir
             self.state.dll_path = project_dir / dll.name
+            self.state.original_dll_dir = dll.parent
             self.state.exe_path = Path(self.exe_input.text().strip()) if self.exe_input.text().strip() else None
             self.statusBar().showMessage("Project created. Running analysis in background...")
             self.progress.setRange(0, 0)
@@ -474,24 +476,31 @@ class MainWindow(QMainWindow):
         if not deps:
             return
         related_dir = Path(self.related_input.text().strip()) if self.related_input.text().strip() else None
-        found_map: dict[str, str] = {}
-        for dep in deps[:30]:
-            lib = dep["library"]
-            if dep.get("is_system"):
-                continue
-            if related_dir and (related_dir / lib).exists():
-                found_map[lib] = str((related_dir / lib).resolve())
-                continue
+        search_dirs: list[Path] = []
+        if self.state.original_dll_dir:
+            search_dirs.append(self.state.original_dll_dir)
+        if related_dir:
+            search_dirs.append(related_dir)
+        if self.state.dll_path:
+            search_dirs.append(self.state.dll_path.parent)
+        if self.state.project_dir:
+            search_dirs.append(self.state.project_dir)
+
+        found_map, missing = self.ctx.pipeline.reverse.resolve_dependency_paths(deps[:40], search_dirs)
+        unresolved = list(missing)
+        for lib in missing:
             answer = QMessageBox.question(
                 self,
                 "Dependency Path Needed",
-                f"Dependency '{lib}' was detected. Do you want to select its file location now?",
+                f"Dependency '{lib}' was not found automatically in DLL/related/project folders. Do you want to select its file location now?",
             )
             if answer == QMessageBox.StandardButton.Yes:
                 selected, _ = QFileDialog.getOpenFileName(self, f"Locate {lib}", "", "DLL Files (*.dll);;All Files (*)")
                 if selected:
                     found_map[lib] = selected
+                    unresolved.remove(lib)
         reverse["resolved_dependency_paths"] = found_map
+        self.statusBar().showMessage(f"Dependency resolution: resolved {len(found_map)} / unresolved {len(unresolved)}")
         if self.state.project_id and found_map:
             self.state.repo.add_guidance_decision(
                 self.state.project_id,

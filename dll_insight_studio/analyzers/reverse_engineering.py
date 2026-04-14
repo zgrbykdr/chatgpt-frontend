@@ -163,3 +163,30 @@ class ReverseEngineeringEnhancer:
                     + "\n"
                 )
         return output_path
+
+    def resolve_dependency_paths(self, dependencies: list[dict[str, Any]], search_dirs: list[Path]) -> tuple[dict[str, str], list[str]]:
+        resolved: dict[str, str] = {}
+        missing: list[str] = []
+        clean_dirs = [d for d in search_dirs if d and d.exists() and d.is_dir()]
+        for dep in dependencies:
+            lib = dep.get("library", "")
+            if not lib or dep.get("is_system"):
+                continue
+            found = self._find_in_dirs(lib, clean_dirs)
+            if found:
+                resolved[lib] = str(found)
+            else:
+                missing.append(lib)
+        return resolved, missing
+
+    @staticmethod
+    def _find_in_dirs(filename: str, dirs: list[Path]) -> Path | None:
+        lname = filename.lower()
+        for directory in dirs:
+            direct = directory / filename
+            if direct.exists():
+                return direct.resolve()
+            for child in directory.iterdir():
+                if child.is_file() and child.name.lower() == lname:
+                    return child.resolve()
+        return None

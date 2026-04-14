@@ -13,6 +13,7 @@ DLL Insight Studio is a Windows desktop application (Python + PySide6 + SQLite) 
 - Model-pattern ranking with evidence and uncertainty.
 - Reverse-engineering enhancements: dependency map, constants detection, FMU variable lookup table, and DOE parameter sensitivity plan.
 - Dependency-aware workflow: non-system DLL dependencies are detected and the UI asks user to locate missing dependency file paths.
+- Dependency auto-discovery: app first searches dependency DLLs in the original DLL folder, related folder, and project workspace; only unresolved ones are asked from the user.
 - Dymola integration export: FMU lookup rows + inferred parameter ranges can be exported as `dymola_lookup_table.csv`.
 - Guided decision flows and runtime validation assistant.
 - Report generation to HTML, PDF, JSON.

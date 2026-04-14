@@ -44,3 +44,17 @@ def test_dymola_lookup_csv_export(tmp_path: Path) -> None:
     content = out.read_text(encoding="utf-8")
     assert "param_heat_coeff" in content
     assert "min,max,default" in content
+
+
+def test_dependency_auto_resolution(tmp_path: Path) -> None:
+    enhancer = ReverseEngineeringEnhancer()
+    dep_file = tmp_path / "CasCalc.dll"
+    dep_file.write_text("x", encoding="utf-8")
+    dependencies = [
+        {"library": "CasCalc.dll", "is_system": False},
+        {"library": "KERNEL32.dll", "is_system": True},
+        {"library": "Missing.dll", "is_system": False},
+    ]
+    resolved, missing = enhancer.resolve_dependency_paths(dependencies, [tmp_path])
+    assert "CasCalc.dll" in resolved
+    assert "Missing.dll" in missing
