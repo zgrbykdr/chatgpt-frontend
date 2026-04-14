@@ -76,6 +76,11 @@ class ReportGenerator:
         lines.append("Dependency Highlights:")
         for dep in reverse.get("dependencies", [])[:8]:
             lines.append(f" - {dep['library']} ({dep['count']} symbols)")
+        resolved = reverse.get("resolved_dependency_paths", {})
+        if resolved:
+            lines.append("Resolved Dependency Paths:")
+            for lib, path in list(resolved.items())[:10]:
+                lines.append(f" - {lib}: {self._safe_text(path)}")
         consts = reverse.get("constants", {})
         lines.append(
             f"Constants detected: numeric={len(consts.get('numeric_constants', []))}, scientific={len(consts.get('scientific_constants', []))}"
@@ -86,6 +91,9 @@ class ReportGenerator:
         lines.append("DOE Plan (parameter sensitivity):")
         for row in reverse.get("doe_plan", [])[:10]:
             lines.append(f" - {self._safe_text(row['parameter'])}: {row['low_step']} / {row['high_step']} priority={row['priority']}")
+        lines.append("Parameter Ranges (heuristic):")
+        for row in reverse.get("parameter_ranges", [])[:10]:
+            lines.append(f" - {self._safe_text(row['name'])}: min={row['min']} max={row['max']} default={row['default']}")
 
         for line in lines:
             for wrapped in self._wrap_line(line):

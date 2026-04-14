@@ -194,7 +194,8 @@ class MainWindow(QMainWindow):
         e1 = QPushButton("Export HTML"); e1.clicked.connect(lambda: self._export_report("html"))
         e2 = QPushButton("Export PDF"); e2.clicked.connect(lambda: self._export_report("pdf"))
         e3 = QPushButton("Export JSON"); e3.clicked.connect(lambda: self._export_report("json"))
-        rpl.addWidget(self.report_preview); rpl.addWidget(e1); rpl.addWidget(e2); rpl.addWidget(e3)
+        e4 = QPushButton("Export Dymola Lookup CSV"); e4.clicked.connect(self._export_dymola_lookup)
+        rpl.addWidget(self.report_preview); rpl.addWidget(e1); rpl.addWidget(e2); rpl.addWidget(e3); rpl.addWidget(e4)
         self.stack.addWidget(self.report)
 
         self.settings = QTextEdit("Workspace, analysis, and report settings are stored per project and can be changed before rerun.")
@@ -327,6 +328,7 @@ class MainWindow(QMainWindow):
         readiness = self.ctx.runtime.readiness_message(self.state.exe_path)
         self.runtime_text.setPlainText(readiness + "\n\nRecord observations here for baseline and changed runs.")
         self.report_preview.setPlainText(self._executive_preview())
+        self._resolve_dependencies_with_user()
 
         logs = self.state.repo.load_dashboard_data(self.state.project_id)
         self.logs.setPlainText(json.dumps(logs.get("analysis_logs", []) + logs.get("app_logs", []), indent=2))
@@ -393,6 +395,53 @@ class MainWindow(QMainWindow):
             f"Likely model pattern:\n{top_patterns}\n\n"
             f"Recommended next steps:\n- Review guided decisions\n- Confirm uncertain I/O terms\n- Use runtime wizard if host EXE is available"
         )
+
+    def _resolve_dependencies_with_user(self) -> None:
+        reverse = (self.state.analysis or {}).get("reverse_engineering", {})
+        deps = reverse.get("dependencies", [])
+        if not deps:
+            return
+        related_dir = Path(self.related_input.text().strip()) if self.related_input.text().strip() else None
+        found_map: dict[str, str] = {}
+        for dep in deps[:30]:
+            lib = dep["library"]
+            if dep.get("is_system"):
+                continue
+            if related_dir and (related_dir / lib).exists():
+                found_map[lib] = str((related_dir / lib).resolve())
+                continue
+            answer = QMessageBox.question(
+                self,
+                "Dependency Path Needed",
+                f"Dependency '{lib}' was detected. Do you want to select its file location now?",
+            )
+            if answer == QMessageBox.StandardButton.Yes:
+                selected, _ = QFileDialog.getOpenFileName(self, f"Locate {lib}", "", "DLL Files (*.dll);;All Files (*)")
+                if selected:
+                    found_map[lib] = selected
+        reverse["resolved_dependency_paths"] = found_map
+        if self.state.project_id and found_map:
+            self.state.repo.add_guidance_decision(
+                self.state.project_id,
+                "dependency_resolution",
+                "Resolve dependent DLL paths",
+                json.dumps(found_map),
+                "User provided dependency paths",
+            )
+
+    def _export_dymola_lookup(self) -> None:
+        if not self.state.analysis or not self.state.project_dir:
+            return
+        reverse = self.state.analysis.get("reverse_engineering", {})
+        rows = reverse.get("dymola_lookup_rows", [])
+        if not rows:
+            QMessageBox.warning(self, "Export Dymola Lookup", "No lookup rows available yet. Run analysis first.")
+            return
+        output_path = self.state.project_dir / "dymola_lookup_table.csv"
+        self.ctx.pipeline.reverse.export_dymola_lookup_csv(rows, output_path)
+        if self.state.project_id:
+            self.state.repo.add_report_history(self.state.project_id, "DYMOLA_LOOKUP_CSV", str(output_path))
+        QMessageBox.information(self, "Export Complete", f"Dymola lookup table exported to {output_path}")
 
     def _open_existing_project(self) -> None:
         path, _ = QFileDialog.getOpenFileName(self, "Open project database", "", "SQLite (*.db)")

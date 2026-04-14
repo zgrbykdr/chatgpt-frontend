@@ -38,6 +38,22 @@ class AnalysisPipeline:
             "fmu_lookup_table": self.reverse.build_fmu_lookup_table(classified_strings, variables),
             "doe_plan": self.reverse.build_doe_plan(variables),
         }
+        ranges = self.reverse.infer_parameter_ranges(classified_strings, variables)
+        reverse["parameter_ranges"] = ranges
+        range_map = {r["name"]: r for r in ranges}
+        reverse["dymola_lookup_rows"] = [
+            {
+                "name": row["name"],
+                "category": row.get("category", ""),
+                "region": row.get("region", ""),
+                "confidence": row.get("confidence", 0),
+                "min": range_map.get(row["name"], {}).get("min", ""),
+                "max": range_map.get(row["name"], {}).get("max", ""),
+                "default": range_map.get(row["name"], {}).get("default", ""),
+                "source": row.get("source", "variable_inference"),
+            }
+            for row in reverse["fmu_lookup_table"]
+        ]
         return {
             "identity": identity,
             "metadata": metadata,
