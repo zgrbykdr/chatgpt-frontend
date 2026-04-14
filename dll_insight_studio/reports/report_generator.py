@@ -9,6 +9,26 @@ from reportlab.pdfgen import canvas
 
 
 class ReportGenerator:
+    @staticmethod
+    def _safe_text(value: Any) -> str:
+        return str(value).replace("\n", " ").replace("\r", " ").strip()
+
+    @staticmethod
+    def _wrap_line(line: str, width: int = 105) -> list[str]:
+        words = line.split(" ")
+        out: list[str] = []
+        current = ""
+        for word in words:
+            if len(current) + len(word) + 1 <= width:
+                current = (current + " " + word).strip()
+            else:
+                if current:
+                    out.append(current)
+                current = word
+        if current:
+            out.append(current)
+        return out or [""]
+
     def export_json(self, payload: dict[str, Any], output_path: Path) -> Path:
         output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         return output_path
@@ -40,19 +60,40 @@ class ReportGenerator:
             f"DLL Type: {payload.get('identity', {}).get('dll_type', 'Unknown')}",
             f"Architecture: {payload.get('identity', {}).get('architecture', 'Unknown')}",
             f"Confidence: {payload.get('identity', {}).get('confidence', 0)}",
+            f"Imports: {len(payload.get('metadata', {}).get('imports', []))}  Exports: {len(payload.get('metadata', {}).get('exports', []))}",
             "Top Function Roles:",
         ]
         for fn in payload.get("functions", [])[:15]:
-            lines.append(f" - {fn['name']}: {fn.get('role', {}).get('primary', 'Unknown')} ({fn.get('role', {}).get('confidence', 0)})")
+            name = self._safe_text(fn.get("name", "unknown_function"))
+            role = self._safe_text(fn.get("role", {}).get("primary", "Unknown"))
+            conf = fn.get("role", {}).get("confidence", 0)
+            lines.append(f" - {name}: {role} ({conf})")
         lines.append("Top Pattern Candidates:")
         for p in payload.get("patterns", [])[:10]:
-            lines.append(f" - {p['pattern']} ({p['confidence']}): {p['evidence']}")
+            lines.append(f" - {self._safe_text(p['pattern'])} ({p['confidence']}): {self._safe_text(p['evidence'])}")
+
+        reverse = payload.get("reverse_engineering", {})
+        lines.append("Dependency Highlights:")
+        for dep in reverse.get("dependencies", [])[:8]:
+            lines.append(f" - {dep['library']} ({dep['count']} symbols)")
+        consts = reverse.get("constants", {})
+        lines.append(
+            f"Constants detected: numeric={len(consts.get('numeric_constants', []))}, scientific={len(consts.get('scientific_constants', []))}"
+        )
+        lines.append("FMU Lookup Table (top entries):")
+        for row in reverse.get("fmu_lookup_table", [])[:10]:
+            lines.append(f" - {self._safe_text(row['name'])} [{row['category']}] conf={row['confidence']}")
+        lines.append("DOE Plan (parameter sensitivity):")
+        for row in reverse.get("doe_plan", [])[:10]:
+            lines.append(f" - {self._safe_text(row['parameter'])}: {row['low_step']} / {row['high_step']} priority={row['priority']}")
+
         for line in lines:
-            c.drawString(50, y, line[:110])
-            y -= 14
-            if y < 60:
-                c.showPage()
-                y = 760
-                c.setFont("Helvetica", 10)
+            for wrapped in self._wrap_line(line):
+                c.drawString(50, y, wrapped[:110])
+                y -= 14
+                if y < 60:
+                    c.showPage()
+                    y = 760
+                    c.setFont("Helvetica", 10)
         c.save()
         return output_path

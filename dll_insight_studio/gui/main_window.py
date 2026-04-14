@@ -359,8 +359,11 @@ class MainWindow(QMainWindow):
         payload = {
             "project_name": self.project_name.text().strip() or "dll_project",
             "identity": self.state.analysis["identity"],
+            "metadata": self.state.analysis["metadata"],
             "functions": self.state.analysis["functions"],
+            "variables": self.state.analysis["variables"],
             "patterns": self.state.analysis["patterns"],
+            "reverse_engineering": self.state.analysis.get("reverse_engineering", {}),
             "recommendations": "Review unresolved uncertainties, confirm important terms, and run controlled runtime comparison when possible.",
         }
         out = self.state.project_dir / f"report.{fmt}"

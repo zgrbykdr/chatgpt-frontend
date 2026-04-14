@@ -11,6 +11,7 @@ DLL Insight Studio is a Windows desktop application (Python + PySide6 + SQLite) 
 - Function role classification with confidence/evidence.
 - Variable ecosystem inference with offset/region grouping.
 - Model-pattern ranking with evidence and uncertainty.
+- Reverse-engineering enhancements: dependency map, constants detection, FMU variable lookup table, and DOE parameter sensitivity plan.
 - Guided decision flows and runtime validation assistant.
 - Report generation to HTML, PDF, JSON.
 - SQLite project persistence, logs, report history.
