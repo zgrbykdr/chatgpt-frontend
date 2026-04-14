@@ -73,6 +73,7 @@ class StudioWindow(QMainWindow):
         self.manager = ProjectManager(Path.cwd() / "workspace")
         self.current_project_id: int | None = None
         self.import_source: Path | None = None
+        self.page_outputs: dict[str, QPlainTextEdit] = {}
 
         root = QWidget()
         root_layout = QVBoxLayout(root)
@@ -115,6 +116,7 @@ class StudioWindow(QMainWindow):
         text.setReadOnly(True)
         text.setPlainText(f"{name} is connected and ready.")
         layout.addWidget(text)
+        self.page_outputs[name] = text
 
         if name == "Project Import":
             self.project_name = QLineEdit("CasCalc Analysis Project")
@@ -134,16 +136,59 @@ class StudioWindow(QMainWindow):
             btn.clicked.connect(self._refresh_overview)
             layout.addWidget(btn)
             self.overview_text = text
+        elif name == "XML Domain Explorer":
+            btn = QPushButton("Run XML Mining")
+            btn.clicked.connect(self._refresh_xml_domain)
+            layout.addWidget(btn)
+        elif name == "DLL Analyzer":
+            btn = QPushButton("Analyze DLL Roles")
+            btn.clicked.connect(self._refresh_dll_findings)
+            layout.addWidget(btn)
+        elif name == "Interface Discovery":
+            btn = QPushButton("Refresh Interface Candidates")
+            btn.clicked.connect(self._refresh_interface_candidates)
+            layout.addWidget(btn)
+        elif name == "Variable Catalog":
+            btn = QPushButton("Refresh Variable Catalog")
+            btn.clicked.connect(self._refresh_variable_catalog)
+            layout.addWidget(btn)
+        elif name == "Guided Review":
+            btn1 = QPushButton("Start Base Scenario Guidance")
+            btn1.clicked.connect(self._guided_base_scenario)
+            btn2 = QPushButton("Show Runtime Readiness Guidance")
+            btn2.clicked.connect(self._guided_runtime_readiness)
+            layout.addWidget(btn1)
+            layout.addWidget(btn2)
         elif name == "Runtime Probing":
             probe = QPushButton("Run Direct Probe (safe)")
             probe.clicked.connect(self._run_probe)
             layout.addWidget(probe)
             self.runtime_text = text
+        elif name == "Sensitivity Analysis":
+            btn = QPushButton("Run Sensitivity (from runtime observations)")
+            btn.clicked.connect(self._run_sensitivity)
+            layout.addWidget(btn)
+        elif name == "Lookup Builder":
+            btn = QPushButton("Generate Demo Lookup Export")
+            btn.clicked.connect(self._run_lookup_build)
+            layout.addWidget(btn)
         elif name == "Report Preview / Export":
             report = QPushButton("Generate Reports")
             report.clicked.connect(self._run_report)
             layout.addWidget(report)
             self.report_text = text
+        elif name == "Logs / Diagnostics":
+            btn = QPushButton("Show Recent Logs")
+            btn.clicked.connect(self._show_logs)
+            layout.addWidget(btn)
+        elif name == "Settings":
+            btn = QPushButton("Show Workspace Settings")
+            btn.clicked.connect(self._show_settings)
+            layout.addWidget(btn)
+        elif name == "About / Help":
+            btn = QPushButton("Show Product Scope")
+            btn.clicked.connect(self._show_about)
+            layout.addWidget(btn)
         return page
 
     def _switch_screen(self, idx: int):
@@ -193,6 +238,20 @@ class StudioWindow(QMainWindow):
             return
         root = Path(self.manager.db.execute("SELECT root_path FROM projects WHERE id=?", (self.current_project_id,)).fetchone()[0])
         result = self.manager.runtime.direct_probe(root, {"InTempSide1": 20.0, "InTempSide2": 40.0})
+        session = self.manager.db.execute(
+            "INSERT INTO runtime_sessions(project_id, mode, base_case_json) VALUES(?,?,?)",
+            (self.current_project_id, "direct_api", json.dumps({"InTempSide1": 20.0, "InTempSide2": 40.0})),
+        ).lastrowid
+        self.manager.db.execute(
+            "INSERT INTO runtime_observations(session_id, inputs_json, outputs_json, status, error_text) VALUES(?,?,?,?,?)",
+            (
+                session,
+                json.dumps({"InTempSide1": 20.0, "InTempSide2": 40.0}),
+                json.dumps(result.get("outputs", {})),
+                result.get("status", "unknown"),
+                result.get("error", ""),
+            ),
+        )
         self.runtime_text.setPlainText(json.dumps(result, indent=2))
 
     def _run_report(self):
@@ -210,6 +269,140 @@ class StudioWindow(QMainWindow):
             out_dir=self.manager.workspace / "reports",
         )
         self.report_text.setPlainText("\n".join([f"{k}: {v}" for k, v in paths.items()]))
+
+    def _active_text(self, screen_name: str) -> QPlainTextEdit:
+        return self.page_outputs[screen_name]
+
+    def _refresh_xml_domain(self):
+        if not self.current_project_id:
+            self._active_text("XML Domain Explorer").setPlainText("Import project first.")
+            return
+        rows = self.manager.db.execute(
+            "SELECT name, source_file, category, dtype, confidence FROM xml_variables WHERE project_id=? ORDER BY confidence DESC, name LIMIT 300",
+            (self.current_project_id,),
+        ).fetchall()
+        self._active_text("XML Domain Explorer").setPlainText(
+            "\n".join([f"{r[0]} | {r[2]} | {r[3]} | conf={r[4]:.2f} | {r[1]}" for r in rows]) or "No XML variables found."
+        )
+
+    def _refresh_dll_findings(self):
+        if not self.current_project_id:
+            self._active_text("DLL Analyzer").setPlainText("Import project first.")
+            return
+        rows = self.manager.db.execute(
+            "SELECT dll_name, architecture, string_clue_count, probable_role, confidence, why FROM dll_findings WHERE project_id=? ORDER BY confidence DESC",
+            (self.current_project_id,),
+        ).fetchall()
+        self._active_text("DLL Analyzer").setPlainText(
+            "\n".join([f"{r[0]} | arch={r[1]} | clues={r[2]} | role={r[3]} | conf={r[4]:.2f} | {r[5]}" for r in rows]) or "No DLL findings."
+        )
+
+    def _refresh_interface_candidates(self):
+        if not self.current_project_id:
+            self._active_text("Interface Discovery").setPlainText("Import project first.")
+            return
+        rows = self.manager.db.execute(
+            "SELECT dll_name, function_name, probable_purpose, call_order_guess, confidence FROM interface_candidates WHERE project_id=? ORDER BY call_order_guess, confidence DESC",
+            (self.current_project_id,),
+        ).fetchall()
+        self._active_text("Interface Discovery").setPlainText(
+            "\n".join([f"{r[0]}::{r[1]} | {r[2]} | step={r[3]} | conf={r[4]:.2f}" for r in rows]) or "No interface candidates found."
+        )
+
+    def _refresh_variable_catalog(self):
+        if not self.current_project_id:
+            self._active_text("Variable Catalog").setPlainText("Import project first.")
+            return
+        rows = self.manager.db.execute(
+            "SELECT canonical_name, category, data_type, confidence, sweepable FROM variable_mappings WHERE project_id=? ORDER BY confidence DESC, canonical_name LIMIT 500",
+            (self.current_project_id,),
+        ).fetchall()
+        self._active_text("Variable Catalog").setPlainText(
+            "\n".join([f"{r[0]} | {r[1]} | {r[2]} | conf={r[3]:.2f} | sweepable={bool(r[4])}" for r in rows]) or "No variable mappings found."
+        )
+
+    def _guided_base_scenario(self):
+        self._active_text("Guided Review").setPlainText(
+            "Base Scenario Guide:\n"
+            "1) Start with one-phase mode.\n"
+            "2) Select common fluid (e.g., Water) from General/FLUID.\n"
+            "3) Keep design geometry fixed for initial runs.\n"
+            "4) Change one input at a time.\n"
+            "5) Keep failed combinations as invalid samples."
+        )
+
+    def _guided_runtime_readiness(self):
+        self._active_text("Guided Review").setPlainText(
+            "Runtime Readiness:\n"
+            "- Direct API probing: use when AlfaCalcInterface clues are present.\n"
+            "- Host-assisted probing: use if function signatures are uncertain.\n"
+            "- Static-only mode: continue with XML + DLL evidence when runtime is blocked."
+        )
+
+    def _run_sensitivity(self):
+        if not self.current_project_id:
+            self._active_text("Sensitivity Analysis").setPlainText("Import project first.")
+            return
+        rows = self.manager.db.execute(
+            "SELECT inputs_json, outputs_json FROM runtime_observations ro JOIN runtime_sessions rs ON ro.session_id=rs.id WHERE rs.project_id=?",
+            (self.current_project_id,),
+        ).fetchall()
+        runs: list[dict] = []
+        for inp, out in rows:
+            obj = {}
+            obj.update(json.loads(inp or "{}"))
+            obj.update({k: v for k, v in json.loads(out or "{}").items() if isinstance(v, (int, float))})
+            runs.append(obj)
+        if len(runs) < 2:
+            self._active_text("Sensitivity Analysis").setPlainText(
+                "Need at least two runtime observations with numeric outputs.\nRun Runtime Probing multiple times with different inputs."
+            )
+            return
+        matrix = self.manager.sensitivity.influence_matrix(runs, ["InTempSide1", "InTempSide2"], ["echo_input_count"])
+        lines = []
+        for _, row in matrix.iterrows():
+            self.manager.db.execute(
+                "INSERT INTO sensitivity_results(project_id, input_var, output_var, influence, evidence_source, notes) VALUES(?,?,?,?,?,?)",
+                (self.current_project_id, row["input_var"], row["output_var"], float(row["influence"]), row["evidence_source"], row["notes"]),
+            )
+            lines.append(f"{row['input_var']} -> {row['output_var']}: {row['influence']:.3f}")
+        self._active_text("Sensitivity Analysis").setPlainText("\n".join(lines))
+
+    def _run_lookup_build(self):
+        if not self.current_project_id:
+            self._active_text("Lookup Builder").setPlainText("Import project first.")
+            return
+        df = self.manager.lookup.generate_samples(
+            {"InTempSide1": (10, 80, 8), "InTempSide2": (20, 120, 8)},
+            lambda p: {"HeatLoad": p["InTempSide2"] - p["InTempSide1"], "EffectiveArea": (p["InTempSide1"] + p["InTempSide2"]) / 2.0},
+        )
+        meta = {"selected_input_axes": ["InTempSide1", "InTempSide2"], "selected_outputs": ["HeatLoad", "EffectiveArea"], "mode": "one-phase-demo"}
+        exports = self.manager.lookup.export(df, self.manager.workspace / "lookup_exports", "lookup", meta)
+        self._active_text("Lookup Builder").setPlainText("Generated lookup exports:\n" + "\n".join(str(p) for p in exports))
+
+    def _show_logs(self):
+        if not self.current_project_id:
+            self._active_text("Logs / Diagnostics").setPlainText("Import project first.")
+            return
+        rows = self.manager.db.execute("SELECT level, message, created_at FROM logs WHERE project_id=? ORDER BY id DESC LIMIT 100", (self.current_project_id,)).fetchall()
+        self._active_text("Logs / Diagnostics").setPlainText(
+            "\n".join([f"[{r[2]}] {r[0]}: {r[1]}" for r in rows]) or "No log records yet."
+        )
+
+    def _show_settings(self):
+        self._active_text("Settings").setPlainText(
+            f"Workspace: {self.manager.workspace}\n"
+            f"Database: {self.manager.db.db_path}\n"
+            "Mode support:\n- Automatic-first\n- Guided semi-automatic\n- Expert (manual review via catalog screens)"
+        )
+
+    def _show_about(self):
+        self._active_text("About / Help").setPlainText(
+            "CasCalc Reverse Mapper\n"
+            "Package-specific reverse engineering assistant for CasCalc.zip.\n"
+            "Use Project Import first, then review XML/DLL/Interface/Variable screens,\n"
+            "run probing and sensitivity, generate lookup exports, then export reports."
+        )
 
 
 def main():
