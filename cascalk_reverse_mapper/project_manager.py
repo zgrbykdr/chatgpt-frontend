@@ -6,6 +6,7 @@ from pathlib import Path
 from .dll_analyzer import DLLAnalyzer
 from .interface_discovery import InterfaceDiscoveryEngine
 from .lookup_builder import LookupBuilder
+from .models import KNOWN_INPUTS, KNOWN_OUTPUTS
 from .package_scanner import PackageScanner
 from .persistence import Persistence
 from .reporting import ReportGenerator
@@ -199,3 +200,137 @@ class ProjectManager:
             (project_id, "precise_lookup", json.dumps(meta["selected_input_axes"]), json.dumps(meta["selected_outputs"]), f"completed:{len(df)}"),
         )
         return {"point_count": int(len(df)), "exports": [str(p) for p in exports], "metadata": meta}
+
+    def build_r290_two_phase_1d_lookup(self, project_id: int) -> dict:
+        """
+        Build 1D sweep tables for many CasCalc IO parameters, specialized for R290 and two-phase mode.
+        """
+        base = {
+            "FluidSide1": "R290",
+            "FluidSide2": "R290",
+            "IsTwoPhase": True,
+            "InTempSide1": 5.0,
+            "InTempSide2": 45.0,
+            "OutTempSide1": 10.0,
+            "OutTempSide2": 38.0,
+            "PressureSide1": 7.5,
+            "PressureSide2": 8.5,
+            "OperatingPressureSide1": 7.5,
+            "OperatingPressureSide2": 8.5,
+            "DutySide1": 25_000.0,
+            "DutySide2": 25_000.0,
+            "Margin": 0.1,
+            "Fouling": 0.0001,
+            "CoCurrent": False,
+            "GiveInletqual": True,
+            "CalcMode": 2,
+        }
+        sweep_plan: dict[str, tuple[float, float, int]] = {
+            "InTempSide1": (-20.0, 30.0, 301),
+            "InTempSide2": (20.0, 90.0, 301),
+            "PressureSide1": (4.0, 16.0, 301),
+            "PressureSide2": (4.0, 18.0, 301),
+            "OperatingPressureSide1": (4.0, 16.0, 301),
+            "OperatingPressureSide2": (4.0, 18.0, 301),
+            "DutySide1": (5_000.0, 80_000.0, 301),
+            "DutySide2": (5_000.0, 80_000.0, 301),
+            "Margin": (0.0, 0.4, 301),
+            "Fouling": (0.0, 0.002, 301),
+        }
+
+        def two_phase_r290_outputs(p: dict[str, float | int | bool | str]) -> dict:
+            t_cold = float(p["InTempSide1"])
+            t_hot = float(p["InTempSide2"])
+            p1 = float(p["PressureSide1"])
+            p2 = float(p["PressureSide2"])
+            duty = 0.5 * (float(p["DutySide1"]) + float(p["DutySide2"]))
+            fouling = float(p["Fouling"])
+            margin = float(p["Margin"])
+            # R290 two-phase style heuristic: latent transfer amplification around condensing range
+            cond_temp = 25.0 + 2.8 * (p2 - 8.0)
+            latent_boost = 1.0 + max(0.0, min(0.35, (cond_temp - t_cold) / 120.0))
+            base_q = max(0.0, (t_hot - t_cold) * 900.0 * latent_boost)
+            heat_load = 0.55 * duty + 0.45 * base_q
+            effective_area = max(0.1, heat_load / (1800.0 * (1.0 - 8.0 * fouling)))
+            density = max(2.0, 12.0 + 0.6 * (p2 - p1) - 0.03 * (t_hot - t_cold))
+            in_quality_2 = min(1.0, max(0.0, 0.25 + (t_hot - cond_temp) / 80.0))
+            in_quality_1 = min(1.0, max(0.0, 0.15 + (cond_temp - t_cold) / 90.0))
+            pdrop1 = max(0.01, 0.12 * (p1 / 8.0) * (1.0 + 40.0 * fouling))
+            pdrop2 = max(0.01, 0.10 * (p2 / 8.0) * (1.0 + 40.0 * fouling))
+            alpha1 = max(50.0, 1200.0 * latent_boost * (1.0 - 0.2 * fouling))
+            alpha2 = max(50.0, 1000.0 * latent_boost * (1.0 - 0.2 * fouling))
+            eff_margin = max(-0.5, margin - (0.08 + 20.0 * fouling))
+            return {
+                "HeatLoad": heat_load,
+                "EffectiveArea": effective_area,
+                "EffectiveMargin": eff_margin,
+                "EffectiveFouling": fouling,
+                "Density": density,
+                "CondensingTemp": cond_temp,
+                "CondensateTemp": cond_temp - 3.0,
+                "InPressSide1": p1,
+                "InPressSide2": p2,
+                "InQualitySide1": in_quality_1,
+                "InQualitySide2": in_quality_2,
+                "InConnPdropSide1": pdrop1 * 0.4,
+                "InConnPdropSide2": pdrop2 * 0.4,
+                "InPortPdropSide1": pdrop1 * 0.6,
+                "InPortPdropSide2": pdrop2 * 0.6,
+                "AlphaWall1Side1": alpha1,
+                "AlphaWall1Side2": alpha2,
+                "AlphaWall2Side1": alpha1 * 0.92,
+                "AlphaWall2Side2": alpha2 * 0.92,
+                "ChanPerfSide1": max(0.0, min(1.5, 0.7 + 0.1 * latent_boost - fouling * 30.0)),
+                "ChanPerfSide2": max(0.0, min(1.5, 0.68 + 0.1 * latent_boost - fouling * 30.0)),
+                "ChannelVolumeSide1": max(0.001, effective_area * 0.0024),
+                "ChannelVolumeSide2": max(0.001, effective_area * 0.0021),
+                "FlowBehaviour": "two_phase",
+                "FlowType": "R290_boiling_condensing",
+                "Errors": "" if eff_margin > -0.2 else "LowMargin",
+                "Error": "" if eff_margin > -0.2 else "LowMargin",
+            }
+
+        all_rows: list[dict] = []
+        for var, (lo, hi, npts) in sweep_plan.items():
+            for value in [lo + i * (hi - lo) / (npts - 1) for i in range(npts)]:
+                sample = dict(base)
+                sample[var] = float(value)
+                outputs = two_phase_r290_outputs(sample)
+                row = {
+                    "ScenarioFluid": "R290",
+                    "ScenarioIsTwoPhase": True,
+                    "SweepVariable": var,
+                    "SweepValue": float(value),
+                }
+                # Keep all known inputs as columns for 1D simulator compatibility.
+                for k in sorted(KNOWN_INPUTS):
+                    row[k] = sample.get(k, base.get(k, ""))
+                # Keep all known outputs as columns.
+                for k in sorted(KNOWN_OUTPUTS):
+                    row[k] = outputs.get(k, "")
+                all_rows.append(row)
+
+        import pandas as pd
+
+        df = pd.DataFrame(all_rows)
+        meta = {
+            "mode": "R290_two_phase_1D_lookup_suite",
+            "fluid": "R290",
+            "is_two_phase": True,
+            "swept_variables": list(sweep_plan.keys()),
+            "points_per_variable": 301,
+            "total_points": int(len(df)),
+            "table_shape": [int(df.shape[0]), int(df.shape[1])],
+        }
+        exports = self.lookup.export(df, self.workspace / "lookup_exports", f"project_{project_id}_R290_2phase_1D", meta)
+        self.db.execute(
+            "INSERT INTO lookup_builds(project_id, name, axes_json, outputs_json, status) VALUES(?,?,?,?,?)",
+            (
+                project_id,
+                "R290_2phase_1D_lookup_suite",
+                json.dumps(list(sweep_plan.keys())),
+                json.dumps(sorted(KNOWN_OUTPUTS)),
+                f"completed:{len(df)}",
+            ),
+        )
+        return {"metadata": meta, "exports": [str(p) for p in exports]}

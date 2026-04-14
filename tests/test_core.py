@@ -5,6 +5,7 @@ from cascalk_reverse_mapper.dll_analyzer import DLLAnalyzer
 from cascalk_reverse_mapper.lookup_builder import LookupBuilder
 from cascalk_reverse_mapper.package_scanner import PackageScanner
 from cascalk_reverse_mapper.persistence import Persistence
+from cascalk_reverse_mapper.project_manager import ProjectManager
 from cascalk_reverse_mapper.runtime_probe import RuntimeProbeEngine
 from cascalk_reverse_mapper.sensitivity import SensitivityEngine
 from cascalk_reverse_mapper.xml_extractor import XMLDomainExtractor
@@ -108,3 +109,12 @@ def test_lookup_high_resolution_grid():
     )
     assert len(df) >= 25
     assert "HeatLoad" in df.columns
+
+
+def test_project_manager_r290_two_phase_lookup(tmp_path: Path):
+    pm = ProjectManager(tmp_path / "workspace")
+    project_id = pm.db.execute("INSERT INTO projects(name, root_path) VALUES(?,?)", ("r290", str(tmp_path))).lastrowid
+    result = pm.build_r290_two_phase_1d_lookup(project_id)
+    assert result["metadata"]["fluid"] == "R290"
+    assert result["metadata"]["is_two_phase"] is True
+    assert result["metadata"]["total_points"] >= 300

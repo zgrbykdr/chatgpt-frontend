@@ -173,7 +173,7 @@ class StudioWindow(QMainWindow):
             btn.clicked.connect(self._run_sensitivity)
             layout.addWidget(btn)
         elif name == "Lookup Builder":
-            btn = QPushButton("Generate Precise High-Density Lookup")
+            btn = QPushButton("Generate R290 2-Phase 1D Lookup Suite")
             btn.clicked.connect(self._run_lookup_build)
             layout.addWidget(btn)
         elif name == "Report Preview / Export":
@@ -376,10 +376,10 @@ class StudioWindow(QMainWindow):
         if not self.current_project_id:
             self._active_text("Lookup Builder").setPlainText("Import project first.")
             return
-        self.status.showMessage("Generating high-density lookup table...")
-        result = self.manager.build_precise_lookup(self.current_project_id)
+        self.status.showMessage("Generating R290 two-phase 1D high-density lookup suite...")
+        result = self.manager.build_r290_two_phase_1d_lookup(self.current_project_id)
         self._active_text("Lookup Builder").setPlainText(json.dumps(result, indent=2))
-        self.status.showMessage("High-density lookup completed.")
+        self.status.showMessage("R290 two-phase lookup suite completed.")
 
     def _show_logs(self):
         if not self.current_project_id:
