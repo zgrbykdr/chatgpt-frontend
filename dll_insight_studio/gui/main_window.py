@@ -176,10 +176,22 @@ class MainWindow(QMainWindow):
 
         self.guided = QWidget(); gl = QVBoxLayout(self.guided)
         self.guided_text = QTextEdit(); self.guided_text.setReadOnly(True)
-        self.guidance_choice = QComboBox(); self.guidance_choice.addItems(["Confirm", "Skip", "I am not sure", "Unsure"])
+        self.guidance_scope = QComboBox(); self.guidance_scope.addItems(["String Label Decision", "Function Role Decision"])
+        self.guidance_scope.currentTextChanged.connect(self._refresh_guided_targets)
+        self.guidance_target = QComboBox()
+        self.guidance_choice = QComboBox(); self.guidance_choice.addItems(["Input", "Output", "Parameter", "State", "Config", "Ignore", "I am not sure", "Unsure"])
         save_decision = QPushButton("Record Decision")
         save_decision.clicked.connect(self._record_guided_decision)
-        gl.addWidget(QLabel("Guided Decision Wizard")); gl.addWidget(self.guided_text); gl.addWidget(self.guidance_choice); gl.addWidget(save_decision)
+        rerun_btn = QPushButton("Re-run Analysis with Decisions")
+        rerun_btn.clicked.connect(self._rerun_after_guidance)
+        gl.addWidget(QLabel("Guided Decision Wizard"))
+        gl.addWidget(QLabel("1) Choose decision type  2) Choose target item  3) Choose label/role  4) Click Record Decision"))
+        gl.addWidget(self.guided_text)
+        gl.addWidget(self.guidance_scope)
+        gl.addWidget(self.guidance_target)
+        gl.addWidget(self.guidance_choice)
+        gl.addWidget(save_decision)
+        gl.addWidget(rerun_btn)
         self.stack.addWidget(self.guided)
 
         self.runtime = QWidget(); rl = QVBoxLayout(self.runtime)
@@ -329,6 +341,7 @@ class MainWindow(QMainWindow):
         self.runtime_text.setPlainText(readiness + "\n\nRecord observations here for baseline and changed runs.")
         self.report_preview.setPlainText(self._executive_preview())
         self._resolve_dependencies_with_user()
+        self._refresh_guided_targets()
 
         logs = self.state.repo.load_dashboard_data(self.state.project_id)
         self.logs.setPlainText(json.dumps(logs.get("analysis_logs", []) + logs.get("app_logs", []), indent=2))
@@ -344,9 +357,63 @@ class MainWindow(QMainWindow):
         if not self.state.project_id:
             return
         choice = self.guidance_choice.currentText()
-        prompt = self.guided_text.toPlainText().splitlines()[0]
-        self.state.repo.add_guidance_decision(self.state.project_id, "important_terms", prompt, choice, "Recorded from guided screen")
-        QMessageBox.information(self, "Saved", "Decision saved and will influence confidence on rerun.")
+        scope = self.guidance_scope.currentText()
+        target = self.guidance_target.currentText()
+        if target.endswith("No uncertain target found"):
+            QMessageBox.information(self, "Guided Decision", "There are currently no uncertain targets to label.")
+            return
+        prompt = f"{scope}: {target}"
+        if target.startswith("STR::"):
+            value = target.replace("STR::", "", 1)
+            map_choice = {
+                "Input": "Possible Inputs",
+                "Output": "Possible Outputs",
+                "Parameter": "Possible Parameters",
+                "State": "Possible States",
+                "Config": "Possible Config Terms",
+                "Ignore": "Unknown but important",
+                "Unsure": "Unknown but important",
+                "I am not sure": "Unknown but important",
+            }
+            self.state.manual_labels[value] = map_choice.get(choice, "Unknown but important")
+        elif target.startswith("FN::"):
+            fn = target.replace("FN::", "", 1)
+            map_role = {
+                "Input": "Input",
+                "Output": "Output",
+                "Parameter": "Parameter",
+                "State": "State Update",
+                "Config": "Config",
+                "Ignore": "Control/Coordinator",
+                "Unsure": "Compute",
+                "I am not sure": "Compute",
+            }
+            self.state.function_overrides[fn] = map_role.get(choice, "Compute")
+        self.state.repo.add_guidance_decision(self.state.project_id, "guided_decision", prompt, choice, "Recorded from guided screen")
+        QMessageBox.information(self, "Saved", "Decision saved. Click 'Re-run Analysis with Decisions' to apply immediately.")
+
+    def _rerun_after_guidance(self) -> None:
+        if not self.state.dll_path:
+            return
+        self.statusBar().showMessage("Re-running analysis with guided decisions...")
+        self.progress.setRange(0, 0)
+        self._run_worker()
+
+    def _refresh_guided_targets(self) -> None:
+        if not self.state.analysis:
+            return
+        self.guidance_target.clear()
+        scope = self.guidance_scope.currentText()
+        if scope == "String Label Decision":
+            low_conf_strings = [s for s in self.state.analysis.get("strings", []) if s.get("confidence", 0) < 0.65][:80]
+            for s in low_conf_strings:
+                self.guidance_target.addItem(f"STR::{s['value']}")
+        else:
+            top_functions = self.state.analysis.get("functions", [])[:80]
+            for fn in top_functions:
+                self.guidance_target.addItem(f"FN::{fn['name']}")
+        if self.guidance_target.count() == 0:
+            self.guidance_target.addItem("STR::No uncertain target found")
 
     def _save_runtime_observation(self) -> None:
         if not self.state.project_id:
