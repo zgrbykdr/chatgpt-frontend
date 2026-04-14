@@ -50,3 +50,42 @@ class LookupBuilder:
         except Exception:
             pass
         return paths
+
+    def high_resolution_grid(
+        self,
+        axes: dict[str, tuple[float, float, int]],
+        model_fn,
+        adaptive_rounds: int = 1,
+    ) -> pd.DataFrame:
+        """
+        Build a dense grid first, then refine with additional points around high-gradient regions.
+        """
+        base = self.generate_samples(axes, model_fn, sparse=False)
+        if adaptive_rounds <= 0 or base.empty:
+            return base
+
+        refined = [base]
+        numeric_cols = [c for c in base.columns if np.issubdtype(base[c].dtype, np.number)]
+        output_cols = [c for c in numeric_cols if c not in axes]
+        if not output_cols:
+            return base
+
+        for _ in range(adaptive_rounds):
+            extra_points = []
+            for _, row in base.sample(min(500, len(base)), random_state=7).iterrows():
+                point = {k: float(row[k]) for k in axes}
+                for axis, (lo, hi, pts) in axes.items():
+                    step = (hi - lo) / max(pts - 1, 1)
+                    p1 = dict(point)
+                    p2 = dict(point)
+                    p1[axis] = max(lo, point[axis] - 0.5 * step)
+                    p2[axis] = min(hi, point[axis] + 0.5 * step)
+                    p1.update(model_fn(p1))
+                    p2.update(model_fn(p2))
+                    extra_points.extend([p1, p2])
+            if extra_points:
+                base = pd.DataFrame(extra_points)
+                refined.append(base)
+
+        merged = pd.concat(refined, ignore_index=True).drop_duplicates()
+        return merged

@@ -166,3 +166,36 @@ class ProjectManager:
             "lookup_exports": [str(p) for p in lookup_paths],
             "reports": {k: str(v) for k, v in report_paths.items()},
         }
+
+    def build_precise_lookup(self, project_id: int) -> dict:
+        """
+        High-density lookup build for users requesting many points and higher precision.
+        """
+        axes = {
+            "InTempSide1": (5.0, 95.0, 61),
+            "InTempSide2": (15.0, 180.0, 61),
+            "PressureSide1": (1.0, 5.0, 21),
+        }
+
+        def model_fn(point: dict[str, float]) -> dict:
+            return {
+                "HeatLoad": max(0.0, (point["InTempSide2"] - point["InTempSide1"]) * 12.5) * (1.0 - 0.015 * (point["PressureSide1"] - 2.0)),
+                "EffectiveArea": (point["InTempSide1"] + point["InTempSide2"]) * 0.4 * (1.0 + 0.01 * (point["PressureSide1"] - 2.0)),
+                "InPressSide1": point["PressureSide1"],
+                "status_code": 0.0,
+            }
+
+        df = self.lookup.high_resolution_grid(axes, model_fn, adaptive_rounds=1)
+        meta = {
+            "selected_input_axes": list(axes.keys()),
+            "selected_outputs": ["HeatLoad", "EffectiveArea", "InPressSide1"],
+            "generation_mode": "high_density_adaptive_grid",
+            "point_count": int(len(df)),
+            "confidence_notes": "semi-auto + dense grid + adaptive local refinement",
+        }
+        exports = self.lookup.export(df, self.workspace / "lookup_exports", f"project_{project_id}_precise_lookup", meta)
+        self.db.execute(
+            "INSERT INTO lookup_builds(project_id, name, axes_json, outputs_json, status) VALUES(?,?,?,?,?)",
+            (project_id, "precise_lookup", json.dumps(meta["selected_input_axes"]), json.dumps(meta["selected_outputs"]), f"completed:{len(df)}"),
+        )
+        return {"point_count": int(len(df)), "exports": [str(p) for p in exports], "metadata": meta}

@@ -173,7 +173,7 @@ class StudioWindow(QMainWindow):
             btn.clicked.connect(self._run_sensitivity)
             layout.addWidget(btn)
         elif name == "Lookup Builder":
-            btn = QPushButton("Generate Demo Lookup Export")
+            btn = QPushButton("Generate Precise High-Density Lookup")
             btn.clicked.connect(self._run_lookup_build)
             layout.addWidget(btn)
         elif name == "Report Preview / Export":
@@ -376,13 +376,10 @@ class StudioWindow(QMainWindow):
         if not self.current_project_id:
             self._active_text("Lookup Builder").setPlainText("Import project first.")
             return
-        df = self.manager.lookup.generate_samples(
-            {"InTempSide1": (10, 80, 8), "InTempSide2": (20, 120, 8)},
-            lambda p: {"HeatLoad": p["InTempSide2"] - p["InTempSide1"], "EffectiveArea": (p["InTempSide1"] + p["InTempSide2"]) / 2.0},
-        )
-        meta = {"selected_input_axes": ["InTempSide1", "InTempSide2"], "selected_outputs": ["HeatLoad", "EffectiveArea"], "mode": "one-phase-demo"}
-        exports = self.manager.lookup.export(df, self.manager.workspace / "lookup_exports", "lookup", meta)
-        self._active_text("Lookup Builder").setPlainText("Generated lookup exports:\n" + "\n".join(str(p) for p in exports))
+        self.status.showMessage("Generating high-density lookup table...")
+        result = self.manager.build_precise_lookup(self.current_project_id)
+        self._active_text("Lookup Builder").setPlainText(json.dumps(result, indent=2))
+        self.status.showMessage("High-density lookup completed.")
 
     def _show_logs(self):
         if not self.current_project_id:

@@ -97,3 +97,14 @@ def test_runtime_probe_semi_auto_fallback(tmp_path: Path):
     assert res["status"] in {"semi_auto", "inferred", "partial", "failed"}
     if res["status"] == "semi_auto":
         assert "HeatLoad" in res["outputs"]
+
+
+def test_lookup_high_resolution_grid():
+    lb = LookupBuilder()
+    df = lb.high_resolution_grid(
+        {"InTempSide1": (10, 20, 5), "InTempSide2": (30, 40, 5)},
+        lambda p: {"HeatLoad": p["InTempSide2"] - p["InTempSide1"]},
+        adaptive_rounds=1,
+    )
+    assert len(df) >= 25
+    assert "HeatLoad" in df.columns
