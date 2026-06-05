@@ -2,8 +2,8 @@
   "metadata": {
     "id": "classic_template",
     "name": "Classic Property Trading Game Template",
-    "created_at": "2026-06-05T06:44:13",
-    "updated_at": "2026-06-05T06:44:13",
+    "created_at": "2026-06-05T07:27:54",
+    "updated_at": "2026-06-05T07:27:54",
     "version": 1
   },
   "settings": {
@@ -34,7 +34,7 @@
     "jail_turns": 3,
     "double_reroll_enabled": true,
     "three_doubles_jail": true,
-    "free_parking_pool_enabled": true,
+    "free_parking_pool_enabled": false,
     "taxes_to": "bank",
     "end_condition": "last_player_standing",
     "turn_limit": 60,
@@ -128,7 +128,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 2,
+      "rent_full_set": 4,
+      "rent_1_house": 10,
+      "rent_2_house": 30,
+      "rent_3_house": 90,
+      "rent_4_house": 160,
+      "rent_hotel": 250,
+      "house_cost": 50,
+      "mortgage_value": 30
     },
     {
       "id": 2,
@@ -216,7 +225,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 4,
+      "rent_full_set": 8,
+      "rent_1_house": 20,
+      "rent_2_house": 60,
+      "rent_3_house": 180,
+      "rent_4_house": 320,
+      "rent_hotel": 450,
+      "house_cost": 50,
+      "mortgage_value": 30
     },
     {
       "id": 4,
@@ -304,7 +322,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 25,
+      "rent_full_set": 200,
+      "mortgage_value": 100,
+      "railroad_rents": [
+        25,
+        50,
+        100,
+        200
+      ]
     },
     {
       "id": 6,
@@ -348,7 +375,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 6,
+      "rent_full_set": 12,
+      "rent_1_house": 30,
+      "rent_2_house": 90,
+      "rent_3_house": 270,
+      "rent_4_house": 400,
+      "rent_hotel": 550,
+      "house_cost": 50,
+      "mortgage_value": 50
     },
     {
       "id": 7,
@@ -436,7 +472,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 6,
+      "rent_full_set": 12,
+      "rent_1_house": 30,
+      "rent_2_house": 90,
+      "rent_3_house": 270,
+      "rent_4_house": 400,
+      "rent_hotel": 550,
+      "house_cost": 50,
+      "mortgage_value": 50
     },
     {
       "id": 9,
@@ -480,7 +525,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 8,
+      "rent_full_set": 16,
+      "rent_1_house": 40,
+      "rent_2_house": 100,
+      "rent_3_house": 300,
+      "rent_4_house": 450,
+      "rent_hotel": 600,
+      "house_cost": 50,
+      "mortgage_value": 60
     },
     {
       "id": 10,
@@ -568,14 +622,23 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 10,
+      "rent_full_set": 20,
+      "rent_1_house": 50,
+      "rent_2_house": 150,
+      "rent_3_house": 450,
+      "rent_4_house": 625,
+      "rent_hotel": 750,
+      "house_cost": 100,
+      "mortgage_value": 70
     },
     {
       "id": 12,
       "name": "Electric Company",
       "type": "utility",
       "price": 150,
-      "rent": 20,
+      "rent": 0,
       "color_group": "Utility",
       "image": "",
       "icon": "",
@@ -612,7 +675,14 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 0,
+      "rent_full_set": 0,
+      "mortgage_value": 75,
+      "utility_multipliers": [
+        4,
+        10
+      ]
     },
     {
       "id": 13,
@@ -656,7 +726,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 10,
+      "rent_full_set": 20,
+      "rent_1_house": 50,
+      "rent_2_house": 150,
+      "rent_3_house": 450,
+      "rent_4_house": 625,
+      "rent_hotel": 750,
+      "house_cost": 100,
+      "mortgage_value": 70
     },
     {
       "id": 14,
@@ -700,7 +779,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 12,
+      "rent_full_set": 24,
+      "rent_1_house": 60,
+      "rent_2_house": 180,
+      "rent_3_house": 500,
+      "rent_4_house": 700,
+      "rent_hotel": 900,
+      "house_cost": 100,
+      "mortgage_value": 80
     },
     {
       "id": 15,
@@ -744,7 +832,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 25,
+      "rent_full_set": 200,
+      "mortgage_value": 100,
+      "railroad_rents": [
+        25,
+        50,
+        100,
+        200
+      ]
     },
     {
       "id": 16,
@@ -788,7 +885,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 14,
+      "rent_full_set": 28,
+      "rent_1_house": 70,
+      "rent_2_house": 200,
+      "rent_3_house": 550,
+      "rent_4_house": 750,
+      "rent_hotel": 950,
+      "house_cost": 100,
+      "mortgage_value": 90
     },
     {
       "id": 17,
@@ -876,7 +982,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 14,
+      "rent_full_set": 28,
+      "rent_1_house": 70,
+      "rent_2_house": 200,
+      "rent_3_house": 550,
+      "rent_4_house": 750,
+      "rent_hotel": 950,
+      "house_cost": 100,
+      "mortgage_value": 90
     },
     {
       "id": 19,
@@ -920,7 +1035,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 16,
+      "rent_full_set": 32,
+      "rent_1_house": 80,
+      "rent_2_house": 220,
+      "rent_3_house": 600,
+      "rent_4_house": 800,
+      "rent_hotel": 1000,
+      "house_cost": 100,
+      "mortgage_value": 100
     },
     {
       "id": 20,
@@ -1008,7 +1132,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 18,
+      "rent_full_set": 36,
+      "rent_1_house": 90,
+      "rent_2_house": 250,
+      "rent_3_house": 700,
+      "rent_4_house": 875,
+      "rent_hotel": 1050,
+      "house_cost": 150,
+      "mortgage_value": 110
     },
     {
       "id": 22,
@@ -1096,7 +1229,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 18,
+      "rent_full_set": 36,
+      "rent_1_house": 90,
+      "rent_2_house": 250,
+      "rent_3_house": 700,
+      "rent_4_house": 875,
+      "rent_hotel": 1050,
+      "house_cost": 150,
+      "mortgage_value": 110
     },
     {
       "id": 24,
@@ -1140,7 +1282,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 20,
+      "rent_full_set": 40,
+      "rent_1_house": 100,
+      "rent_2_house": 300,
+      "rent_3_house": 750,
+      "rent_4_house": 925,
+      "rent_hotel": 1100,
+      "house_cost": 150,
+      "mortgage_value": 120
     },
     {
       "id": 25,
@@ -1184,7 +1335,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 25,
+      "rent_full_set": 200,
+      "mortgage_value": 100,
+      "railroad_rents": [
+        25,
+        50,
+        100,
+        200
+      ]
     },
     {
       "id": 26,
@@ -1228,7 +1388,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 22,
+      "rent_full_set": 44,
+      "rent_1_house": 110,
+      "rent_2_house": 330,
+      "rent_3_house": 800,
+      "rent_4_house": 975,
+      "rent_hotel": 1150,
+      "house_cost": 150,
+      "mortgage_value": 130
     },
     {
       "id": 27,
@@ -1272,14 +1441,23 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 22,
+      "rent_full_set": 44,
+      "rent_1_house": 110,
+      "rent_2_house": 330,
+      "rent_3_house": 800,
+      "rent_4_house": 975,
+      "rent_hotel": 1150,
+      "house_cost": 150,
+      "mortgage_value": 130
     },
     {
       "id": 28,
       "name": "Water Works",
       "type": "utility",
       "price": 150,
-      "rent": 20,
+      "rent": 0,
       "color_group": "Utility",
       "image": "",
       "icon": "",
@@ -1316,7 +1494,14 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 0,
+      "rent_full_set": 0,
+      "mortgage_value": 75,
+      "utility_multipliers": [
+        4,
+        10
+      ]
     },
     {
       "id": 29,
@@ -1360,7 +1545,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 24,
+      "rent_full_set": 48,
+      "rent_1_house": 120,
+      "rent_2_house": 360,
+      "rent_3_house": 850,
+      "rent_4_house": 1025,
+      "rent_hotel": 1200,
+      "house_cost": 150,
+      "mortgage_value": 140
     },
     {
       "id": 30,
@@ -1448,7 +1642,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 26,
+      "rent_full_set": 52,
+      "rent_1_house": 130,
+      "rent_2_house": 390,
+      "rent_3_house": 900,
+      "rent_4_house": 1100,
+      "rent_hotel": 1275,
+      "house_cost": 200,
+      "mortgage_value": 150
     },
     {
       "id": 32,
@@ -1492,7 +1695,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 26,
+      "rent_full_set": 52,
+      "rent_1_house": 130,
+      "rent_2_house": 390,
+      "rent_3_house": 900,
+      "rent_4_house": 1100,
+      "rent_hotel": 1275,
+      "house_cost": 200,
+      "mortgage_value": 150
     },
     {
       "id": 33,
@@ -1580,7 +1792,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 28,
+      "rent_full_set": 56,
+      "rent_1_house": 150,
+      "rent_2_house": 450,
+      "rent_3_house": 1000,
+      "rent_4_house": 1200,
+      "rent_hotel": 1400,
+      "house_cost": 200,
+      "mortgage_value": 160
     },
     {
       "id": 35,
@@ -1624,7 +1845,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 25,
+      "rent_full_set": 200,
+      "mortgage_value": 100,
+      "railroad_rents": [
+        25,
+        50,
+        100,
+        200
+      ]
     },
     {
       "id": 36,
@@ -1712,7 +1942,16 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 35,
+      "rent_full_set": 70,
+      "rent_1_house": 175,
+      "rent_2_house": 500,
+      "rent_3_house": 1100,
+      "rent_4_house": 1300,
+      "rent_hotel": 1500,
+      "house_cost": 200,
+      "mortgage_value": 175
     },
     {
       "id": 38,
@@ -1800,34 +2039,22 @@
       "owner": null,
       "houses": 0,
       "hotel": false,
-      "mortgaged": false
+      "mortgaged": false,
+      "rent_base": 50,
+      "rent_full_set": 100,
+      "rent_1_house": 200,
+      "rent_2_house": 600,
+      "rent_3_house": 1400,
+      "rent_4_house": 1700,
+      "rent_hotel": 2000,
+      "house_cost": 200,
+      "mortgage_value": 200
     }
   ],
   "card_decks": {
     "Chance": [
       {
-        "id": "0a71c1cd-af62-410a-afb9-da5abcefb0c0",
-        "name": "Advance to GO",
-        "description": "Collect salary if enabled.",
-        "image": "",
-        "return_to_deck": true,
-        "single_use": false,
-        "holdable": false,
-        "tradable": false,
-        "action": {
-          "type": "go_to_square",
-          "amount": 0,
-          "target": null,
-          "message": "",
-          "timer": {
-            "mode": "none",
-            "value": 0,
-            "after_action": "none"
-          }
-        }
-      },
-      {
-        "id": "f63118be-c5a0-45b2-9469-432c7f8e559e",
+        "id": "fc8fef28-2575-437d-918d-4cbb6579fa6c",
         "name": "Bank pays dividend",
         "description": "Gain 50.",
         "image": "",
@@ -1848,9 +2075,114 @@
         }
       },
       {
-        "id": "1afe8daf-a613-4590-bca5-a4b7b1f28217",
+        "id": "cc85b1ef-6e96-472f-a0e9-a25d5e2744ef",
+        "name": "Advance to nearest Utility",
+        "description": "Move to the nearest utility; rent uses dice multiplier.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "nearest_utility",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "4796d258-2037-4e3e-9702-5fb20df4dbcc",
+        "name": "Chairman elected",
+        "description": "Pay every player 50.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "pay_all",
+          "amount": 50,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "e1024c62-b473-4334-a0ba-4ffde899c55c",
+        "name": "Get Out of Jail Free",
+        "description": "Keep this card until used.",
+        "image": "",
+        "return_to_deck": false,
+        "single_use": true,
+        "holdable": true,
+        "tradable": true,
+        "action": {
+          "type": "jail_card",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "4a851820-3cf1-4636-b2f4-fa4499f6b49f",
+        "name": "Advance to Start",
+        "description": "Move to Start and collect salary.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "advance_start",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "f2da0179-da28-420e-9c8f-3eca5eec197c",
+        "name": "Advance to Illinois Avenue",
+        "description": "Move to Illinois Avenue.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "go_to_square",
+          "amount": 0,
+          "target": 24,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "6f36ee89-8c17-41d8-84b9-a33a3870f789",
         "name": "Go to Jail",
-        "description": "Move directly to jail.",
+        "description": "Move directly to Jail.",
         "image": "",
         "return_to_deck": true,
         "single_use": false,
@@ -1869,7 +2201,91 @@
         }
       },
       {
-        "id": "e9d78065-972e-4ab3-baf5-eebe78778184",
+        "id": "8f996e0c-96b7-471b-90f9-9604f45e227d",
+        "name": "General repairs",
+        "description": "Pay 25 per house and 100 per hotel.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "repair_fee",
+          "amount": 25,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "d80d5ff1-f8b5-44d7-83aa-945583c6e411",
+        "name": "Go Back 3 Spaces",
+        "description": "Move back 3 spaces.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "move_backward",
+          "amount": 3,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "be3320d4-742b-4136-b16d-bc7c4b08ba3b",
+        "name": "Advance to Boardwalk",
+        "description": "Move to Boardwalk.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "go_to_square",
+          "amount": 0,
+          "target": 39,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "f1d8b614-786e-48dd-a4c6-31987fbb2219",
+        "name": "Advance to St. Charles Place",
+        "description": "Move to St. Charles Place.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "go_to_square",
+          "amount": 0,
+          "target": 11,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "b83cb9cf-b76a-436d-bb13-db3b69918f3c",
         "name": "Speeding fine",
         "description": "Pay 15.",
         "image": "",
@@ -1890,80 +2306,17 @@
         }
       },
       {
-        "id": "11f9038b-c885-4d0c-8da9-812b31309393",
-        "name": "Get Out of Jail",
-        "description": "Keep this card until used.",
+        "id": "40613a9e-16bd-468d-b2b5-ed2a3c64356e",
+        "name": "Advance to nearest Railroad",
+        "description": "Move to the nearest railroad and pay railroad rent if owned.",
         "image": "",
         "return_to_deck": true,
-        "single_use": true,
-        "holdable": true,
-        "tradable": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
         "action": {
-          "type": "jail_card",
+          "type": "nearest_railroad",
           "amount": 0,
-          "target": null,
-          "message": "",
-          "timer": {
-            "mode": "none",
-            "value": 0,
-            "after_action": "none"
-          }
-        }
-      },
-      {
-        "id": "cc91b520-d905-4fbf-a407-4f360fba186b",
-        "name": "Advance 3 spaces",
-        "description": "Move ahead.",
-        "image": "",
-        "return_to_deck": true,
-        "single_use": false,
-        "holdable": false,
-        "tradable": false,
-        "action": {
-          "type": "move_forward",
-          "amount": 3,
-          "target": null,
-          "message": "",
-          "timer": {
-            "mode": "none",
-            "value": 0,
-            "after_action": "none"
-          }
-        }
-      },
-      {
-        "id": "5fabb216-f073-410f-b98e-7f03ee9c4427",
-        "name": "Repairs",
-        "description": "Pay for each house/hotel.",
-        "image": "",
-        "return_to_deck": true,
-        "single_use": false,
-        "holdable": false,
-        "tradable": false,
-        "action": {
-          "type": "repair_fee",
-          "amount": 25,
-          "target": null,
-          "message": "",
-          "timer": {
-            "mode": "none",
-            "value": 0,
-            "after_action": "none"
-          }
-        }
-      },
-      {
-        "id": "e56ed21a-e63d-43c2-85f5-6c11d4a2e641",
-        "name": "Chairman elected",
-        "description": "Pay every player.",
-        "image": "",
-        "return_to_deck": true,
-        "single_use": false,
-        "holdable": false,
-        "tradable": false,
-        "action": {
-          "type": "pay_all",
-          "amount": 50,
           "target": null,
           "message": "",
           "timer": {
@@ -1976,28 +2329,7 @@
     ],
     "Community Chest": [
       {
-        "id": "418bbc84-13a9-45a8-9ad8-d5e4842996c0",
-        "name": "Doctor fee",
-        "description": "Pay 50.",
-        "image": "",
-        "return_to_deck": true,
-        "single_use": false,
-        "holdable": false,
-        "tradable": false,
-        "action": {
-          "type": "lose_money",
-          "amount": 50,
-          "target": null,
-          "message": "",
-          "timer": {
-            "mode": "none",
-            "value": 0,
-            "after_action": "none"
-          }
-        }
-      },
-      {
-        "id": "7d2f1ae3-f3f0-47c4-969e-ea919f01ec97",
+        "id": "ef447970-b6c7-4420-bff7-5c1cbec5b053",
         "name": "Bank error in your favor",
         "description": "Collect 200.",
         "image": "",
@@ -2018,9 +2350,30 @@
         }
       },
       {
-        "id": "2968b620-a204-4aff-858a-2db0ddab8ca4",
-        "name": "Life insurance matures",
-        "description": "Collect 100.",
+        "id": "0fdd2511-e5c9-4019-87ad-4c13dcbbbda0",
+        "name": "Doctor fee",
+        "description": "Pay 50.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "lose_money",
+          "amount": 50,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "e1ae16a3-92ef-48b3-8572-cc0217424603",
+        "name": "Receive consultancy fee",
+        "description": "Collect 25.",
         "image": "",
         "return_to_deck": true,
         "single_use": false,
@@ -2028,6 +2381,48 @@
         "tradable": false,
         "action": {
           "type": "gain_money",
+          "amount": 25,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "ba5cbfc6-42b7-4b9a-aba3-b28019750d59",
+        "name": "Go to Jail",
+        "description": "Move directly to Jail.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "go_to_jail",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "1d90964e-1848-46b9-b2ea-dd81abccb34d",
+        "name": "Pay hospital fees",
+        "description": "Pay 100.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "lose_money",
           "amount": 100,
           "target": null,
           "message": "",
@@ -2039,7 +2434,7 @@
         }
       },
       {
-        "id": "dc143e86-f17c-4002-903b-14a2da876d80",
+        "id": "d1424208-7c24-4728-8cf1-577b4d7e99e0",
         "name": "Pay school fees",
         "description": "Pay 50.",
         "image": "",
@@ -2060,30 +2455,9 @@
         }
       },
       {
-        "id": "9c4ca26c-16ed-4fea-9f52-48ba36bfbb19",
-        "name": "Get Out of Jail",
-        "description": "Keep this card until used.",
-        "image": "",
-        "return_to_deck": true,
-        "single_use": true,
-        "holdable": true,
-        "tradable": true,
-        "action": {
-          "type": "jail_card",
-          "amount": 0,
-          "target": null,
-          "message": "",
-          "timer": {
-            "mode": "none",
-            "value": 0,
-            "after_action": "none"
-          }
-        }
-      },
-      {
-        "id": "8dd0b43a-444a-44cc-8ce4-de779d507cfc",
+        "id": "a83d5d85-4869-42e1-a90e-c528f2694465",
         "name": "Collect from every player",
-        "description": "Each player pays you.",
+        "description": "Each player pays you 10.",
         "image": "",
         "return_to_deck": true,
         "single_use": false,
@@ -2102,16 +2476,37 @@
         }
       },
       {
-        "id": "6ce87d62-cd3e-4447-bf26-444427efd36f",
-        "name": "Go to Jail",
-        "description": "Move directly to jail.",
+        "id": "cdf9a41b-cb66-4805-879e-f730f7245ade",
+        "name": "Income tax refund",
+        "description": "Collect 20.",
         "image": "",
         "return_to_deck": true,
         "single_use": false,
         "holdable": false,
         "tradable": false,
         "action": {
-          "type": "go_to_jail",
+          "type": "gain_money",
+          "amount": 20,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "78b1f07c-042b-49b0-8dd1-dd85ac17b1a7",
+        "name": "Advance to Start",
+        "description": "Move to Start and collect salary.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "advance_start",
           "amount": 0,
           "target": null,
           "message": "",
@@ -2123,8 +2518,71 @@
         }
       },
       {
-        "id": "5626c609-6f12-4503-a988-41bc752738bb",
+        "id": "51083d41-99e6-459f-a61b-2d7e74b918af",
+        "name": "Get Out of Jail Free",
+        "description": "Keep this card until used.",
+        "image": "",
+        "return_to_deck": false,
+        "single_use": true,
+        "holdable": true,
+        "tradable": true,
+        "action": {
+          "type": "jail_card",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "36861e47-6377-4a7a-a003-47983de7fb71",
         "name": "Holiday fund matures",
+        "description": "Collect 100.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "gain_money",
+          "amount": 100,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "78644c7f-639e-47d5-a5cd-bf71335fa57b",
+        "name": "Street repairs",
+        "description": "Pay 40 per house and 115 per hotel.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "repair_fee",
+          "amount": 40,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "93a1cd4f-8b6e-4180-baaa-5d9a7c046dcf",
+        "name": "Life insurance matures",
         "description": "Collect 100.",
         "image": "",
         "return_to_deck": true,

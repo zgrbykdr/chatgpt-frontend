@@ -94,6 +94,31 @@ def create_classic_template():
         ("Chance", "card", 0, 0, "Special"), ("Park Place", "property", 350, 35, "Blue"), ("Luxury Tax", "tax", 0, 100, "Special"),
         ("Boardwalk", "property", 400, 50, "Blue")
     ]
+
+    property_specs = {
+        "Mediterranean Avenue": (60, 2, 4, 10, 30, 90, 160, 250, 50, 30),
+        "Baltic Avenue": (60, 4, 8, 20, 60, 180, 320, 450, 50, 30),
+        "Oriental Avenue": (100, 6, 12, 30, 90, 270, 400, 550, 50, 50),
+        "Vermont Avenue": (100, 6, 12, 30, 90, 270, 400, 550, 50, 50),
+        "Connecticut Avenue": (120, 8, 16, 40, 100, 300, 450, 600, 50, 60),
+        "St. Charles Place": (140, 10, 20, 50, 150, 450, 625, 750, 100, 70),
+        "States Avenue": (140, 10, 20, 50, 150, 450, 625, 750, 100, 70),
+        "Virginia Avenue": (160, 12, 24, 60, 180, 500, 700, 900, 100, 80),
+        "St. James Place": (180, 14, 28, 70, 200, 550, 750, 950, 100, 90),
+        "Tennessee Avenue": (180, 14, 28, 70, 200, 550, 750, 950, 100, 90),
+        "New York Avenue": (200, 16, 32, 80, 220, 600, 800, 1000, 100, 100),
+        "Kentucky Avenue": (220, 18, 36, 90, 250, 700, 875, 1050, 150, 110),
+        "Indiana Avenue": (220, 18, 36, 90, 250, 700, 875, 1050, 150, 110),
+        "Illinois Avenue": (240, 20, 40, 100, 300, 750, 925, 1100, 150, 120),
+        "Atlantic Avenue": (260, 22, 44, 110, 330, 800, 975, 1150, 150, 130),
+        "Ventnor Avenue": (260, 22, 44, 110, 330, 800, 975, 1150, 150, 130),
+        "Marvin Gardens": (280, 24, 48, 120, 360, 850, 1025, 1200, 150, 140),
+        "Pacific Avenue": (300, 26, 52, 130, 390, 900, 1100, 1275, 200, 150),
+        "North Carolina Avenue": (300, 26, 52, 130, 390, 900, 1100, 1275, 200, 150),
+        "Pennsylvania Avenue": (320, 28, 56, 150, 450, 1000, 1200, 1400, 200, 160),
+        "Park Place": (350, 35, 70, 175, 500, 1100, 1300, 1500, 200, 175),
+        "Boardwalk": (400, 50, 100, 200, 600, 1400, 1700, 2000, 200, 200),
+    }
     squares = []
     for i, (n, t, p, r, g) in enumerate(names):
         action = make_action("none")
@@ -106,21 +131,52 @@ def create_classic_template():
             action = make_action("draw_card", target=deck)
         elif t == "go_to_jail":
             action = make_action("go_to_jail")
-        squares.append(make_square(i, n, t, p, r, g, action))
+        sq = make_square(i, n, t, p, r, g, action)
+        if t == "property" and n in property_specs:
+            price, rent_base, rent_full_set, r1, r2, r3, r4, hotel, house_cost, mortgage = property_specs[n]
+            sq.update({"price": price, "rent": rent_base, "rent_base": rent_base, "rent_full_set": rent_full_set, "rent_1_house": r1, "rent_2_house": r2, "rent_3_house": r3, "rent_4_house": r4, "rent_hotel": hotel, "house_cost": house_cost, "mortgage_value": mortgage})
+        elif t == "railroad":
+            sq.update({"price": 200, "rent": 25, "rent_base": 25, "rent_full_set": 200, "mortgage_value": 100, "railroad_rents": [25, 50, 100, 200]})
+        elif t == "utility":
+            sq.update({"price": 150, "rent": 0, "rent_base": 0, "rent_full_set": 0, "mortgage_value": 75, "utility_multipliers": [4, 10]})
+        squares.append(sq)
     chance = [
-        ("Advance to GO", "go_to_square", 0, "Collect salary if enabled."), ("Bank pays dividend", "gain_money", 50, "Gain 50."),
-        ("Go to Jail", "go_to_jail", 0, "Move directly to jail."), ("Speeding fine", "lose_money", 15, "Pay 15."),
-        ("Get Out of Jail", "jail_card", 0, "Keep this card until used."), ("Advance 3 spaces", "move_forward", 3, "Move ahead."),
-        ("Repairs", "repair_fee", 25, "Pay for each house/hotel."), ("Chairman elected", "pay_all", 50, "Pay every player."),
+        ("Advance to Start", "advance_start", 0, None, "Move to Start and collect salary."),
+        ("Advance to Illinois Avenue", "go_to_square", 0, 24, "Move to Illinois Avenue."),
+        ("Advance to St. Charles Place", "go_to_square", 0, 11, "Move to St. Charles Place."),
+        ("Advance to nearest Utility", "nearest_utility", 0, None, "Move to the nearest utility; rent uses dice multiplier."),
+        ("Advance to nearest Railroad", "nearest_railroad", 0, None, "Move to the nearest railroad and pay railroad rent if owned."),
+        ("Bank pays dividend", "gain_money", 50, None, "Gain 50."),
+        ("Get Out of Jail Free", "jail_card", 0, None, "Keep this card until used."),
+        ("Go Back 3 Spaces", "move_backward", 3, None, "Move back 3 spaces."),
+        ("Go to Jail", "go_to_jail", 0, None, "Move directly to Jail."),
+        ("General repairs", "repair_fee", 25, None, "Pay 25 per house and 100 per hotel."),
+        ("Speeding fine", "lose_money", 15, None, "Pay 15."),
+        ("Chairman elected", "pay_all", 50, None, "Pay every player 50."),
+        ("Advance to Boardwalk", "go_to_square", 0, 39, "Move to Boardwalk."),
     ]
     chest = [
-        ("Doctor fee", "lose_money", 50, "Pay 50."), ("Bank error in your favor", "gain_money", 200, "Collect 200."),
-        ("Life insurance matures", "gain_money", 100, "Collect 100."), ("Pay school fees", "lose_money", 50, "Pay 50."),
-        ("Get Out of Jail", "jail_card", 0, "Keep this card until used."), ("Collect from every player", "collect_from_all", 10, "Each player pays you."),
-        ("Go to Jail", "go_to_jail", 0, "Move directly to jail."), ("Holiday fund matures", "gain_money", 100, "Collect 100."),
+        ("Advance to Start", "advance_start", 0, None, "Move to Start and collect salary."),
+        ("Bank error in your favor", "gain_money", 200, None, "Collect 200."),
+        ("Doctor fee", "lose_money", 50, None, "Pay 50."),
+        ("Get Out of Jail Free", "jail_card", 0, None, "Keep this card until used."),
+        ("Go to Jail", "go_to_jail", 0, None, "Move directly to Jail."),
+        ("Holiday fund matures", "gain_money", 100, None, "Collect 100."),
+        ("Income tax refund", "gain_money", 20, None, "Collect 20."),
+        ("Life insurance matures", "gain_money", 100, None, "Collect 100."),
+        ("Pay hospital fees", "lose_money", 100, None, "Pay 100."),
+        ("Pay school fees", "lose_money", 50, None, "Pay 50."),
+        ("Receive consultancy fee", "gain_money", 25, None, "Collect 25."),
+        ("Street repairs", "repair_fee", 40, None, "Pay 40 per house and 115 per hotel."),
+        ("Collect from every player", "collect_from_all", 10, None, "Each player pays you 10."),
     ]
     def cards(items):
-        return [{"id": str(uuid.uuid4()), "name": n, "description": d, "image": "", "return_to_deck": True, "single_use": a == "jail_card", "holdable": a == "jail_card", "tradable": a == "jail_card", "action": make_action(a, amt)} for n, a, amt, d in items]
+        result=[]
+        for n, a, amt, target, d in items:
+            action = make_action(a, amt, target=target)
+            result.append({"id": str(uuid.uuid4()), "name": n, "description": d, "image": "", "return_to_deck": a != "jail_card", "single_use": a == "jail_card", "holdable": a == "jail_card", "tradable": a == "jail_card", "action": action})
+        random.shuffle(result)
+        return result
     game = {
         "metadata": {"id": "classic_template", "name": "Classic Property Trading Game Template", "created_at": datetime.now().isoformat(timespec="seconds"), "updated_at": datetime.now().isoformat(timespec="seconds"), "version": 1},
         "settings": {"min_players": 2, "max_players": 6, "starting_money": 1500, "board_layout": "Monopoly style square", "board_square_count": 40},
@@ -129,7 +185,7 @@ def create_classic_template():
             "property_purchase_enabled": True, "auction_enabled": True, "auction_unbought_property": True, "rent_enabled": True,
             "houses_hotels_enabled": True, "mortgage_enabled": True, "trade_enabled": True, "debt_enabled": True, "debt_interest_enabled": True,
             "debt_due_turns": 5, "debt_default": "transfer_collateral_or_penalty", "jail_enabled": True, "jail_fee": 50, "jail_turns": 3,
-            "double_reroll_enabled": True, "three_doubles_jail": True, "free_parking_pool_enabled": True, "taxes_to": "bank",
+            "double_reroll_enabled": True, "three_doubles_jail": True, "free_parking_pool_enabled": False, "taxes_to": "bank",
             "end_condition": "last_player_standing", "turn_limit": 60, "wealth_target": 5000, "property_target": 12
         },
         "board": squares,
@@ -584,8 +640,19 @@ class App:
     def roll_dice(self):
         ps=self.play_state
         if ps.rolling or ps.turn_rolled or ps.winner: return
-        d1,d2=random.randint(1,6),random.randint(1,6); ps.last_roll=(d1,d2); ps.rolling=True; ps.roll_end=time.time()+0.8; ps.pending_steps=d1+d2
-        p=ps.current_player(); p["doubles"] = p.get("doubles",0)+1 if d1==d2 else 0
+        d1,d2=random.randint(1,6),random.randint(1,6); ps.last_roll=(d1,d2)
+        p=ps.current_player(); is_double=d1==d2
+        if p.get("in_jail"):
+            if is_double:
+                p["in_jail"]=False; p["jail_turns_served"]=0; ps.log(f"{p['name']} rolled doubles and left Jail.")
+            else:
+                p["jail_turns_served"]=p.get("jail_turns_served",0)+1
+                if p["jail_turns_served"]>=ps.game["rules"].get("jail_turns",3) and p["money"]>=ps.game["rules"].get("jail_fee",50):
+                    fee=ps.game["rules"].get("jail_fee",50); p["money"]-=fee; p["in_jail"]=False; p["jail_turns_served"]=0; ps.log(f"{p['name']} paid {fee} after 3 jail turns and left Jail.")
+                else:
+                    ps.turn_rolled=True; ps.log(f"{p['name']} is in Jail and did not roll doubles ({d1}+{d2})."); return
+        ps.rolling=True; ps.roll_end=time.time()+0.8; ps.pending_steps=d1+d2
+        p["doubles"] = p.get("doubles",0)+1 if is_double else 0
         ps.log(f"{p['name']} rolled {d1}+{d2}.")
     def buy_property(self):
         ps=self.play_state; p=ps.current_player(); sq=ps.square(p["pos"])
@@ -686,7 +753,7 @@ class App:
             ps.log(f"Loan failed: {lender['name']} does not have {amount}."); self.close_modal(); return
         lender["money"] -= amount; borrower["money"] += amount
         due = ps.turn_count + due_turns
-        borrower["debts"].append({"lender": lender["id"], "principal": amount, "interest": interest, "due_turn": due, "penalty": "pay_extra_or_wait"})
+        borrower["debts"].append({"lender": lender["id"], "borrower": borrower["id"], "principal": amount, "interest_percent": interest, "interest": interest, "due_turn": due, "collateral_property_id": None, "penalty_if_unpaid": "bankruptcy_if_unpaid", "penalty": "bankruptcy_if_unpaid", "status": "active"})
         ps.log(f"Loan: {borrower['name']} borrowed {amount} from {lender['name']} at {interest}% interest; due turn {due}.")
         self.close_modal()
     def close_modal(self):
@@ -696,18 +763,40 @@ class App:
     def debt(self):
         self.open_debt_modal()
     def build_house(self):
-        ps=self.play_state; p=ps.current_player(); owned=[ps.square(i) for i in p["properties"]]
-        prop=next((s for s in owned if s["type"]=="property" and not s.get("hotel")),None)
-        if prop and p["money"]>=50:
-            p["money"]-=50
-            if prop.get("houses",0)>=4: prop["hotel"]=True; prop["houses"]=0; ps.log(f"Hotel built on {prop['name']}.")
-            else: prop["houses"]=prop.get("houses",0)+1; ps.log(f"House built on {prop['name']}.")
-        else: ps.log("No eligible property or money.")
+        ps=self.play_state; p=ps.current_player()
+        candidates=ps.buildable_properties(p)
+        if not candidates:
+            ps.log("No property is eligible for a house/hotel. Own a full color group and build evenly."); return
+        self.build_candidates=[sq["id"] for sq in candidates]
+        lines=[]
+        for sq in candidates[:6]: lines.append(f"#{sq['id']} {sq['name']} - cost ${sq.get('house_cost',50)} - houses {sq.get('houses',0)}")
+        body = "Eligible properties:\n" + "\n".join(lines) + "\n\nConfirm builds on the first listed property."
+        self.open_confirm_modal("build", "Build House / Hotel", body, self.confirm_build_house)
+    def confirm_build_house(self):
+        ps=self.play_state; p=ps.current_player(); candidates=[ps.square(i) for i in getattr(self,"build_candidates",[]) if i in p.get("properties",[])]
+        prop=candidates[0] if candidates else None
+        if not prop: ps.log("No eligible property selected."); self.close_modal(); return
+        cost=prop.get("house_cost",50)
+        if p["money"]<cost: ps.log(f"Need {cost} to build on {prop['name']}."); self.close_modal(); return
+        p["money"]-=cost
+        if prop.get("houses",0)>=4:
+            prop["hotel"]=True; prop["houses"]=0; ps.log(f"Hotel built on {prop['name']} for {cost}.")
+        else:
+            prop["houses"]=prop.get("houses",0)+1; ps.log(f"House built on {prop['name']} for {cost}.")
+        self.close_modal()
     def mortgage(self):
-        ps=self.play_state; p=ps.current_player(); prop=next((ps.square(i) for i in p["properties"] if not ps.square(i).get("mortgaged")),None)
+        ps=self.play_state; p=ps.current_player()
+        prop=next((ps.square(i) for i in p["properties"] if ps.square(i).get("mortgaged")),None)
         if prop:
-            prop["mortgaged"]=True; val=prop.get("price",100)//2; p["money"]+=val; ps.log(f"{p['name']} mortgaged {prop['name']} for {val}.")
-        else: ps.log("No property to mortgage.")
+            due=int(prop.get("mortgage_value",prop.get("price",100)//2)*1.1)
+            if p["money"]>=due:
+                p["money"]-=due; prop["mortgaged"]=False; ps.log(f"{p['name']} unmortgaged {prop['name']} for {due}.")
+            else: ps.log(f"Need {due} to unmortgage {prop['name']}.")
+            return
+        prop=next((ps.square(i) for i in p["properties"] if not ps.square(i).get("mortgaged") and not ps.square(i).get("houses",0) and not ps.square(i).get("hotel")),None)
+        if prop:
+            prop["mortgaged"]=True; val=prop.get("mortgage_value",prop.get("price",100)//2); p["money"]+=val; ps.log(f"{p['name']} mortgaged {prop['name']} for {val}.")
+        else: ps.log("No eligible property to mortgage/unmortgage.")
     def use_card(self):
         ps=self.play_state; p=ps.current_player()
         if p["cards"]:
@@ -716,9 +805,12 @@ class App:
     def end_turn(self):
         ps=self.play_state
         if not ps.turn_rolled and not ps.winner: ps.log("Roll first, or use actions before ending.")
+        p=ps.current_player(); sq=ps.square(p["pos"])
+        if ps.turn_rolled and sq.get("owner") is None and sq.get("type") in ("property","railroad","utility") and ps.game["rules"].get("auction_unbought_property", True):
+            self.confirm_auction()
         ps.next_turn()
     def save_game(self):
-        ps=self.play_state; data={"saved_at":datetime.now().isoformat(timespec="seconds"),"game":ps.game,"players":ps.players,"current":ps.current,"turn_count":ps.turn_count,"log":ps.logs}
+        ps=self.play_state; data={"saved_at":datetime.now().isoformat(timespec="seconds"),"game":ps.game,"players":ps.players,"current":ps.current,"turn_count":ps.turn_count,"last_roll":ps.last_roll,"free_pool":ps.free_pool,"log":ps.logs}
         path=os.path.join(SAVES_DIR,safe_filename(ps.game["metadata"]["name"])+"_save.json"); save_json(path,data); ps.log("Game saved to saves folder.")
 
     def draw_bg(self):
@@ -795,7 +887,7 @@ class App:
         self.ui.glass(self.screen, box, COLORS["panel"], 220, 24, COLORS["accent"], 135, True)
         self.ui.text(self.screen, self.modal.get("title", "Popup"), (box.centerx, box.y+34), 30, COLORS["accent"], True, box.w-70)
         mtype = self.modal.get("type")
-        if mtype in ("info", "buy", "auction"):
+        if mtype in ("info", "buy", "auction", "build"):
             icon = self.modal.get("icon", "card")
             if mtype == "buy": icon = "go"
             if mtype == "auction": icon = "tax"
@@ -981,7 +1073,7 @@ class App:
 class GameState:
     def __init__(self, game, names):
         self.game=game; self.players=[]; start=game["settings"].get("starting_money",1500)
-        for i,n in enumerate(names): self.players.append({"id":i,"name":n,"money":start,"pos":0,"properties":[],"cards":[],"debts":[],"wait_turns":0,"bankrupt":False,"doubles":0})
+        for i,n in enumerate(names): self.players.append({"id":i,"name":n,"money":start,"pos":0,"properties":[],"cards":[],"debts":[],"wait_turns":0,"in_jail":False,"jail_turns_served":0,"bankrupt":False,"doubles":0})
         self.current=0; self.turn_count=1; self.last_roll=(1,1); self.rolling=False; self.roll_end=0; self.pending_steps=0; self.moving=False; self.move_timer=0; self.turn_rolled=False; self.logs=["Game started."]; self.winner=None; self.free_pool=0; self.last_popup=None; self.hover_square=None
     def log(self,msg): self.logs.append(msg); self.logs=self.logs[-80:]
     def current_player(self): return self.players[self.current]
@@ -999,7 +1091,7 @@ class GameState:
                 self.move_timer=0
                 if self.pending_steps>0:
                     p=self.current_player(); old=p["pos"]; p["pos"]=(p["pos"]+1)%len(self.game["board"]); self.pending_steps-=1
-                    if p["pos"]<old and self.game["rules"].get("pass_start_money_enabled"):
+                    if p["pos"]<old and p["pos"] != 0 and self.game["rules"].get("pass_start_money_enabled"):
                         p["money"]+=self.game["rules"].get("pass_start_money",200); self.log(f"{p['name']} passed Start and collected money.")
                 else:
                     self.moving=False; self.turn_rolled=True; self.land(self.current_player())
@@ -1017,11 +1109,13 @@ class GameState:
             elif mode == "on_return": timer["armed"] = True
             else: timer["due_turn"] = self.turn_count + max(1, int(tm.get("value",0)))
             p.setdefault("timers",[]).append(timer); self.log(f"Timer started on {sq['name']}: {tm.get('value',0)} {mode}.")
+        if sq.get("type")=="free" and self.game["rules"].get("free_parking_pool_enabled") and self.free_pool:
+            p["money"]+=self.free_pool; self.log(f"{p['name']} collected Free Parking pool of {self.free_pool}."); self.free_pool=0
         if sq["type"] in ("property","railroad","utility"):
             owner=sq.get("owner")
-            if owner is None: self.log("Available to buy or auction.")
+            if owner is None: self.log("Available to buy; if skipped, auction starts at end turn.")
             elif owner!=p["id"] and self.game["rules"].get("rent_enabled") and not sq.get("mortgaged"):
-                rent=sq.get("rent",0)+sq.get("houses",0)*20+(100 if sq.get("hotel") else 0); self.pay(p,self.players[owner],rent,f"rent for {sq['name']}")
+                rent=self.calculate_rent(sq, self.players[owner]); self.pay(p,self.players[owner],rent,f"rent for {sq['name']}")
         for act in sq.get("actions",[]): self.apply_action(p,act,source=sq["name"])
         if self.last_roll[0] == self.last_roll[1] and self.game["rules"].get("double_reroll_enabled") and not p.get("wait_turns"):
             self.turn_rolled = False; self.log(f"{p['name']} rolled doubles and may roll again.")
@@ -1029,15 +1123,21 @@ class GameState:
     def apply_action(self,p,act,source="Action"):
         t=act.get("type","none"); amt=int(act.get("amount",0) or 0); target=act.get("target")
         if t in ("none","buy","pay_rent"): return
-        if t=="gain_money": p["money"]+=amt; self.log(f"{p['name']} gained {amt} from {source}.")
-        elif t=="lose_money": p["money"]-=amt; self.log(f"{p['name']} paid {amt} for {source}.")
+        if t=="advance_start": self.move_to(p,0); p["money"]+=self.game["rules"].get("pass_start_money",200); self.log(f"{p['name']} advanced to Start and collected salary.")
+        elif t=="gain_money": p["money"]+=amt; self.log(f"{p['name']} gained {amt} from {source}.")
+        elif t=="lose_money":
+            p["money"]-=amt
+            if self.game["rules"].get("free_parking_pool_enabled") and self.game["rules"].get("taxes_to")=="free_parking" and "tax" in source.lower(): self.free_pool+=amt
+            self.log(f"{p['name']} paid {amt} for {source}.")
         elif t=="move_forward": self.move_direct(p, amt)
-        elif t=="move_backward": self.move_direct(p, -amt)
-        elif t=="go_to_square": self.move_to(p, int(target or 0))
+        elif t=="move_backward": self.move_direct(p, -amt); self.land(p)
+        elif t=="go_to_square": self.move_to(p, int(target or 0)); self.land(p)
         elif t=="go_to_jail": self.go_jail(p)
         elif t=="wait_turns": p["wait_turns"]+=max(1,amt); self.log(f"{p['name']} waits {amt} turns.")
         elif t=="reroll": self.turn_rolled=False; self.log("Roll again granted.")
         elif t=="draw_card": self.draw_card(p, target or "Chance")
+        elif t=="nearest_railroad": self.move_to_nearest(p, "railroad")
+        elif t=="nearest_utility": self.move_to_nearest(p, "utility")
         elif t=="collect_from_all":
             for o in self.players:
                 if o["id"]!=p["id"] and not o["bankrupt"]: self.pay(o,p,amt,"card collection")
@@ -1045,14 +1145,19 @@ class GameState:
             for o in self.players:
                 if o["id"]!=p["id"] and not o["bankrupt"]: self.pay(p,o,amt,"card payment")
         elif t=="repair_fee":
-            owned=[self.square(i) for i in p["properties"]]; fee=sum(s.get("houses",0)*amt + (amt*4 if s.get("hotel") else 0) for s in owned)
+            owned=[self.square(i) for i in p["properties"]]; hotel_fee = 115 if amt >= 40 else 100; fee=sum(s.get("houses",0)*amt + (hotel_fee if s.get("hotel") else 0) for s in owned)
             p["money"]-=fee; self.log(f"{p['name']} paid {fee} repair fees.")
         elif t=="transfer_to_player":
             target_id = int(target) if str(target).isdigit() else (p["id"] + 1) % len(self.players)
             other = self.players[target_id % len(self.players)]
             if other["id"] != p["id"] and not other["bankrupt"]: self.pay(p, other, amt, source)
-        elif t=="jail_card": p["cards"].append({"name":"Get Out of Jail","action":make_action("message",message="Used jail card")}); self.log(f"{p['name']} received a get-out card.")
+        elif t=="jail_card":
+            if p.get("in_jail"):
+                p["in_jail"]=False; p["jail_turns_served"]=0; self.log(f"{p['name']} used a Get Out of Jail Free card.")
+            else:
+                p["cards"].append({"name":"Get Out of Jail Free","description":"Use to leave Jail without paying.","action":make_action("jail_card"),"holdable":True,"tradable":True}); self.log(f"{p['name']} received a Get Out of Jail Free card.")
         elif t=="message": self.log(act.get("message") or f"Message from {source}")
+        elif t=="collect_free_parking": p["money"]+=self.free_pool; self.log(f"{p['name']} collected Free Parking pool of {self.free_pool}."); self.free_pool=0
         elif t=="timer": p.setdefault("timers",[]).append({"mode":"turns","due_turn":self.turn_count+max(1,amt),"action":make_action("gain_money",amt),"source":source}); self.log("Timer action scheduled.")
         elif t=="auction": self.log("Auction action is available through the Auction button.")
     def draw_card(self,p,deck_name):
@@ -1063,10 +1168,12 @@ class GameState:
         else: self.apply_action(p,card.get("action",make_action()),source=card.get("name","Card"))
     def pay(self,src,dst,amt,reason):
         src["money"]-=amt; dst["money"]+=amt; self.log(f"{src['name']} paid {dst['name']} {amt} ({reason}).")
+        if src["money"]<0 and not src.get("bankrupt"):
+            self.handle_bankruptcy(src, dst.get("id"))
     def move_direct(self,p,steps): p["pos"]=(p["pos"]+steps)%len(self.game["board"]); self.log(f"{p['name']} moved to {self.square(p['pos'])['name']}.")
     def move_to(self,p,pos): p["pos"]=pos%len(self.game["board"]); self.log(f"{p['name']} moved to {self.square(p['pos'])['name']}.")
     def go_jail(self,p):
-        jail=next((i for i,s in enumerate(self.game["board"]) if s["type"]=="jail"),0); p["pos"]=jail; p["wait_turns"]=self.game["rules"].get("jail_turns",3); p["doubles"]=0; self.log(f"{p['name']} went to jail/waiting area.")
+        jail=next((i for i,s in enumerate(self.game["board"]) if s["type"]=="jail"),0); p["pos"]=jail; p["in_jail"]=True; p["jail_turns_served"]=0; p["doubles"]=0; self.log(f"{p['name']} went to Jail.")
     def next_turn(self):
         p=self.current_player(); self.resolve_timers(p); self.check_bankruptcy(); self.check_winner()
         if self.winner: return
@@ -1104,15 +1211,65 @@ class GameState:
             else: remain.append(tm)
         p["timers"]=remain
         for debt in list(p.get("debts",[])):
+            if debt.get("status","active") != "active": continue
             if self.turn_count>=debt["due_turn"]:
-                due=int(debt["principal"]*(1+debt.get("interest",0)/100)); p["money"]-=due; self.log(f"Debt due: {p['name']} paid {due}."); p["debts"].remove(debt)
+                due=int(debt["principal"]*(1+debt.get("interest_percent",debt.get("interest",0))/100)); self.last_popup={"title":"Debt Due","body":f"{p['name']} owes {due}. If unpaid, bankruptcy/collateral rules apply.","icon":"tax"}
+                if p["money"]>=due:
+                    p["money"]-=due; lender=self.players[debt.get("lender",0)]; lender["money"]+=due; debt["status"]="paid"; self.log(f"Debt due: {p['name']} paid {due} to {lender['name']}.")
+                else:
+                    debt["status"]="defaulted"; self.handle_bankruptcy(p, debt.get("lender")); self.log(f"{p['name']} defaulted on a debt.")
             elif debt["due_turn"]-self.turn_count<=1: self.log(f"Debt warning for {p['name']}: due soon.")
+    def active_players(self): return [p for p in self.players if not p.get("bankrupt")]
+    def group_squares(self, group): return [s for s in self.game["board"] if s.get("type")=="property" and s.get("color_group")==group]
+    def owns_color_group(self, player, group):
+        group_props=self.group_squares(group)
+        return bool(group_props) and all(s.get("owner")==player["id"] for s in group_props)
+    def calculate_rent(self, sq, owner):
+        if sq.get("mortgaged"): return 0
+        if sq.get("type")=="railroad":
+            count=sum(1 for s in self.game["board"] if s.get("type")=="railroad" and s.get("owner")==owner["id"])
+            rents=sq.get("railroad_rents",[25,50,100,200]); return rents[max(0,min(count,4)-1)]
+        if sq.get("type")=="utility":
+            count=sum(1 for s in self.game["board"] if s.get("type")=="utility" and s.get("owner")==owner["id"])
+            mult=10 if count>=2 else 4; return (self.last_roll[0]+self.last_roll[1])*mult
+        if sq.get("hotel"): return sq.get("rent_hotel", sq.get("rent",0))
+        houses=sq.get("houses",0)
+        if houses: return sq.get(f"rent_{houses}_house", sq.get("rent",0))
+        if self.owns_color_group(owner, sq.get("color_group")): return sq.get("rent_full_set", sq.get("rent_base",sq.get("rent",0))*2)
+        return sq.get("rent_base", sq.get("rent",0))
+    def buildable_properties(self, player):
+        result=[]
+        for prop_id in player.get("properties",[]):
+            sq=self.square(prop_id)
+            if sq.get("type")!="property" or sq.get("mortgaged") or sq.get("hotel"): continue
+            group=sq.get("color_group")
+            if not self.owns_color_group(player, group): continue
+            group_props=[s for s in self.group_squares(group) if not s.get("mortgaged") and not s.get("hotel")]
+            min_h=min([s.get("houses",0) for s in group_props] or [0])
+            if sq.get("houses",0)<=min_h and sq.get("houses",0)<=4: result.append(sq)
+        return result
+    def move_to_nearest(self,p,square_type):
+        start=p["pos"]; n=len(self.game["board"])
+        for step in range(1,n+1):
+            idx=(start+step)%n
+            if self.square(idx).get("type")==square_type:
+                if idx<start and self.game["rules"].get("pass_start_money_enabled"):
+                    p["money"]+=self.game["rules"].get("pass_start_money",200)
+                self.move_to(p,idx); self.land(p); return
+    def handle_bankruptcy(self,p, creditor_id=None):
+        p["bankrupt"]=True
+        creditor=self.players[creditor_id] if creditor_id is not None and 0 <= creditor_id < len(self.players) else None
+        for s in self.game["board"]:
+            if s.get("owner")==p["id"]:
+                if creditor:
+                    s["owner"]=creditor["id"]; creditor["properties"].append(s["id"])
+                else:
+                    s["owner"]=None; s["houses"]=0; s["hotel"]=False; s["mortgaged"]=False
+        p["properties"]=[]; self.log(f"{p['name']} is bankrupt and leaves the game.")
     def check_bankruptcy(self):
         for p in self.players:
             if not p["bankrupt"] and p["money"]<0:
-                p["bankrupt"]=True; self.log(f"{p['name']} is bankrupt.")
-                for s in self.game["board"]:
-                    if s.get("owner")==p["id"]: s["owner"]=None; s["houses"]=0; s["hotel"]=False; s["mortgaged"]=False
+                self.handle_bankruptcy(p)
     def check_winner(self):
         active=[p for p in self.players if not p["bankrupt"]]
         if len(active)==1: self.winner=active[0]["name"]
