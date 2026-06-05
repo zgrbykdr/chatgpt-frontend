@@ -253,13 +253,14 @@ class App:
         self.screen = pygame.display.set_mode(tuple(self.settings.get("resolution", [1280,720])), pygame.RESIZABLE)
         pygame.display.set_caption(APP_TITLE)
         self.clock = pygame.time.Clock(); self.ui = UI(); self.running = True
-        self.scene = "menu"; self.message = ""; self.message_until = 0
+        self.scene = "main_menu"; self.message = ""; self.message_until = 0
         self.buttons = []; self.inputs = []; self.toggles = []
         self.selected_game_path = None; self.games_cache = []
         self.edit_game = None; self.edit_path = None; self.editor_tab = "Board"; self.selected_square = 0; self.selected_card_deck = "Chance"; self.selected_card = 0
         self.play_state = None; self.anim = None; self.popup = None; self.dark = self.settings.get("theme", "dark") == "dark"
         self.modal = None; self.modal_buttons = []; self.modal_inputs = []; self.modal_toggles = []; self.modal_partner_index = 0
-        self.ensure_default_template(); self.build_menu()
+        self.editor_active = False; self.play_select_mode = "list"
+        self.ensure_default_template(); self.build_main_menu()
 
     def ensure_default_template(self):
         path = os.path.join(GAMES_DIR, "Classic_Property_Trading_Game_Template.json")
@@ -286,28 +287,65 @@ class App:
         return games
 
     def set_scene(self, scene):
+        aliases = {"menu": "main_menu", "add": "create_game", "play": "gameplay"}
+        scene = aliases.get(scene, scene)
         self.scene = scene; self.buttons = []; self.inputs = []; self.toggles = []
         getattr(self, "build_" + scene)()
 
+    def panel_rect(self, width=760, height=560):
+        w, h = self.screen.get_size()
+        width = min(width, w - 80)
+        height = min(height, h - 110)
+        return pygame.Rect((w - width)//2, max(92, (h - height)//2 + 28), width, height)
+
+    def build_main_menu(self):
+        self.scene = "main_menu"; self.buttons = []; self.inputs = []; self.toggles = []; self.modal = None
+        self.editor_active = False; self.play_select_mode = "list"
+        w,h = self.screen.get_size(); panel = self.panel_rect(520, 470)
+        bw,bh = min(340, panel.w-90), 54; x = panel.centerx-bw//2; y = panel.y+122
+        items = [("Add New Game", lambda: self.set_scene("create_game")), ("Edit Existing Game", lambda: self.open_list("edit")), ("Play Game", lambda: self.open_list("play")), ("Settings", lambda: self.set_scene("settings")), ("Exit", self.quit)]
+        for i,(lab,act) in enumerate(items): self.buttons.append(Button((x,y+i*66,bw,bh), lab, act, "primary" if i==0 else "secondary"))
+
     def build_menu(self):
-        self.scene = "menu"; self.buttons = []
-        w,h = self.screen.get_size(); bw,bh = 330,54; x = w//2-bw//2; y = h//2-110
-        items = [("Add New Game", lambda: self.set_scene("add")), ("Edit Existing Game", lambda: self.open_list("edit")), ("Play Game", lambda: self.open_list("play")), ("Settings", lambda: self.set_scene("settings")), ("Exit", self.quit)]
-        for i,(lab,act) in enumerate(items): self.buttons.append(Button((x,y+i*68,bw,bh), lab, act, "primary" if i==0 else "secondary"))
+        self.build_main_menu()
+
+    def build_create_game(self):
+        self.scene = "create_game"; self.buttons = []; self.inputs = []; self.toggles = []
+        w,h = self.screen.get_size(); panel = self.panel_rect(780, 570)
+        label_x = panel.x + max(34, panel.w//10)
+        input_x = panel.x + panel.w//2 - 20
+        input_w = min(330, panel.right - input_x - 48)
+        row_y = panel.y + 98
+        gap = 52
+        self.add_layout_index = getattr(self, "add_layout_index", 0)
+        self.inputs = [
+            InputBox((input_x,row_y,input_w,38), "My Custom Board Game"),
+            InputBox((input_x,row_y+gap,120,38), "2", True),
+            InputBox((input_x,row_y+gap*2,120,38), "6", True),
+            InputBox((input_x,row_y+gap*3,150,38), "1500", True),
+            InputBox((input_x,row_y+gap*4,150,38), "28", True),
+            InputBox((input_x,row_y+gap*5,150,38), "200", True),
+        ]
+        self.toggles = []
+        button_y = panel.bottom - 72
+        back_w, layout_w, create_w, gap_w = 140, 220, 180, 18
+        start_x = panel.centerx - (back_w + layout_w + create_w + gap_w * 2)//2
+        self.buttons = [
+            Button((start_x,button_y,back_w,46), "Back", self.build_main_menu, "secondary"),
+            Button((start_x+back_w+gap_w,button_y,layout_w,46), "Layout: " + BOARD_TYPES[self.add_layout_index].split()[0], self.cycle_add_layout, "secondary"),
+            Button((start_x+back_w+gap_w+layout_w+gap_w,button_y,create_w,46), "Create Game", self.save_new_game, "good"),
+        ]
 
     def build_add(self):
-        w,h = self.screen.get_size(); self.add_layout_index = 0
-        self.inputs = [InputBox((w//2-120,145,320,38), "My Custom Board Game"), InputBox((w//2-120,195,90,38), "2", True), InputBox((w//2+110,195,90,38), "6", True), InputBox((w//2-120,245,120,38), "1500", True), InputBox((w//2-120,295,120,38), "28", True), InputBox((w//2-120,395,120,38), "200", True)]
-        self.toggles = [Toggle((w//2-120,350,56,28), True), Toggle((w//2-120,445,56,28), True)]
-        self.buttons = [Button((40,h-76,160,46), "Back", self.build_menu, "secondary"), Button((w//2+40,520,220,50), "Save New Game", self.save_new_game, "good"), Button((w//2-220,520,220,50), "Layout: Square", self.cycle_add_layout, "secondary")]
+        self.build_create_game()
     def cycle_add_layout(self):
-        self.add_layout_index = (self.add_layout_index + 1) % len(BOARD_TYPES); self.buttons[-1].label = "Layout: " + BOARD_TYPES[self.add_layout_index].split()[0]
+        self.add_layout_index = (self.add_layout_index + 1) % len(BOARD_TYPES); self.buttons[1].label = "Layout: " + BOARD_TYPES[self.add_layout_index].split()[0]
     def save_new_game(self):
         name = self.inputs[0].value("My Game").strip() or "My Game"
         count = max(8, min(80, self.inputs[4].value(28)))
         game = create_classic_template(); game["metadata"]["id"] = str(uuid.uuid4()); game["metadata"]["name"] = name; game["metadata"]["created_at"] = datetime.now().isoformat(timespec="seconds")
         game["settings"].update({"min_players": max(1,self.inputs[1].value(2)), "max_players": max(2,self.inputs[2].value(6)), "starting_money": self.inputs[3].value(1500), "board_square_count": count, "board_layout": BOARD_TYPES[self.add_layout_index]})
-        game["rules"]["pass_start_money_enabled"] = self.toggles[0].value; game["rules"]["pass_start_money"] = self.inputs[5].value(200); game["rules"]["jail_enabled"] = self.toggles[1].value
+        game["rules"]["pass_start_money_enabled"] = True; game["rules"]["pass_start_money"] = self.inputs[5].value(200); game["rules"]["jail_enabled"] = True
         base = []
         for i in range(count):
             if i == 0: base.append(make_square(i, "Start", "start", action=make_action("none")))
@@ -320,41 +358,65 @@ class App:
                 group = list(GROUP_COLORS.keys())[i % 8]
                 base.append(make_square(i, f"Property {i}", "property", 80 + i*10, 8 + i, group, make_action("buy")))
         game["board"] = base
-        path = os.path.join(GAMES_DIR, safe_filename(name)+".json"); save_json(path, game); self.notify("Game saved as JSON."); self.build_menu()
+        path = os.path.join(GAMES_DIR, safe_filename(name)+".json"); save_json(path, game); self.notify("Game saved as JSON."); self.build_main_menu()
 
     def open_list(self, mode):
-        self.list_mode = mode; self.set_scene("gamelist")
-    def build_gamelist(self):
-        self.list_games(); w,h = self.screen.get_size(); self.buttons = [Button((35,h-70,140,44), "Back", self.build_menu, "secondary")]
-        y=130
+        self.list_mode = mode
+        if mode == "edit":
+            self.editor_active = False
+            self.set_scene("edit_game")
+        else:
+            self.play_select_mode = "list"
+            self.set_scene("play_select")
+    def build_game_list_buttons(self, mode):
+        self.list_games(); w,h = self.screen.get_size(); panel = self.panel_rect(1040, 560)
+        self.buttons = [Button((panel.x+28,panel.bottom-58,140,42), "Back", self.build_main_menu, "secondary")]
+        y = panel.y + 104; row_h = 64
         for idx,(p,g) in enumerate(self.games_cache[:7]):
-            self.buttons.append(Button((w-390,y+idx*66,100,38), "Play", lambda i=idx: self.start_setup(i), "good"))
-            self.buttons.append(Button((w-280,y+idx*66,100,38), "Edit", lambda i=idx: self.start_edit(i), "secondary"))
-            self.buttons.append(Button((w-170,y+idx*66,100,38), "Delete", lambda i=idx: self.delete_game(i), "danger"))
+            by = y + idx*row_h + 12
+            self.buttons.append(Button((panel.right-360,by,95,36), "Play", lambda i=idx: self.start_setup(i), "good"))
+            self.buttons.append(Button((panel.right-255,by,95,36), "Edit", lambda i=idx: self.start_edit(i), "secondary"))
+            self.buttons.append(Button((panel.right-150,by,95,36), "Delete", lambda i=idx: self.delete_game(i), "danger"))
+    def build_edit_game(self):
+        if self.editor_active:
+            self.build_editor()
+        else:
+            self.build_game_list_buttons("edit")
+    def build_play_select(self):
+        if self.play_select_mode == "setup":
+            self.build_setup()
+        else:
+            self.build_game_list_buttons("play")
+    def build_gamelist(self):
+        if getattr(self, "list_mode", "play") == "edit": self.build_edit_game()
+        else: self.build_play_select()
     def delete_game(self, idx):
         p,_=self.games_cache[idx]
         try: os.remove(p); self.notify("Game deleted.")
         except Exception as e: self.notify("Delete failed: "+str(e))
-        self.build_gamelist()
+        if getattr(self, "scene", "play_select") == "edit_game": self.build_edit_game()
+        else: self.build_play_select()
     def start_edit(self, idx):
-        self.edit_path,self.edit_game = self.games_cache[idx]; self.editor_tab="Board"; self.selected_square=0; self.set_scene("editor")
+        self.edit_path,self.edit_game = self.games_cache[idx]; self.editor_tab="Board"; self.selected_square=0; self.editor_active=True; self.set_scene("edit_game")
     def start_setup(self, idx):
-        self.selected_game_path,self.setup_game = self.games_cache[idx]; self.set_scene("setup")
+        self.selected_game_path,self.setup_game = self.games_cache[idx]; self.play_select_mode="setup"; self.setup_count = min(max(2, self.setup_game["settings"].get("min_players",2)), self.setup_game["settings"].get("max_players",6)); self.set_scene("play_select")
 
     def build_setup(self):
-        g=self.setup_game; w,h=self.screen.get_size(); mx=g["settings"].get("max_players",6)
-        self.setup_count = min(max(2,g["settings"].get("min_players",2)), mx)
+        g=self.setup_game; w,h=self.screen.get_size(); panel = self.panel_rect(720, 560); mx=g["settings"].get("max_players",6)
+        self.setup_count = min(max(g["settings"].get("min_players",2), getattr(self, "setup_count", g["settings"].get("min_players",2))), mx)
         self.inputs=[]
-        for i in range(mx): self.inputs.append(InputBox((w//2-120,155+i*45,240,34), f"Player {i+1}"))
-        self.buttons=[Button((35,h-70,140,44),"Back",lambda:self.open_list("play"),"secondary"), Button((w//2-180,95,80,36),"-",self.dec_players,"secondary"), Button((w//2+100,95,80,36),"+",self.inc_players,"secondary"), Button((w//2-120,h-90,240,50),"Start Game",self.launch_game,"good")]
-    def dec_players(self): self.setup_count=max(self.setup_game["settings"].get("min_players",2),self.setup_count-1)
-    def inc_players(self): self.setup_count=min(self.setup_game["settings"].get("max_players",6),self.setup_count+1)
+        x = panel.centerx - 120; y = panel.y + 135
+        for i in range(self.setup_count): self.inputs.append(InputBox((x,y+i*43,240,34), f"Player {i+1}"))
+        self.buttons=[Button((panel.x+32,panel.bottom-58,140,42),"Back",lambda:self.open_list("play"),"secondary"), Button((panel.centerx-180,panel.y+88,80,36),"-",self.dec_players,"secondary"), Button((panel.centerx+100,panel.y+88,80,36),"+",self.inc_players,"secondary"), Button((panel.centerx-120,panel.bottom-62,240,46),"Start Game",self.launch_game,"good")]
+    def dec_players(self): self.setup_count=max(self.setup_game["settings"].get("min_players",2),self.setup_count-1); self.build_setup()
+    def inc_players(self): self.setup_count=min(self.setup_game["settings"].get("max_players",6),self.setup_count+1); self.build_setup()
     def launch_game(self):
-        names=[self.inputs[i].value(f"Player {i+1}").strip() or f"Player {i+1}" for i in range(self.setup_count)]
+        names=[self.inputs[i].value(f"Player {i+1}").strip() or f"Player {i+1}" for i in range(min(self.setup_count, len(self.inputs)))]
         self.play_state = GameState(deepcopy(self.setup_game), names)
-        self.set_scene("play")
+        self.set_scene("gameplay")
 
     def build_editor(self):
+        self.scene = "edit_game"
         w,h=self.screen.get_size(); self.buttons=[Button((30,h-64,120,42),"Back",lambda:self.open_list("edit"),"secondary"), Button((w-170,h-64,140,42),"Save JSON",self.save_edit,"good")]
         tabs=["Board","Actions","Timers","Cards","Rules","Trade","Assets"]
         x=30
@@ -447,12 +509,15 @@ class App:
         self.build_editor()
 
     def build_settings(self):
-        w,h=self.screen.get_size(); self.buttons=[Button((35,h-70,140,44),"Back",self.build_menu,"secondary"), Button((w//2-120,260,240,48),"Toggle Theme",self.toggle_theme,"secondary"), Button((w//2-120,325,240,48),"1280 x 720",lambda:self.set_res(1280,720),"secondary"), Button((w//2-120,390,240,48),"1920 x 1080",lambda:self.set_res(1920,1080),"secondary")]
+        w,h=self.screen.get_size(); self.buttons=[Button((35,h-70,140,44),"Back",self.build_main_menu,"secondary"), Button((w//2-120,260,240,48),"Toggle Theme",self.toggle_theme,"secondary"), Button((w//2-120,325,240,48),"1280 x 720",lambda:self.set_res(1280,720),"secondary"), Button((w//2-120,390,240,48),"1920 x 1080",lambda:self.set_res(1920,1080),"secondary")]
     def toggle_theme(self): self.dark=not self.dark; self.settings["theme"]="dark" if self.dark else "light"; save_json(SETTINGS_PATH,self.settings)
     def set_res(self,w,h): self.settings["resolution"]=[w,h]; save_json(SETTINGS_PATH,self.settings); self.screen=pygame.display.set_mode((w,h),pygame.RESIZABLE); self.build_settings()
-    def build_play(self):
+    def build_gameplay(self):
+        self.scene = "gameplay"
         w,h=self.screen.get_size(); self.buttons=[Button((35,h-58,122,40),"Main Menu",self.confirm_menu,"secondary"),Button((170,h-58,115,40),"Roll Dice",self.roll_dice,"primary"),Button((295,h-58,130,40),"Buy Property",self.buy_property,"good"),Button((435,h-58,100,40),"Auction",self.auction,"secondary"),Button((545,h-58,90,40),"Trade",self.trade,"secondary"),Button((645,h-58,115,40),"Debt / Loan",self.debt,"secondary"),Button((770,h-58,120,40),"Build House",self.build_house,"secondary"),Button((900,h-58,105,40),"Mortgage",self.mortgage,"secondary"),Button((1015,h-58,95,40),"Use Card",self.use_card,"secondary"),Button((1120,h-58,110,40),"End Turn",self.end_turn,"secondary"),Button((w-135,h-58,105,40),"Save",self.save_game,"secondary")]
-    def confirm_menu(self): self.build_menu()
+    def build_play(self):
+        self.build_gameplay()
+    def confirm_menu(self): self.build_main_menu()
 
     def quit(self): self.running=False
 
@@ -600,8 +665,8 @@ class App:
         if e.type==pygame.MOUSEBUTTONDOWN and e.button==1:
             for b in list(self.buttons):
                 if b.click(e.pos) and b.action: b.action(); return
-            if self.scene=="editor": self.editor_click(e.pos)
-        if e.type==pygame.KEYDOWN and self.scene=="editor":
+            if self.scene=="edit_game" and self.editor_active: self.editor_click(e.pos)
+        if e.type==pygame.KEYDOWN and self.scene=="edit_game" and self.editor_active:
             if e.key==pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL: self.save_edit()
     def editor_click(self,pos):
         if self.editor_tab in ("Board","Actions","Timers"):
@@ -618,7 +683,7 @@ class App:
             for i,c in enumerate(deck):
                 if pygame.Rect(270,y+i*32,300,28).collidepoint(pos): self.save_edit_values(); self.selected_card=i; self.build_editor(); return
     def update(self,dt):
-        if self.scene=="play" and self.play_state: self.play_state.update(dt)
+        if self.scene=="gameplay" and self.play_state: self.play_state.update(dt)
     def draw(self):
         self.draw_bg(); getattr(self,"draw_"+self.scene)()
         mouse=pygame.mouse.get_pos()
@@ -656,30 +721,52 @@ class App:
 
         w,h=self.screen.get_size(); self.ui.text(self.screen,title,(w//2,42),38,COLORS["text"],True)
         if subtitle: self.ui.text(self.screen,subtitle,(w//2,76),16,COLORS["muted"],True)
+    def draw_main_menu(self):
+        self.draw_header(APP_TITLE,"Create, edit, save and play custom property board games")
+        panel = self.panel_rect(520, 470)
+        self.ui.rounded(self.screen,panel,COLORS["panel"],22,border=(255,255,255,30))
+        self.ui.text(self.screen,"Professional 2D Board Game Maker",(panel.centerx,panel.y+58),24,COLORS["accent"],True,max_width=panel.w-50)
     def draw_menu(self):
-        w,h=self.screen.get_size(); self.draw_header(APP_TITLE,"Create, edit, save and play custom property board games")
-        self.ui.rounded(self.screen,(w//2-225,120,450,80),COLORS["panel"],20,border=(255,255,255,30)); self.ui.text(self.screen,"Professional 2D Board Game Maker",(w//2,160),24,COLORS["accent"],True)
-    def draw_add(self):
-        self.draw_header("Add New Game","Create a JSON game with rules, board layout, timers and card decks")
-        labels=["Game name","Players min / max","Starting money","Board square count","Pay when passing Start?","Start pass money","Use jail / waiting area?"]
-        y=153; x=self.screen.get_size()[0]//2-370
-        for i,l in enumerate(labels): self.ui.text(self.screen,l,(x,y+i*50),18,COLORS["text"])
-        self.ui.text(self.screen,"Board layout: "+BOARD_TYPES[self.add_layout_index],(x,505),18,COLORS["muted"])
+        self.draw_main_menu()
+    def draw_create_game(self):
+        self.draw_header("Create Game","Create a JSON game with a clean custom board setup")
+        panel = self.panel_rect(780, 570)
+        self.ui.rounded(self.screen,panel,COLORS["panel"],22,border=(255,255,255,30))
+        self.ui.text(self.screen,"New Game Settings",(panel.centerx,panel.y+42),26,COLORS["accent"],True)
+        label_x = panel.x + max(34, panel.w//10)
+        row_y = panel.y + 106
+        gap = 52
+        labels=["Game Name","Minimum Players","Maximum Players","Starting Money","Board Square Count","Pass Start Money"]
+        for i,l in enumerate(labels): self.ui.text(self.screen,l,(label_x,row_y+i*gap+8),18,COLORS["text"])
+        self.ui.text(self.screen,"Board Layout: "+BOARD_TYPES[self.add_layout_index],(label_x,row_y+gap*6+8),18,COLORS["muted"],max_width=panel.w-80)
     def draw_gamelist(self):
-        self.draw_header("Select Game","Stored JSON games in the games folder")
-        w,h=self.screen.get_size(); y=130
-        for idx,(p,g) in enumerate(self.games_cache[:7]):
-            r=(55,y+idx*66,w-470,54); self.ui.rounded(self.screen,r,COLORS["panel"],14,border=(255,255,255,25))
-            m=g.get("metadata",{}); s=g.get("settings",{})
-            self.ui.text(self.screen,m.get("name","Untitled"),(75,y+idx*66+8),20,COLORS["text"],max_width=w-600)
-            self.ui.text(self.screen,f"Created: {m.get('created_at','?')}  Players: {s.get('min_players',2)}-{s.get('max_players',6)}  Squares: {len(g.get('board',[]))}",(75,y+idx*66+32),14,COLORS["muted"],max_width=w-600)
+        self.draw_game_list(getattr(self, "list_mode", "play"))
     def draw_setup(self):
-        g=self.setup_game; self.draw_header("Start Game",g["metadata"].get("name","Game")); self.ui.text(self.screen,f"Player count: {self.setup_count}",(self.screen.get_size()[0]//2,108),22,COLORS["accent"],True)
+        g=self.setup_game; self.draw_header("Start Game",g["metadata"].get("name","Game"))
+        panel=self.panel_rect(720,560); self.ui.rounded(self.screen,panel,COLORS["panel"],22,border=(255,255,255,30))
+        self.ui.text(self.screen,f"Player count: {self.setup_count}",(panel.centerx,panel.y+106),22,COLORS["accent"],True)
         for i in range(len(self.inputs)):
-            self.inputs[i].rect.y=155+i*45; self.inputs[i].rect.x=self.screen.get_size()[0]//2-120
-            if i>=self.setup_count: continue
             self.ui.text(self.screen,f"P{i+1}",(self.inputs[i].rect.x-45,self.inputs[i].rect.y+7),18,PLAYER_COLORS[i%len(PLAYER_COLORS)])
-    def draw_editor(self):
+    def draw_add(self):
+        self.draw_create_game()
+    def draw_game_list(self, mode):
+        title = "Edit Existing Game" if mode == "edit" else "Play Game"
+        subtitle = "Stored JSON games in the games folder"
+        self.draw_header(title, subtitle)
+        w,h=self.screen.get_size(); panel=self.panel_rect(1040,560)
+        self.ui.rounded(self.screen,panel,COLORS["panel"],18,border=(255,255,255,30))
+        y=panel.y+104; row_h=64
+        if not self.games_cache:
+            self.ui.text(self.screen,"No saved games found.",(panel.centerx,panel.centery),22,COLORS["muted"],True)
+        for idx,(p,g) in enumerate(self.games_cache[:7]):
+            r=(panel.x+34,y+idx*row_h,panel.w-430,54); self.ui.rounded(self.screen,r,COLORS["panel2"],14,border=(255,255,255,25),shadow=False)
+            m=g.get("metadata",{}); st=g.get("settings",{})
+            self.ui.text(self.screen,m.get("name","Untitled"),(panel.x+55,y+idx*row_h+8),20,COLORS["text"],max_width=panel.w-560)
+            self.ui.text(self.screen,f"Created: {m.get('created_at','?')}  Players: {st.get('min_players',2)}-{st.get('max_players',6)}  Squares: {len(g.get('board',[]))}",(panel.x+55,y+idx*row_h+32),14,COLORS["muted"],max_width=panel.w-560)
+    def draw_edit_game(self):
+        if not self.editor_active:
+            self.draw_game_list("edit")
+            return
         g=self.edit_game; self.draw_header("Game Editor",g["metadata"].get("name","Game"))
         if self.editor_tab in ("Board","Actions","Timers"):
             self.ui.text(self.screen,"Squares",(30,170),20,COLORS["accent"])
@@ -710,10 +797,19 @@ class App:
         else:
             self.ui.text(self.screen,self.editor_tab+" System",(60,140),28,COLORS["accent"])
             self.ui.wrap(self.screen,"This panel documents and stores trade/debt/asset options in JSON. The first version includes working money trades, loans with interest and due turns, default icons, missing-image fallback, player tokens, property ownership markers, and editable JSON fields.",pygame.Rect(60,190,800,160),20,COLORS["text"])
+    def draw_editor(self):
+        self.draw_edit_game()
     def draw_settings(self):
         self.draw_header("Settings","Theme and resolution")
         self.ui.text(self.screen,"Theme: "+("Dark" if self.dark else "Light"),(self.screen.get_size()[0]//2,210),22,COLORS["text"],True)
+    def draw_play_select(self):
+        if self.play_select_mode == "setup":
+            self.draw_setup()
+        else:
+            self.draw_game_list("play")
     def draw_play(self):
+        self.draw_gameplay()
+    def draw_gameplay(self):
         ps=self.play_state; w,h=self.screen.get_size(); self.ui.text(self.screen,ps.game["metadata"].get("name","Game"),(w//2,24),24,COLORS["text"],True,max_width=600)
         self.ui.text(self.screen,f"Turn {ps.turn_count} - {ps.current_player()['name']}'s turn",(w//2,52),16,COLORS["accent"],True)
         board_rect=pygame.Rect(30,85,w-390,h-160); self.ui.rounded(self.screen,board_rect,COLORS["panel"],18,border=(255,255,255,30))
