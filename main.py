@@ -185,26 +185,81 @@ class UI:
     def rounded(self, surf, rect, color, radius=14, border=None, border_width=1, shadow=True):
         r = pygame.Rect(rect)
         if shadow:
-            sh = r.copy(); sh.move_ip(4, 6)
-            pygame.draw.rect(surf, (0, 0, 0, 55), sh, border_radius=radius)
+            sh = r.copy(); sh.move_ip(5, 8)
+            shadow_surf = pygame.Surface((sh.w + 12, sh.h + 12), pygame.SRCALPHA)
+            pygame.draw.rect(shadow_surf, (0, 0, 0, 95), (6, 6, sh.w, sh.h), border_radius=radius)
+            surf.blit(shadow_surf, (sh.x - 6, sh.y - 6))
         pygame.draw.rect(surf, color, r, border_radius=radius)
         if border:
             pygame.draw.rect(surf, border, r, border_width, border_radius=radius)
 
+    def glass(self, surf, rect, color=(30, 41, 59), alpha=188, radius=20, border=(56, 189, 248), border_alpha=95, shadow=True):
+        r = pygame.Rect(rect)
+        if shadow:
+            sh = pygame.Surface((r.w + 18, r.h + 18), pygame.SRCALPHA)
+            pygame.draw.rect(sh, (0, 0, 0, 105), (9, 9, r.w, r.h), border_radius=radius)
+            surf.blit(sh, (r.x - 9, r.y - 9))
+        panel = pygame.Surface((r.w, r.h), pygame.SRCALPHA)
+        pygame.draw.rect(panel, (*color, alpha), (0, 0, r.w, r.h), border_radius=radius)
+        pygame.draw.rect(panel, (255, 255, 255, 28), (1, 1, r.w-2, max(18, r.h//4)), border_radius=radius)
+        if border:
+            border_rgb = border[:3]
+            pygame.draw.rect(panel, (*border_rgb, border_alpha), (0, 0, r.w, r.h), 1, border_radius=radius)
+        surf.blit(panel, r.topleft)
+
+    def neon_line(self, surf, start, end, color=None, width=2):
+        color = color or COLORS["accent"]
+        pygame.draw.line(surf, (*color[:3],) if len(color) == 3 else color, start, end, width)
+        pygame.draw.line(surf, color[:3], start, end, max(1, width-1))
+
+    def icon(self, surf, name, center, size=20, color=None):
+        color = color or COLORS["accent"]
+        x, y = int(center[0]), int(center[1]); s = int(size)
+        if name == "card":
+            rr = pygame.Rect(0, 0, s, int(s*1.25)); rr.center = (x, y)
+            pygame.draw.rect(surf, (248,250,252), rr, border_radius=4)
+            pygame.draw.rect(surf, color, rr, 2, border_radius=4)
+            pygame.draw.circle(surf, color, (rr.centerx, rr.centery), max(2, s//5))
+        elif name == "tax":
+            self.text(surf, "$", (x, y-1), max(16, s), color, True)
+        elif name == "railroad":
+            pygame.draw.rect(surf, color, (x-s//2, y-s//5, s, s//3), border_radius=3)
+            pygame.draw.circle(surf, COLORS["dark_text"], (x-s//3, y+s//5), max(2, s//7))
+            pygame.draw.circle(surf, COLORS["dark_text"], (x+s//3, y+s//5), max(2, s//7))
+        elif name == "utility":
+            pygame.draw.polygon(surf, color, [(x, y-s//2), (x-s//5, y), (x+s//8, y), (x-s//8, y+s//2), (x+s//3, y-s//8), (x, y-s//8)])
+        elif name == "jail":
+            pygame.draw.rect(surf, color, (x-s//2, y-s//2, s, s), 2, border_radius=3)
+            for off in (-s//4, 0, s//4): pygame.draw.line(surf, color, (x+off, y-s//2), (x+off, y+s//2), 2)
+        elif name == "go":
+            pygame.draw.circle(surf, color, (x, y), s//2)
+            self.text(surf, "GO", (x, y), max(10, s//2), COLORS["dark_text"], True)
+        else:
+            pygame.draw.circle(surf, color, (x, y), s//2)
+
 
 class Button:
     def __init__(self, rect, label, action=None, kind="primary"):
-        self.rect = pygame.Rect(rect); self.label = label; self.action = action; self.kind = kind; self.enabled = True
+        self.rect = pygame.Rect(rect); self.label = label; self.action = action; self.kind = kind; self.enabled = True; self.hover_t = 0.0
     def draw(self, surf, ui, mouse):
         hover = self.rect.collidepoint(mouse) and self.enabled
+        self.hover_t += (1.0 if hover else -1.0) * 0.18
+        self.hover_t = max(0.0, min(1.0, self.hover_t))
         base = COLORS["accent"] if self.kind == "primary" else COLORS["panel2"]
         if self.kind == "danger": base = COLORS["bad"]
         if self.kind == "good": base = COLORS["good"]
-        if not self.enabled: base = (75, 85, 99)
-        color = tuple(min(255, c + (22 if hover else 0)) for c in base)
-        ui.rounded(surf, self.rect, color, 13, border=(255,255,255,40), shadow=True)
-        txt_color = COLORS["dark_text"] if self.kind in ("primary", "good") else COLORS["text"]
-        ui.text(surf, self.label, self.rect.center, 18, txt_color, center=True, max_width=self.rect.w-16)
+        if self.kind == "roll": base = (14, 165, 233)
+        if not self.enabled: base = (55, 65, 81)
+        lift = int(18 * self.hover_t)
+        color = tuple(min(255, c + lift) for c in base)
+        r = self.rect.copy(); r.y -= int(2*self.hover_t)
+        if hover and self.enabled:
+            glow = pygame.Surface((r.w+18, r.h+18), pygame.SRCALPHA)
+            pygame.draw.rect(glow, (*COLORS["accent"], 70), (9,9,r.w,r.h), border_radius=15)
+            surf.blit(glow, (r.x-9, r.y-9))
+        ui.rounded(surf, r, color, 14, border=COLORS["accent"] if hover else (255,255,255,45), shadow=True)
+        txt_color = COLORS["dark_text"] if self.kind in ("primary", "good", "roll") and self.enabled else COLORS["text"]
+        ui.text(surf, self.label, r.center, 17 if self.rect.w < 120 else 18, txt_color, center=True, max_width=r.w-14)
     def click(self, pos):
         return self.enabled and self.rect.collidepoint(pos)
 
@@ -259,7 +314,7 @@ class App:
         self.edit_game = None; self.edit_path = None; self.editor_tab = "Board"; self.selected_square = 0; self.selected_card_deck = "Chance"; self.selected_card = 0
         self.play_state = None; self.anim = None; self.popup = None; self.dark = self.settings.get("theme", "dark") == "dark"
         self.modal = None; self.modal_buttons = []; self.modal_inputs = []; self.modal_toggles = []; self.modal_partner_index = 0
-        self.editor_active = False; self.play_select_mode = "list"
+        self.editor_active = False; self.play_select_mode = "list"; self.board_hover_square = None
         self.ensure_default_template(); self.build_main_menu()
 
     def ensure_default_template(self):
@@ -300,7 +355,7 @@ class App:
 
     def build_main_menu(self):
         self.scene = "main_menu"; self.buttons = []; self.inputs = []; self.toggles = []; self.modal = None
-        self.editor_active = False; self.play_select_mode = "list"
+        self.editor_active = False; self.play_select_mode = "list"; self.board_hover_square = None
         w,h = self.screen.get_size(); panel = self.panel_rect(520, 470)
         bw,bh = min(340, panel.w-90), 54; x = panel.centerx-bw//2; y = panel.y+122
         items = [("Add New Game", lambda: self.set_scene("create_game")), ("Edit Existing Game", lambda: self.open_list("edit")), ("Play Game", lambda: self.open_list("play")), ("Settings", lambda: self.set_scene("settings")), ("Exit", self.quit)]
@@ -514,7 +569,12 @@ class App:
     def set_res(self,w,h): self.settings["resolution"]=[w,h]; save_json(SETTINGS_PATH,self.settings); self.screen=pygame.display.set_mode((w,h),pygame.RESIZABLE); self.build_settings()
     def build_gameplay(self):
         self.scene = "gameplay"
-        w,h=self.screen.get_size(); self.buttons=[Button((35,h-58,122,40),"Main Menu",self.confirm_menu,"secondary"),Button((170,h-58,115,40),"Roll Dice",self.roll_dice,"primary"),Button((295,h-58,130,40),"Buy Property",self.buy_property,"good"),Button((435,h-58,100,40),"Auction",self.auction,"secondary"),Button((545,h-58,90,40),"Trade",self.trade,"secondary"),Button((645,h-58,115,40),"Debt / Loan",self.debt,"secondary"),Button((770,h-58,120,40),"Build House",self.build_house,"secondary"),Button((900,h-58,105,40),"Mortgage",self.mortgage,"secondary"),Button((1015,h-58,95,40),"Use Card",self.use_card,"secondary"),Button((1120,h-58,110,40),"End Turn",self.end_turn,"secondary"),Button((w-135,h-58,105,40),"Save",self.save_game,"secondary")]
+        w,h=self.screen.get_size(); y=h-58; x=30; gap=8; end_w=132; roll_w=150; small_w=max(82, min(104, (w-60-end_w-roll_w-gap*11)//9))
+        labels=[("Main Menu",self.confirm_menu,"secondary",small_w), ("Roll Dice",self.roll_dice,"roll",roll_w), ("Buy",self.buy_property,"good",small_w), ("Auction",self.auction,"secondary",small_w), ("Trade",self.trade,"secondary",small_w), ("Debt",self.debt,"secondary",small_w), ("Build",self.build_house,"secondary",small_w), ("Mortgage",self.mortgage,"secondary",small_w), ("Card",self.use_card,"secondary",small_w), ("Save",self.save_game,"secondary",small_w)]
+        self.buttons=[]
+        for lab,act,kind,bw in labels:
+            self.buttons.append(Button((x,y,bw,42),lab,act,kind)); x += bw + gap
+        self.buttons.append(Button((w-30-end_w,y,end_w,42),"End Turn",self.end_turn,"danger"))
     def build_play(self):
         self.build_gameplay()
     def confirm_menu(self): self.build_main_menu()
@@ -524,20 +584,40 @@ class App:
     def roll_dice(self):
         ps=self.play_state
         if ps.rolling or ps.turn_rolled or ps.winner: return
-        d1,d2=random.randint(1,6),random.randint(1,6); ps.last_roll=(d1,d2); ps.rolling=True; ps.roll_end=time.time()+0.85; ps.pending_steps=d1+d2
+        d1,d2=random.randint(1,6),random.randint(1,6); ps.last_roll=(d1,d2); ps.rolling=True; ps.roll_end=time.time()+0.8; ps.pending_steps=d1+d2
         p=ps.current_player(); p["doubles"] = p.get("doubles",0)+1 if d1==d2 else 0
         ps.log(f"{p['name']} rolled {d1}+{d2}.")
     def buy_property(self):
         ps=self.play_state; p=ps.current_player(); sq=ps.square(p["pos"])
         if sq["type"] in ("property","railroad","utility") and sq.get("owner") is None and p["money"]>=sq.get("price",0):
-            p["money"]-=sq.get("price",0); sq["owner"]=p["id"]; p["properties"].append(sq["id"]); ps.log(f"{p['name']} bought {sq['name']} for {sq['price']}.")
+            self.open_confirm_modal("buy", "Buy Property", f"Buy {sq['name']} for ${sq.get('price',0)}?", self.confirm_buy_property)
         else: ps.log("Cannot buy this square now.")
+    def confirm_buy_property(self):
+        ps=self.play_state; p=ps.current_player(); sq=ps.square(p["pos"])
+        if sq["type"] in ("property","railroad","utility") and sq.get("owner") is None and p["money"]>=sq.get("price",0):
+            p["money"]-=sq.get("price",0); sq["owner"]=p["id"]; p["properties"].append(sq["id"]); ps.log(f"{p['name']} bought {sq['name']} for {sq['price']}.")
+        self.close_modal()
     def auction(self):
+        ps=self.play_state; sq=ps.square(ps.current_player()["pos"])
+        if sq.get("owner") is None and sq["type"] in ("property","railroad","utility"):
+            self.open_confirm_modal("auction", "Auction", f"Start a quick auction for {sq['name']}?", self.confirm_auction)
+        else: ps.log("Auction is unavailable.")
+    def confirm_auction(self):
         ps=self.play_state; sq=ps.square(ps.current_player()["pos"]); bidders=[p for p in ps.players if not p["bankrupt"]]
         if sq.get("owner") is None and sq["type"] in ("property","railroad","utility") and bidders:
             winner=max(bidders,key=lambda p:p["money"]); bid=max(1,int(sq.get("price",100)*0.75)); bid=min(bid,winner["money"])
             winner["money"]-=bid; sq["owner"]=winner["id"]; winner["properties"].append(sq["id"]); ps.log(f"Auction sold {sq['name']} to {winner['name']} for {bid}.")
-        else: ps.log("Auction is unavailable.")
+        self.close_modal()
+    def open_confirm_modal(self, modal_type, title, body, confirm_action):
+        w, h = self.screen.get_size()
+        self.modal = {"type": modal_type, "title": title, "body": body, "opened_at": time.time()}
+        self.modal_inputs=[]; self.modal_toggles=[]
+        self.modal_buttons=[Button((w//2-135,h//2+105,120,42),"Confirm",confirm_action,"good"), Button((w//2+25,h//2+105,120,42),"Cancel",self.close_modal,"danger")]
+    def open_info_modal(self, title, body, icon="card"):
+        w, h = self.screen.get_size()
+        self.modal = {"type": "info", "title": title, "body": body, "icon": icon, "opened_at": time.time()}
+        self.modal_inputs=[]; self.modal_toggles=[]
+        self.modal_buttons=[Button((w//2-70,h//2+115,140,42),"OK",self.close_modal,"primary")]
     def open_trade_modal(self):
         ps = self.play_state
         if not ps or not ps.game.get("rules", {}).get("trade_enabled", True):
@@ -549,7 +629,7 @@ class App:
             return
         self.modal_partner_index = 0
         w, h = self.screen.get_size()
-        self.modal = {"type": "trade", "title": "Trade Offer", "partners": partners}
+        self.modal = {"type": "trade", "title": "Trade Offer", "partners": partners, "opened_at": time.time()}
         self.modal_inputs = [
             InputBox((w//2-95, h//2-20, 120, 34), "100", True),
             InputBox((w//2-95, h//2+35, 120, 34), "", True),
@@ -588,7 +668,7 @@ class App:
             return
         self.modal_partner_index = 0
         w, h = self.screen.get_size()
-        self.modal = {"type": "debt", "title": "Debt / Loan", "partners": partners}
+        self.modal = {"type": "debt", "title": "Debt / Loan", "partners": partners, "opened_at": time.time()}
         self.modal_inputs = [
             InputBox((w//2-95, h//2-20, 120, 34), "100", True),
             InputBox((w//2-95, h//2+35, 120, 34), str(ps.game.get("debt_rules", {}).get("default_interest", 10)), True),
@@ -631,7 +711,7 @@ class App:
     def use_card(self):
         ps=self.play_state; p=ps.current_player()
         if p["cards"]:
-            c=p["cards"].pop(0); ps.apply_action(p,c.get("action",make_action()),source=c.get("name","Card"))
+            c=p["cards"].pop(0); self.open_info_modal(c.get("name","Card"), c.get("description", "Card used."), "card"); ps.apply_action(p,c.get("action",make_action()),source=c.get("name","Card"))
         else: ps.log("No held cards.")
     def end_turn(self):
         ps=self.play_state
@@ -642,9 +722,15 @@ class App:
         path=os.path.join(SAVES_DIR,safe_filename(ps.game["metadata"]["name"])+"_save.json"); save_json(path,data); ps.log("Game saved to saves folder.")
 
     def draw_bg(self):
-        w,h=self.screen.get_size(); top=(18,24,38) if self.dark else (226,232,240); bot=(15,23,42) if self.dark else (248,250,252)
+        w,h=self.screen.get_size(); top=(10,18,32) if self.dark else (226,232,240); bot=(15,23,42) if self.dark else (248,250,252)
         for y in range(h):
             t=y/max(1,h); c=tuple(int(top[i]*(1-t)+bot[i]*t) for i in range(3)); pygame.draw.line(self.screen,c,(0,y),(w,y))
+        # Subtle neon background blooms, drawn with alpha surfaces so no external assets are required.
+        bloom=pygame.Surface((w,h),pygame.SRCALPHA)
+        pygame.draw.circle(bloom,(56,189,248,28),(int(w*0.18),int(h*0.18)),max(180,w//6))
+        pygame.draw.circle(bloom,(168,85,247,24),(int(w*0.82),int(h*0.28)),max(160,w//7))
+        pygame.draw.circle(bloom,(34,197,94,14),(int(w*0.55),int(h*0.92)),max(180,w//6))
+        self.screen.blit(bloom,(0,0))
     def handle_event(self,e):
         if e.type==pygame.QUIT: self.running=False
         if self.modal:
@@ -683,7 +769,11 @@ class App:
             for i,c in enumerate(deck):
                 if pygame.Rect(270,y+i*32,300,28).collidepoint(pos): self.save_edit_values(); self.selected_card=i; self.build_editor(); return
     def update(self,dt):
-        if self.scene=="gameplay" and self.play_state: self.play_state.update(dt)
+        if self.scene=="gameplay" and self.play_state:
+            self.play_state.update(dt)
+            if getattr(self.play_state, "last_popup", None) and not self.modal:
+                pop = self.play_state.last_popup; self.play_state.last_popup = None
+                self.open_info_modal(pop.get("title", "Event"), pop.get("body", ""), pop.get("icon", "card"))
     def draw(self):
         self.draw_bg(); getattr(self,"draw_"+self.scene)()
         mouse=pygame.mouse.get_pos()
@@ -697,22 +787,31 @@ class App:
         pygame.display.flip()
     def draw_modal(self):
         w, h = self.screen.get_size()
-        overlay = pygame.Surface((w, h), pygame.SRCALPHA); overlay.fill((0, 0, 0, 145)); self.screen.blit(overlay, (0, 0))
-        box = pygame.Rect(w//2-300, h//2-175, 600, 370)
-        self.ui.rounded(self.screen, box, COLORS["panel"], 22, border=COLORS["accent"], shadow=True)
-        self.ui.text(self.screen, self.modal.get("title", "Popup"), (box.centerx, box.y+32), 28, COLORS["accent"], True)
-        partners = self.modal.get("partners", [])
-        partner = partners[self.modal_partner_index] if partners else {"name": "None", "money": 0, "properties": []}
-        current = self.play_state.current_player() if self.play_state else {"name": "Player", "money": 0, "properties": []}
-        self.ui.text(self.screen, f"Current: {current['name']} (${current['money']})", (box.x+35, box.y+75), 17, COLORS["text"])
-        self.ui.text(self.screen, f"Partner: {partner['name']} (${partner['money']})", (box.x+35, box.y+100), 17, COLORS["text"])
-        labels = ["Money amount", "Your property id", "Partner property id"] if self.modal.get("type") == "trade" else ["Loan amount", "Interest %", "Due in turns"]
-        for i, lab in enumerate(labels):
-            self.ui.text(self.screen, lab, (box.x+105, h//2-14+i*55), 17, COLORS["muted"])
-        if self.modal.get("type") == "trade":
-            self.ui.wrap(self.screen, "Property ids are the square numbers shown on the board/list. Leave property fields empty for a money-only trade.", pygame.Rect(box.x+330, box.y+135, 220, 95), 15, COLORS["muted"])
+        overlay = pygame.Surface((w, h), pygame.SRCALPHA); overlay.fill((0, 0, 0, 155)); self.screen.blit(overlay, (0, 0))
+        age = time.time() - self.modal.get("opened_at", time.time())
+        scale = min(1.0, 0.88 + age * 4.0)
+        full = pygame.Rect(w//2-300, h//2-185, 600, 390)
+        box = pygame.Rect(0, 0, int(full.w*scale), int(full.h*scale)); box.center = full.center
+        self.ui.glass(self.screen, box, COLORS["panel"], 220, 24, COLORS["accent"], 135, True)
+        self.ui.text(self.screen, self.modal.get("title", "Popup"), (box.centerx, box.y+34), 30, COLORS["accent"], True, box.w-70)
+        mtype = self.modal.get("type")
+        if mtype in ("info", "buy", "auction"):
+            icon = self.modal.get("icon", "card")
+            if mtype == "buy": icon = "go"
+            if mtype == "auction": icon = "tax"
+            self.ui.icon(self.screen, icon, (box.centerx, box.y+105), 42, COLORS["accent"])
+            self.ui.wrap(self.screen, self.modal.get("body", ""), pygame.Rect(box.x+70, box.y+145, box.w-140, 86), 20, COLORS["text"])
         else:
-            self.ui.wrap(self.screen, "The lender gives money now. Principal plus interest is automatically collected when the due turn arrives.", pygame.Rect(box.x+330, box.y+135, 220, 95), 15, COLORS["muted"])
+            partners = self.modal.get("partners", [])
+            partner = partners[self.modal_partner_index] if partners else {"name": "None", "money": 0, "properties": []}
+            current = self.play_state.current_player() if self.play_state else {"name": "Player", "money": 0, "properties": []}
+            self.ui.text(self.screen, f"Current: {current['name']} (${current['money']})", (box.x+38, box.y+78), 17, COLORS["text"])
+            self.ui.text(self.screen, f"Partner: {partner['name']} (${partner['money']})", (box.x+38, box.y+104), 17, COLORS["text"])
+            labels = ["Money amount", "Your property id", "Partner property id"] if mtype == "trade" else ["Loan amount", "Interest %", "Due in turns"]
+            for i, lab in enumerate(labels):
+                self.ui.text(self.screen, lab, (box.x+100, h//2-14+i*55), 17, COLORS["muted"])
+            helper = "Property ids are square numbers. Leave property fields empty for a money-only trade." if mtype == "trade" else "The lender gives money now. Principal plus interest is collected on the due turn."
+            self.ui.wrap(self.screen, helper, pygame.Rect(box.x+330, box.y+145, 220, 95), 15, COLORS["muted"])
         mouse = pygame.mouse.get_pos()
         for inp in self.modal_inputs: inp.draw(self.screen, self.ui)
         for b in self.modal_buttons: b.draw(self.screen, self.ui, mouse)
@@ -724,8 +823,12 @@ class App:
     def draw_main_menu(self):
         self.draw_header(APP_TITLE,"Create, edit, save and play custom property board games")
         panel = self.panel_rect(520, 470)
-        self.ui.rounded(self.screen,panel,COLORS["panel"],22,border=(255,255,255,30))
-        self.ui.text(self.screen,"Professional 2D Board Game Maker",(panel.centerx,panel.y+58),24,COLORS["accent"],True,max_width=panel.w-50)
+        self.ui.glass(self.screen,panel,COLORS["panel"],205,24,COLORS["accent"],105)
+        logo_y=panel.y+58
+        pygame.draw.circle(self.screen,(56,189,248),(panel.centerx-150,logo_y),24,2)
+        pygame.draw.circle(self.screen,(168,85,247),(panel.centerx-150,logo_y),12)
+        self.ui.text(self.screen,"BOX BOARD GAME STUDIO",(panel.centerx+12,logo_y-10),26,COLORS["text"],True,max_width=panel.w-130)
+        self.ui.text(self.screen,"Commercial-quality 2D board game editor",(panel.centerx+12,logo_y+20),15,COLORS["muted"],True,max_width=panel.w-130)
     def draw_menu(self):
         self.draw_main_menu()
     def draw_create_game(self):
@@ -810,29 +913,63 @@ class App:
     def draw_play(self):
         self.draw_gameplay()
     def draw_gameplay(self):
-        ps=self.play_state; w,h=self.screen.get_size(); self.ui.text(self.screen,ps.game["metadata"].get("name","Game"),(w//2,24),24,COLORS["text"],True,max_width=600)
-        self.ui.text(self.screen,f"Turn {ps.turn_count} - {ps.current_player()['name']}'s turn",(w//2,52),16,COLORS["accent"],True)
-        board_rect=pygame.Rect(30,85,w-390,h-160); self.ui.rounded(self.screen,board_rect,COLORS["panel"],18,border=(255,255,255,30))
+        ps=self.play_state; w,h=self.screen.get_size()
+        top=pygame.Rect(30,18,w-60,60); self.ui.glass(self.screen,top,COLORS["panel"],165,18,COLORS["accent"],80,False)
+        self.ui.text(self.screen,ps.game["metadata"].get("name","Game"),(w//2,34),24,COLORS["text"],True,max_width=650)
+        self.ui.text(self.screen,f"Turn {ps.turn_count}  •  {ps.current_player()['name']}'s turn",(w//2,58),16,COLORS["accent"],True)
+        board_rect=pygame.Rect(30,92,w-390,h-182); self.ui.glass(self.screen,board_rect,COLORS["panel"],190,22,COLORS["accent"],90)
         ps.draw_board(self.screen,self.ui,board_rect)
-        side=pygame.Rect(w-335,85,305,h-160); self.ui.rounded(self.screen,side,COLORS["panel"],18,border=(255,255,255,30))
-        self.ui.text(self.screen,"Players",(side.x+18,side.y+15),22,COLORS["accent"])
-        y=side.y+50
+        self.board_hover_square = getattr(ps, "hover_square", None)
+        if self.board_hover_square:
+            mx,my=pygame.mouse.get_pos(); tip=pygame.Rect(mx+16,my+12,280,74)
+            if tip.right>w: tip.x=mx-296
+            self.ui.glass(self.screen,tip,COLORS["panel2"],235,12,COLORS["accent"],130,True)
+            sq=self.board_hover_square
+            self.ui.text(self.screen,sq.get("name","Square"),(tip.x+14,tip.y+10),17,COLORS["text"],max_width=250)
+            self.ui.text(self.screen,f"{sq.get('type','custom')} • ${sq.get('price',0)} • rent {sq.get('rent',0)}",(tip.x+14,tip.y+39),14,COLORS["muted"],max_width=250)
+        side=pygame.Rect(w-335,92,305,h-182); self.ui.glass(self.screen,side,COLORS["panel"],195,22,COLORS["accent"],85)
+        self.ui.text(self.screen,"Players",(side.x+18,side.y+16),22,COLORS["accent"])
+        y=side.y+52
         for i,p in enumerate(ps.players):
-            col=PLAYER_COLORS[i%len(PLAYER_COLORS)]; rr=pygame.Rect(side.x+14,y,277,62); self.ui.rounded(self.screen,rr,(51,65,85) if i==ps.current else (38,50,70),12,shadow=False)
-            if i==ps.current: pygame.draw.rect(self.screen,COLORS["accent"],rr,2,border_radius=12)
-            pygame.draw.circle(self.screen,col,(rr.x+22,rr.y+29),12); self.ui.text(self.screen,p["name"],(rr.x+42,rr.y+8),17,COLORS["text"],max_width=150)
-            debt_count=len(p.get("debts",[])); timer_count=len(p.get("timers",[]))
-            self.ui.text(self.screen,f"${p['money']} Pos {p['pos']} Props {len(p['properties'])} Debt {debt_count} Timer {timer_count}",(rr.x+42,rr.y+32),14,COLORS["muted"],max_width=240)
-            y+=70
-        self.ui.text(self.screen,"Dice",(side.x+18,y+5),18,COLORS["accent"])
-        d1,d2=ps.animated_dice(); self.draw_die(side.x+25,y+35,d1); self.draw_die(side.x+90,y+35,d2)
-        self.ui.text(self.screen,"Log",(side.x+18,y+100),18,COLORS["accent"])
-        yy=y+130
-        for line in ps.logs[-6:]: self.ui.text(self.screen,line,(side.x+18,yy),13,COLORS["muted"],max_width=265); yy+=21
+            if y+96 > side.bottom-135: break
+            col=PLAYER_COLORS[i%len(PLAYER_COLORS)]; rr=pygame.Rect(side.x+14,y,277,88)
+            glow = 0.5 + 0.5*math.sin(time.time()*2.4) if i==ps.current else 0
+            border = COLORS["accent"] if i==ps.current else (255,255,255,35)
+            self.ui.glass(self.screen,rr,(35,48,72) if i==ps.current else (30,41,59),220,14,border,int(80+80*glow) if i==ps.current else 45,False)
+            pygame.draw.circle(self.screen,col,(rr.x+25,rr.y+25),15); self.ui.text(self.screen,str(i+1),(rr.x+25,rr.y+25),14,COLORS["white"],True)
+            self.ui.text(self.screen,p["name"],(rr.x+48,rr.y+9),17,COLORS["text"],max_width=150)
+            self.ui.text(self.screen,f"Money: ${p['money']}",(rr.x+48,rr.y+31),14,COLORS["muted"],max_width=150)
+            self.ui.text(self.screen,f"Pos: {p['pos']}   Props: {len(p['properties'])}",(rr.x+48,rr.y+50),14,COLORS["muted"],max_width=160)
+            self.ui.text(self.screen,f"Debt: {len(p.get('debts',[]))}   Timer: {len(p.get('timers',[]))}",(rr.x+48,rr.y+69),14,COLORS["muted"],max_width=170)
+            chip_x=rr.right-84; chip_y=rr.y+18
+            for prop_id in p["properties"][:8]:
+                sq=ps.square(prop_id); chip_col=GROUP_COLORS.get(sq.get("color_group"),(100,116,139))
+                pygame.draw.rect(self.screen,chip_col,(chip_x,chip_y,14,10),border_radius=3); chip_x+=18
+                if chip_x>rr.right-18: chip_x=rr.right-84; chip_y+=15
+            y+=98
+        dice_y=max(y+10, side.bottom-118); self.ui.text(self.screen,"Dice",(side.x+18,dice_y),18,COLORS["accent"])
+        d1,d2=ps.animated_dice(); self.draw_die(side.x+24,dice_y+28,d1); self.draw_die(side.x+88,dice_y+28,d2)
+        self.ui.text(self.screen,"Log",(side.x+18,dice_y+88),18,COLORS["accent"])
+        yy=dice_y+112
+        for line in ps.logs[-4:]: self.ui.text(self.screen,line,(side.x+18,yy),13,COLORS["muted"],max_width=265); yy+=20
+        bottom=pygame.Rect(24,h-70,w-48,60); self.ui.glass(self.screen,bottom,COLORS["panel"],160,18,COLORS["accent"],60,False)
+        # Button availability follows the current square and turn state.
+        current=ps.current_player(); sq=ps.square(current["pos"])
+        if len(self.buttons) >= 11:
+            self.buttons[1].enabled = (not ps.rolling and not ps.turn_rolled and not ps.winner)
+            can_buy = sq["type"] in ("property","railroad","utility") and sq.get("owner") is None and current["money"] >= sq.get("price",0)
+            self.buttons[2].enabled = can_buy
+            self.buttons[3].enabled = sq["type"] in ("property","railroad","utility") and sq.get("owner") is None
+            self.buttons[6].enabled = bool(current["properties"])
+            self.buttons[7].enabled = bool(current["properties"])
+            self.buttons[8].enabled = bool(current["cards"])
         if ps.winner:
-            self.ui.rounded(self.screen,(w//2-250,h//2-70,500,140),COLORS["panel2"],20,border=COLORS["good"]); self.ui.text(self.screen,ps.winner+" wins!",(w//2,h//2),34,COLORS["good"],True)
+            self.ui.glass(self.screen,(w//2-260,h//2-80,520,160),COLORS["panel2"],235,24,COLORS["good"],160)
+            self.ui.text(self.screen,ps.winner+" wins!",(w//2,h//2),36,COLORS["good"],True)
     def draw_die(self,x,y,val):
-        rect=pygame.Rect(x,y,50,50); self.ui.rounded(self.screen,rect,COLORS["white"],10,shadow=False); self.ui.text(self.screen,str(val),(x+25,y+25),30,COLORS["dark_text"],True)
+        rect=pygame.Rect(x,y,52,52); self.ui.rounded(self.screen,rect,(248,250,252),12,border=COLORS["accent"],shadow=True)
+        pip={1:[(0,0)],2:[(-1,-1),(1,1)],3:[(-1,-1),(0,0),(1,1)],4:[(-1,-1),(1,-1),(-1,1),(1,1)],5:[(-1,-1),(1,-1),(0,0),(-1,1),(1,1)],6:[(-1,-1),(1,-1),(-1,0),(1,0),(-1,1),(1,1)]}
+        for px,py in pip.get(val,[]): pygame.draw.circle(self.screen,COLORS["dark_text"],(rect.centerx+px*14,rect.centery+py*14),4)
     def run(self):
         while self.running:
             dt=self.clock.tick(60)/1000
@@ -845,7 +982,7 @@ class GameState:
     def __init__(self, game, names):
         self.game=game; self.players=[]; start=game["settings"].get("starting_money",1500)
         for i,n in enumerate(names): self.players.append({"id":i,"name":n,"money":start,"pos":0,"properties":[],"cards":[],"debts":[],"wait_turns":0,"bankrupt":False,"doubles":0})
-        self.current=0; self.turn_count=1; self.last_roll=(1,1); self.rolling=False; self.roll_end=0; self.pending_steps=0; self.moving=False; self.move_timer=0; self.turn_rolled=False; self.logs=["Game started."]; self.winner=None; self.free_pool=0
+        self.current=0; self.turn_count=1; self.last_roll=(1,1); self.rolling=False; self.roll_end=0; self.pending_steps=0; self.moving=False; self.move_timer=0; self.turn_rolled=False; self.logs=["Game started."]; self.winner=None; self.free_pool=0; self.last_popup=None; self.hover_square=None
     def log(self,msg): self.logs.append(msg); self.logs=self.logs[-80:]
     def current_player(self): return self.players[self.current]
     def square(self,i): return self.game["board"][i % len(self.game["board"])]
@@ -921,7 +1058,7 @@ class GameState:
     def draw_card(self,p,deck_name):
         deck=self.game.get("card_decks",{}).get(deck_name,[])
         if not deck: self.log(deck_name+" deck is empty."); return
-        card=random.choice(deck); self.log(f"Card drawn: {card.get('name','Card')} - {card.get('description','')}")
+        card=random.choice(deck); self.log(f"Card drawn: {card.get('name','Card')} - {card.get('description','')}"); self.last_popup={"title": card.get("name","Card"), "body": card.get("description", ""), "icon": "card"}
         if card.get("holdable"): p["cards"].append(card); self.log("Card kept in hand.")
         else: self.apply_action(p,card.get("action",make_action()),source=card.get("name","Card"))
     def pay(self,src,dst,amt,reason):
@@ -988,7 +1125,8 @@ class GameState:
                 if len(p["properties"])>=self.game["rules"].get("property_target",12): self.winner=p["name"]
         if ec=="turn_limit" and self.turn_count>=self.game["rules"].get("turn_limit",60): self.winner=max(active,key=lambda p:p["money"])["name"] if active else None
     def draw_board(self,surf,ui,rect):
-        layout=self.game["settings"].get("board_layout",BOARD_TYPES[0]); n=len(self.game["board"]); centers=[]
+        layout=self.game["settings"].get("board_layout",BOARD_TYPES[0]); n=len(self.game["board"]); centers=[]; self.hover_square=None
+        mouse=pygame.mouse.get_pos()
         if layout=="Circular path":
             cx,cy=rect.center; rad=min(rect.w,rect.h)*0.38
             for i in range(n):
@@ -997,28 +1135,64 @@ class GameState:
             cols=math.ceil(math.sqrt(n)); rows=math.ceil(n/cols); cell=min(rect.w/(cols+1),rect.h/(rows+1))
             for i in range(n): centers.append((rect.x+cell*(1+i%cols),rect.y+cell*(1+i//cols)))
         else:
-            per=max(1,n//4); left,right,top,bottom=rect.x+55,rect.right-55,rect.y+55,rect.bottom-55
+            per=max(1,n//4); left,right,top,bottom=rect.x+72,rect.right-72,rect.y+70,rect.bottom-70
             for i in range(n):
                 side=i/per
                 if side<1: t=(i%per)/per; centers.append((right-(right-left)*t,bottom))
                 elif side<2: t=(i%per)/per; centers.append((left, bottom-(bottom-top)*t))
                 elif side<3: t=(i%per)/per; centers.append((left+(right-left)*t,top))
                 else: t=(i%per)/max(1,n-3*per); centers.append((right, top+(bottom-top)*t))
+        # Premium center table.
+        inner=pygame.Rect(rect.x+120,rect.y+95,max(180,rect.w-240),max(130,rect.h-190))
+        ui.glass(surf,inner,(15,23,42),95,22,COLORS["accent2"],45,False)
+        ui.text(surf,"BOARD STUDIO",inner.center,30,(71,85,105),True,max_width=inner.w-40)
+        square_rects=[]
         for i,sq in enumerate(self.game["board"]):
-            x,y=centers[i]; col=GROUP_COLORS.get(sq.get("color_group"),(100,116,139)); r=pygame.Rect(0,0,74,48); r.center=(x,y)
-            ui.rounded(surf,r,(248,250,252),8,border=col,border_width=3,shadow=False)
-            pygame.draw.rect(surf,col,(r.x,r.y,r.w,8),border_radius=4)
-            ui.text(surf,sq["name"],(r.centerx,r.y+15),11,COLORS["dark_text"],True,max_width=66)
+            x,y=centers[i]; col=GROUP_COLORS.get(sq.get("color_group"),(100,116,139)); corner = i in (0, n//4, n//2, (n*3)//4)
+            r=pygame.Rect(0,0,96 if corner else 78,68 if corner else 52); r.center=(x,y); square_rects.append(r)
+            hover=r.collidepoint(mouse)
+            if hover: self.hover_square=sq
+            fill=(248,250,252) if not hover else (255,255,255)
+            ui.rounded(surf,r,fill,10,border=col,border_width=3 if not hover else 4,shadow=True if hover else False)
+            strip_h=14 if not corner else 18
+            pygame.draw.rect(surf,col,(r.x+3,r.y+3,r.w-6,strip_h),border_radius=6)
+            st=sq.get("type","custom")
+            icon=None
+            if st=="card": icon="card"
+            elif st=="tax": icon="tax"
+            elif st=="railroad": icon="railroad"
+            elif st=="utility": icon="utility"
+            elif st in ("jail","go_to_jail"): icon="jail"
+            elif st=="start": icon="go"
+            if icon:
+                ui.icon(surf,icon,(r.centerx,r.y+strip_h+14),17 if not corner else 22,col)
+                text_y=r.y+strip_h+27
+            else:
+                text_y=r.y+strip_h+8
+            ui.text(surf,sq.get("name","Square"),(r.centerx,text_y),11 if not corner else 12,COLORS["dark_text"],True,max_width=r.w-10)
+            if st in ("property","railroad","utility") and sq.get("price",0):
+                ui.text(surf,"$"+str(sq.get("price",0)),(r.centerx,r.bottom-10),10,(71,85,105),True,max_width=r.w-10)
             if sq.get("owner") is not None:
                 pygame.draw.circle(surf,PLAYER_COLORS[sq["owner"]%len(PLAYER_COLORS)],(r.right-10,r.bottom-10),6)
-            if sq.get("houses",0): ui.text(surf,"H"+str(sq.get("houses")),(r.x+6,r.bottom-17),11,COLORS["good"])
-            if sq.get("hotel"): ui.text(surf,"HOT",(r.x+6,r.bottom-17),11,COLORS["bad"])
+            if sq.get("houses",0): ui.text(surf,"H"+str(sq.get("houses")),(r.x+7,r.bottom-18),11,COLORS["good"])
+            if sq.get("hotel"): ui.text(surf,"HOT",(r.x+7,r.bottom-18),11,COLORS["bad"])
+        occupants={}
         for idx,p in enumerate(self.players):
-            if p["bankrupt"]: continue
-            x,y=centers[p["pos"]]; off=((idx%3)-1)*12; oy=(idx//3)*12
-            pulse=2 if idx==self.current and int(time.time()*4)%2==0 else 0
-            pygame.draw.circle(surf,PLAYER_COLORS[idx%len(PLAYER_COLORS)],(int(x+off),int(y+oy)),11+pulse)
-            ui.text(surf,str(idx+1),(x+off,y+oy),13,COLORS["white"],True)
+            if not p["bankrupt"]: occupants.setdefault(p["pos"],[]).append(idx)
+        for pos,idxs in occupants.items():
+            x,y=centers[pos]
+            count=len(idxs); spacing=16
+            for local,idx in enumerate(idxs):
+                p=self.players[idx]; col=PLAYER_COLORS[idx%len(PLAYER_COLORS)]
+                off_x=(local-(count-1)/2)*spacing; off_y=10 if count>1 else 0
+                active=idx==self.current; pulse=0.5+0.5*math.sin(time.time()*4)
+                if active:
+                    pygame.draw.circle(surf,(*col,80),(int(x+off_x),int(y+off_y)),20+int(4*pulse))
+                    glow=pygame.Surface((52,52),pygame.SRCALPHA); pygame.draw.circle(glow,(*col,95),(26,26),24); surf.blit(glow,(int(x+off_x)-26,int(y+off_y)-26))
+                pygame.draw.circle(surf,(15,23,42),(int(x+off_x),int(y+off_y)),15)
+                pygame.draw.circle(surf,col,(int(x+off_x),int(y+off_y)),13)
+                ui.text(surf,str(idx+1),(x+off_x,y+off_y),13,COLORS["white"],True)
+
 
 
 if __name__ == "__main__":
