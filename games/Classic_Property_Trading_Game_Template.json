@@ -1,0 +1,2213 @@
+{
+  "metadata": {
+    "id": "classic_template",
+    "name": "Classic Property Trading Game Template",
+    "created_at": "2026-06-05T06:44:13",
+    "updated_at": "2026-06-05T06:44:13",
+    "version": 1
+  },
+  "settings": {
+    "min_players": 2,
+    "max_players": 6,
+    "starting_money": 1500,
+    "board_layout": "Monopoly style square",
+    "board_square_count": 40
+  },
+  "rules": {
+    "pass_start_money_enabled": true,
+    "pass_start_money": 200,
+    "exact_start_bonus_enabled": true,
+    "exact_start_bonus": 200,
+    "property_purchase_enabled": true,
+    "auction_enabled": true,
+    "auction_unbought_property": true,
+    "rent_enabled": true,
+    "houses_hotels_enabled": true,
+    "mortgage_enabled": true,
+    "trade_enabled": true,
+    "debt_enabled": true,
+    "debt_interest_enabled": true,
+    "debt_due_turns": 5,
+    "debt_default": "transfer_collateral_or_penalty",
+    "jail_enabled": true,
+    "jail_fee": 50,
+    "jail_turns": 3,
+    "double_reroll_enabled": true,
+    "three_doubles_jail": true,
+    "free_parking_pool_enabled": true,
+    "taxes_to": "bank",
+    "end_condition": "last_player_standing",
+    "turn_limit": 60,
+    "wealth_target": 5000,
+    "property_target": 12
+  },
+  "board": [
+    {
+      "id": 0,
+      "name": "GO",
+      "type": "start",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 1,
+      "name": "Mediterranean Avenue",
+      "type": "property",
+      "price": 60,
+      "rent": 2,
+      "color_group": "Brown",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 2,
+      "name": "Community Chest",
+      "type": "card",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "draw_card",
+          "amount": 0,
+          "target": "Community Chest",
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 3,
+      "name": "Baltic Avenue",
+      "type": "property",
+      "price": 60,
+      "rent": 4,
+      "color_group": "Brown",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 4,
+      "name": "Income Tax",
+      "type": "tax",
+      "price": 0,
+      "rent": 200,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "lose_money",
+          "amount": 200,
+          "target": null,
+          "message": "Pay 200 tax",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 5,
+      "name": "Reading Railroad",
+      "type": "railroad",
+      "price": 200,
+      "rent": 25,
+      "color_group": "Railroad",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 6,
+      "name": "Oriental Avenue",
+      "type": "property",
+      "price": 100,
+      "rent": 6,
+      "color_group": "Light Blue",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 7,
+      "name": "Chance",
+      "type": "card",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "draw_card",
+          "amount": 0,
+          "target": "Chance",
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 8,
+      "name": "Vermont Avenue",
+      "type": "property",
+      "price": 100,
+      "rent": 6,
+      "color_group": "Light Blue",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 9,
+      "name": "Connecticut Avenue",
+      "type": "property",
+      "price": 120,
+      "rent": 8,
+      "color_group": "Light Blue",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 10,
+      "name": "Jail / Visiting",
+      "type": "jail",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 11,
+      "name": "St. Charles Place",
+      "type": "property",
+      "price": 140,
+      "rent": 10,
+      "color_group": "Pink",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 12,
+      "name": "Electric Company",
+      "type": "utility",
+      "price": 150,
+      "rent": 20,
+      "color_group": "Utility",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 13,
+      "name": "States Avenue",
+      "type": "property",
+      "price": 140,
+      "rent": 10,
+      "color_group": "Pink",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 14,
+      "name": "Virginia Avenue",
+      "type": "property",
+      "price": 160,
+      "rent": 12,
+      "color_group": "Pink",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 15,
+      "name": "Pennsylvania Railroad",
+      "type": "railroad",
+      "price": 200,
+      "rent": 25,
+      "color_group": "Railroad",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 16,
+      "name": "St. James Place",
+      "type": "property",
+      "price": 180,
+      "rent": 14,
+      "color_group": "Orange",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 17,
+      "name": "Community Chest",
+      "type": "card",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "draw_card",
+          "amount": 0,
+          "target": "Community Chest",
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 18,
+      "name": "Tennessee Avenue",
+      "type": "property",
+      "price": 180,
+      "rent": 14,
+      "color_group": "Orange",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 19,
+      "name": "New York Avenue",
+      "type": "property",
+      "price": 200,
+      "rent": 16,
+      "color_group": "Orange",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 20,
+      "name": "Free Parking",
+      "type": "free",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 21,
+      "name": "Kentucky Avenue",
+      "type": "property",
+      "price": 220,
+      "rent": 18,
+      "color_group": "Red",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 22,
+      "name": "Chance",
+      "type": "card",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "draw_card",
+          "amount": 0,
+          "target": "Chance",
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 23,
+      "name": "Indiana Avenue",
+      "type": "property",
+      "price": 220,
+      "rent": 18,
+      "color_group": "Red",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 24,
+      "name": "Illinois Avenue",
+      "type": "property",
+      "price": 240,
+      "rent": 20,
+      "color_group": "Red",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 25,
+      "name": "B. & O. Railroad",
+      "type": "railroad",
+      "price": 200,
+      "rent": 25,
+      "color_group": "Railroad",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 26,
+      "name": "Atlantic Avenue",
+      "type": "property",
+      "price": 260,
+      "rent": 22,
+      "color_group": "Yellow",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 27,
+      "name": "Ventnor Avenue",
+      "type": "property",
+      "price": 260,
+      "rent": 22,
+      "color_group": "Yellow",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 28,
+      "name": "Water Works",
+      "type": "utility",
+      "price": 150,
+      "rent": 20,
+      "color_group": "Utility",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 29,
+      "name": "Marvin Gardens",
+      "type": "property",
+      "price": 280,
+      "rent": 24,
+      "color_group": "Yellow",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 30,
+      "name": "Go To Jail",
+      "type": "go_to_jail",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "go_to_jail",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 31,
+      "name": "Pacific Avenue",
+      "type": "property",
+      "price": 300,
+      "rent": 26,
+      "color_group": "Green",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 32,
+      "name": "North Carolina Avenue",
+      "type": "property",
+      "price": 300,
+      "rent": 26,
+      "color_group": "Green",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 33,
+      "name": "Community Chest",
+      "type": "card",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "draw_card",
+          "amount": 0,
+          "target": "Community Chest",
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 34,
+      "name": "Pennsylvania Avenue",
+      "type": "property",
+      "price": 320,
+      "rent": 28,
+      "color_group": "Green",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 35,
+      "name": "Short Line",
+      "type": "railroad",
+      "price": 200,
+      "rent": 25,
+      "color_group": "Railroad",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 36,
+      "name": "Chance",
+      "type": "card",
+      "price": 0,
+      "rent": 0,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "draw_card",
+          "amount": 0,
+          "target": "Chance",
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 37,
+      "name": "Park Place",
+      "type": "property",
+      "price": 350,
+      "rent": 35,
+      "color_group": "Blue",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 38,
+      "name": "Luxury Tax",
+      "type": "tax",
+      "price": 0,
+      "rent": 100,
+      "color_group": "Special",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "lose_money",
+          "amount": 100,
+          "target": null,
+          "message": "Pay 100 tax",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    },
+    {
+      "id": 39,
+      "name": "Boardwalk",
+      "type": "property",
+      "price": 400,
+      "rent": 50,
+      "color_group": "Blue",
+      "image": "",
+      "icon": "",
+      "description": "",
+      "actions": [
+        {
+          "type": "buy",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      ],
+      "timer": {
+        "enabled": false,
+        "mode": "turns",
+        "value": 0,
+        "action": {
+          "type": "none",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      "owner": null,
+      "houses": 0,
+      "hotel": false,
+      "mortgaged": false
+    }
+  ],
+  "card_decks": {
+    "Chance": [
+      {
+        "id": "0a71c1cd-af62-410a-afb9-da5abcefb0c0",
+        "name": "Advance to GO",
+        "description": "Collect salary if enabled.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "go_to_square",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "f63118be-c5a0-45b2-9469-432c7f8e559e",
+        "name": "Bank pays dividend",
+        "description": "Gain 50.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "gain_money",
+          "amount": 50,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "1afe8daf-a613-4590-bca5-a4b7b1f28217",
+        "name": "Go to Jail",
+        "description": "Move directly to jail.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "go_to_jail",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "e9d78065-972e-4ab3-baf5-eebe78778184",
+        "name": "Speeding fine",
+        "description": "Pay 15.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "lose_money",
+          "amount": 15,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "11f9038b-c885-4d0c-8da9-812b31309393",
+        "name": "Get Out of Jail",
+        "description": "Keep this card until used.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": true,
+        "holdable": true,
+        "tradable": true,
+        "action": {
+          "type": "jail_card",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "cc91b520-d905-4fbf-a407-4f360fba186b",
+        "name": "Advance 3 spaces",
+        "description": "Move ahead.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "move_forward",
+          "amount": 3,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "5fabb216-f073-410f-b98e-7f03ee9c4427",
+        "name": "Repairs",
+        "description": "Pay for each house/hotel.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "repair_fee",
+          "amount": 25,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "e56ed21a-e63d-43c2-85f5-6c11d4a2e641",
+        "name": "Chairman elected",
+        "description": "Pay every player.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "pay_all",
+          "amount": 50,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      }
+    ],
+    "Community Chest": [
+      {
+        "id": "418bbc84-13a9-45a8-9ad8-d5e4842996c0",
+        "name": "Doctor fee",
+        "description": "Pay 50.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "lose_money",
+          "amount": 50,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "7d2f1ae3-f3f0-47c4-969e-ea919f01ec97",
+        "name": "Bank error in your favor",
+        "description": "Collect 200.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "gain_money",
+          "amount": 200,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "2968b620-a204-4aff-858a-2db0ddab8ca4",
+        "name": "Life insurance matures",
+        "description": "Collect 100.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "gain_money",
+          "amount": 100,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "dc143e86-f17c-4002-903b-14a2da876d80",
+        "name": "Pay school fees",
+        "description": "Pay 50.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "lose_money",
+          "amount": 50,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "9c4ca26c-16ed-4fea-9f52-48ba36bfbb19",
+        "name": "Get Out of Jail",
+        "description": "Keep this card until used.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": true,
+        "holdable": true,
+        "tradable": true,
+        "action": {
+          "type": "jail_card",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "8dd0b43a-444a-44cc-8ce4-de779d507cfc",
+        "name": "Collect from every player",
+        "description": "Each player pays you.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "collect_from_all",
+          "amount": 10,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "6ce87d62-cd3e-4447-bf26-444427efd36f",
+        "name": "Go to Jail",
+        "description": "Move directly to jail.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "go_to_jail",
+          "amount": 0,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      },
+      {
+        "id": "5626c609-6f12-4503-a988-41bc752738bb",
+        "name": "Holiday fund matures",
+        "description": "Collect 100.",
+        "image": "",
+        "return_to_deck": true,
+        "single_use": false,
+        "holdable": false,
+        "tradable": false,
+        "action": {
+          "type": "gain_money",
+          "amount": 100,
+          "target": null,
+          "message": "",
+          "timer": {
+            "mode": "none",
+            "value": 0,
+            "after_action": "none"
+          }
+        }
+      }
+    ],
+    "Event Cards": [],
+    "Penalty Cards": [],
+    "Reward Cards": [],
+    "Custom Deck": []
+  },
+  "player_settings": {
+    "icons": [
+      "Token",
+      "Car",
+      "Hat",
+      "Dog",
+      "Ship",
+      "Shoe",
+      "Star",
+      "Gem"
+    ],
+    "colors": [
+      [
+        239,
+        68,
+        68
+      ],
+      [
+        59,
+        130,
+        246
+      ],
+      [
+        34,
+        197,
+        94
+      ],
+      [
+        234,
+        179,
+        8
+      ],
+      [
+        168,
+        85,
+        247
+      ],
+      [
+        236,
+        72,
+        153
+      ]
+    ]
+  },
+  "assets": {
+    "default_icon": "",
+    "background": ""
+  },
+  "trade_rules": {
+    "money": true,
+    "properties": true,
+    "cards": true,
+    "debt": true
+  },
+  "debt_rules": {
+    "allow_loans": true,
+    "default_interest": 10,
+    "default_due_turns": 5,
+    "default_penalty": "pay_extra_or_wait"
+  },
+  "timers": []
+}
