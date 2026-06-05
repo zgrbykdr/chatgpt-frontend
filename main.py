@@ -370,7 +370,7 @@ class App:
         self.edit_game = None; self.edit_path = None; self.editor_tab = "Board"; self.selected_square = 0; self.selected_card_deck = "Chance"; self.selected_card = 0
         self.play_state = None; self.anim = None; self.popup = None; self.dark = self.settings.get("theme", "dark") == "dark"
         self.modal = None; self.modal_buttons = []; self.modal_inputs = []; self.modal_toggles = []; self.modal_partner_index = 0
-        self.editor_active = False; self.play_select_mode = "list"; self.board_hover_square = None
+        self.editor_active = False; self.play_select_mode = "list"; self.board_hover_square = None; self.player_card_rects = []; self.detail_tab = "Properties"; self.detail_player_id = 0
         self.ensure_default_template(); self.build_main_menu()
 
     def ensure_default_template(self):
@@ -411,7 +411,7 @@ class App:
 
     def build_main_menu(self):
         self.scene = "main_menu"; self.buttons = []; self.inputs = []; self.toggles = []; self.modal = None
-        self.editor_active = False; self.play_select_mode = "list"; self.board_hover_square = None
+        self.editor_active = False; self.play_select_mode = "list"; self.board_hover_square = None; self.player_card_rects = []; self.detail_tab = "Properties"; self.detail_player_id = 0
         w,h = self.screen.get_size(); panel = self.panel_rect(520, 470)
         bw,bh = min(340, panel.w-90), 54; x = panel.centerx-bw//2; y = panel.y+122
         items = [("Add New Game", lambda: self.set_scene("create_game")), ("Edit Existing Game", lambda: self.open_list("edit")), ("Play Game", lambda: self.open_list("play")), ("Settings", lambda: self.set_scene("settings")), ("Exit", self.quit)]
@@ -625,8 +625,8 @@ class App:
     def set_res(self,w,h): self.settings["resolution"]=[w,h]; save_json(SETTINGS_PATH,self.settings); self.screen=pygame.display.set_mode((w,h),pygame.RESIZABLE); self.build_settings()
     def build_gameplay(self):
         self.scene = "gameplay"
-        w,h=self.screen.get_size(); y=h-58; x=30; gap=8; end_w=132; roll_w=150; small_w=max(82, min(104, (w-60-end_w-roll_w-gap*11)//9))
-        labels=[("Main Menu",self.confirm_menu,"secondary",small_w), ("Roll Dice",self.roll_dice,"roll",roll_w), ("Buy",self.buy_property,"good",small_w), ("Auction",self.auction,"secondary",small_w), ("Trade",self.trade,"secondary",small_w), ("Debt",self.debt,"secondary",small_w), ("Build",self.build_house,"secondary",small_w), ("Mortgage",self.mortgage,"secondary",small_w), ("Card",self.use_card,"secondary",small_w), ("Save",self.save_game,"secondary",small_w)]
+        w,h=self.screen.get_size(); y=h-58; x=30; gap=8; end_w=132; roll_w=145; details_w=126; small_w=max(76, min(96, (w-60-end_w-roll_w-details_w-gap*12)//9))
+        labels=[("Menu",self.confirm_menu,"secondary",small_w), ("Roll Dice",self.roll_dice,"roll",roll_w), ("Buy",self.buy_property,"good",small_w), ("Auction",self.auction,"secondary",small_w), ("Trade",self.trade,"secondary",small_w), ("Debt",self.debt,"secondary",small_w), ("Build",self.build_house,"secondary",small_w), ("Mortgage",self.mortgage,"secondary",small_w), ("Card",self.use_card,"secondary",small_w), ("Player Details",self.open_current_player_details,"primary",details_w), ("Save",self.save_game,"secondary",small_w)]
         self.buttons=[]
         for lab,act,kind,bw in labels:
             self.buttons.append(Button((x,y,bw,42),lab,act,kind)); x += bw + gap
@@ -716,13 +716,13 @@ class App:
         ps = self.play_state; p = ps.current_player(); partner = self.modal["partners"][self.modal_partner_index]
         amount = max(0, self.modal_inputs[0].value(0)); my_prop = self.modal_inputs[1].value(-1); partner_prop = self.modal_inputs[2].value(-1)
         if amount and p["money"] >= amount:
-            p["money"] -= amount; partner["money"] += amount; ps.log(f"Trade: {p['name']} paid {partner['name']} {amount}.")
+            p["money"] -= amount; partner["money"] += amount; ps.log(f"Trade: {p['name']} paid {partner['name']} {amount}."); ps.trade_history.append({"type":"money_transfer","from":p["id"],"to":partner["id"],"amount":amount,"turn":ps.turn_count})
         elif amount:
             ps.log("Trade money skipped: insufficient funds.")
         if my_prop in p["properties"]:
-            p["properties"].remove(my_prop); partner["properties"].append(my_prop); ps.square(my_prop)["owner"] = partner["id"]; ps.log(f"Trade: {p['name']} gave {ps.square(my_prop)['name']} to {partner['name']}.")
+            p["properties"].remove(my_prop); partner["properties"].append(my_prop); ps.square(my_prop)["owner"] = partner["id"]; ps.log(f"Trade: {p['name']} gave {ps.square(my_prop)['name']} to {partner['name']}."); ps.trade_history.append({"type":"property_transfer","from":p["id"],"to":partner["id"],"property_id":my_prop,"turn":ps.turn_count})
         if partner_prop in partner["properties"]:
-            partner["properties"].remove(partner_prop); p["properties"].append(partner_prop); ps.square(partner_prop)["owner"] = p["id"]; ps.log(f"Trade: {partner['name']} gave {ps.square(partner_prop)['name']} to {p['name']}.")
+            partner["properties"].remove(partner_prop); p["properties"].append(partner_prop); ps.square(partner_prop)["owner"] = p["id"]; ps.log(f"Trade: {partner['name']} gave {ps.square(partner_prop)['name']} to {p['name']}."); ps.trade_history.append({"type":"property_transfer","from":partner["id"],"to":p["id"],"property_id":partner_prop,"turn":ps.turn_count})
         self.close_modal()
     def open_debt_modal(self):
         ps = self.play_state
@@ -754,7 +754,7 @@ class App:
         lender["money"] -= amount; borrower["money"] += amount
         due = ps.turn_count + due_turns
         borrower["debts"].append({"lender": lender["id"], "borrower": borrower["id"], "principal": amount, "interest_percent": interest, "interest": interest, "due_turn": due, "collateral_property_id": None, "penalty_if_unpaid": "bankruptcy_if_unpaid", "penalty": "bankruptcy_if_unpaid", "status": "active"})
-        ps.log(f"Loan: {borrower['name']} borrowed {amount} from {lender['name']} at {interest}% interest; due turn {due}.")
+        ps.log(f"Loan: {borrower['name']} borrowed {amount} from {lender['name']} at {interest}% interest; due turn {due}."); ps.trade_history.append({"type":"debt_contract","lender":lender["id"],"borrower":borrower["id"],"principal":amount,"interest_percent":interest,"due_turn":due,"turn":ps.turn_count})
         self.close_modal()
     def close_modal(self):
         self.modal = None; self.modal_buttons = []; self.modal_inputs = []; self.modal_toggles = []
@@ -810,8 +810,103 @@ class App:
             self.confirm_auction()
         ps.next_turn()
     def save_game(self):
-        ps=self.play_state; data={"saved_at":datetime.now().isoformat(timespec="seconds"),"game":ps.game,"players":ps.players,"current":ps.current,"turn_count":ps.turn_count,"last_roll":ps.last_roll,"free_pool":ps.free_pool,"log":ps.logs}
+        ps=self.play_state; data={"saved_at":datetime.now().isoformat(timespec="seconds"),"game":ps.game,"players":ps.players,"current":ps.current,"turn_count":ps.turn_count,"last_roll":ps.last_roll,"free_pool":ps.free_pool,"trade_history":ps.trade_history,"log":ps.logs}
         path=os.path.join(SAVES_DIR,safe_filename(ps.game["metadata"]["name"])+"_save.json"); save_json(path,data); ps.log("Game saved to saves folder.")
+
+    def player_financial_stats(self, ps, player):
+        props=[ps.square(i) for i in player.get("properties",[])]
+        active_debts=[d for d in player.get("debts",[]) if d.get("status","active")=="active"]
+        debt_total=sum(int(d.get("principal",0)*(1+d.get("interest_percent",d.get("interest",0))/100)) for d in active_debts)
+        receivable_total=0
+        for other in ps.players:
+            for d in other.get("debts",[]):
+                if d.get("status","active")=="active" and d.get("lender")==player["id"]:
+                    receivable_total += int(d.get("principal",0)*(1+d.get("interest_percent",d.get("interest",0))/100))
+        return {
+            "properties": props,
+            "property_count": len(props),
+            "railroads": sum(1 for sq in props if sq.get("type")=="railroad"),
+            "utilities": sum(1 for sq in props if sq.get("type")=="utility"),
+            "houses": sum(sq.get("houses",0) for sq in props),
+            "hotels": sum(1 for sq in props if sq.get("hotel")),
+            "mortgaged": sum(1 for sq in props if sq.get("mortgaged")),
+            "debt_total": debt_total,
+            "receivable_total": receivable_total,
+            "special_cards": len(player.get("cards",[])),
+        }
+    def open_current_player_details(self):
+        if self.play_state:
+            self.open_player_details(self.play_state.current_player()["id"])
+    def open_player_details(self, player_id):
+        self.detail_player_id = player_id
+        self.detail_tab = getattr(self, "detail_tab", "Properties")
+        w,h=self.screen.get_size()
+        self.modal={"type":"player_details","title":"Player Details","opened_at":time.time()}
+        self.modal_inputs=[]; self.modal_toggles=[]
+        self.modal_buttons=[Button((w//2+245,h//2+245,120,40),"Close",self.close_modal,"danger")]
+    def detail_tab_rects(self):
+        w,h=self.screen.get_size(); box=pygame.Rect(w//2-390,h//2-285,780,560)
+        tabs=["Properties","Cards","Debt","Trade History"]
+        rects=[]; x=box.x+24
+        for tab in tabs:
+            tw=150 if tab!="Trade History" else 170
+            rects.append((tab, pygame.Rect(x, box.y+76, tw, 34))); x += tw + 10
+        return rects
+    def format_trade_entry(self, ps, entry):
+        def pname(pid):
+            return ps.players[pid]["name"] if isinstance(pid, int) and 0 <= pid < len(ps.players) else "Player"
+        if entry.get("type") == "money_transfer":
+            reason = f" ({entry.get('reason')})" if entry.get("reason") else ""
+            return f"Turn {entry.get('turn','-')}: {pname(entry.get('from'))} paid {pname(entry.get('to'))} ${entry.get('amount',0)}{reason}."
+        if entry.get("type") == "property_transfer":
+            prop = ps.square(entry.get("property_id", 0)).get("name", "Property")
+            return f"Turn {entry.get('turn','-')}: {prop} moved from {pname(entry.get('from'))} to {pname(entry.get('to'))}."
+        if entry.get("type") == "debt_contract":
+            return f"Turn {entry.get('turn','-')}: {pname(entry.get('borrower'))} borrowed ${entry.get('principal',0)} from {pname(entry.get('lender'))} at {entry.get('interest_percent',0)}%; due turn {entry.get('due_turn','-')}."
+        return str(entry)
+
+    def draw_player_details_modal(self, box):
+        ps=self.play_state; player=ps.players[self.detail_player_id % len(ps.players)]; stats=self.player_financial_stats(ps, player)
+        col=PLAYER_COLORS[player["id"]%len(PLAYER_COLORS)]
+        pygame.draw.circle(self.screen,col,(box.x+42,box.y+42),18); self.ui.text(self.screen,str(player["id"]+1),(box.x+42,box.y+42),15,COLORS["white"],True)
+        self.ui.text(self.screen,f"{player['name']}  •  ${player['money']}  •  {ps.square(player['pos'])['name']}",(box.x+72,box.y+27),22,COLORS["text"],max_width=560)
+        mouse=pygame.mouse.get_pos()
+        for tab,r in self.detail_tab_rects():
+            active=tab==self.detail_tab; self.ui.rounded(self.screen,r,COLORS["accent"] if active else COLORS["panel2"],10,border=COLORS["accent"],shadow=False)
+            self.ui.text(self.screen,tab,r.center,15,COLORS["dark_text"] if active else COLORS["text"],True,max_width=r.w-12)
+        area=pygame.Rect(box.x+24,box.y+125,box.w-48,box.h-185)
+        self.ui.glass(self.screen,area,COLORS["panel2"],165,14,COLORS["accent"],45,False)
+        y=area.y+14
+        if self.detail_tab=="Properties":
+            if not stats["properties"]: self.ui.text(self.screen,"No owned properties.",(area.x+18,y),17,COLORS["muted"])
+            for sq in stats["properties"][:12]:
+                rent=ps.calculate_rent(sq, player) if not sq.get("mortgaged") else 0
+                line=f"#{sq['id']} {sq['name']} | {sq.get('color_group')} | Price ${sq.get('price',0)} | Current rent / income ${rent} | H:{sq.get('houses',0)} Hotel:{'Yes' if sq.get('hotel') else 'No'} | Mortgage:{'Yes' if sq.get('mortgaged') else 'No'} (${sq.get('mortgage_value',0)})"
+                self.ui.text(self.screen,line,(area.x+14,y),14,COLORS["text"],max_width=area.w-28); y+=27
+        elif self.detail_tab=="Cards":
+            if not player.get("cards"): self.ui.text(self.screen,"No held special cards.",(area.x+18,y),17,COLORS["muted"])
+            for card in player.get("cards",[])[:10]:
+                line=f"{card.get('name','Card')} | Usable: Yes | Tradable: {'Yes' if card.get('tradable',False) else 'No'}"
+                self.ui.text(self.screen,line,(area.x+14,y),15,COLORS["text"],max_width=area.w-28); y+=22
+                self.ui.text(self.screen,card.get("description",""),(area.x+28,y),13,COLORS["muted"],max_width=area.w-42); y+=28
+        elif self.detail_tab=="Debt":
+            self.ui.text(self.screen,"Borrowed debts",(area.x+14,y),17,COLORS["accent"]); y+=26
+            for d in [d for d in player.get("debts",[]) if d.get("status","active")=="active"][:6]:
+                remain=max(0,d.get("due_turn",ps.turn_count)-ps.turn_count)
+                line=f"From P{d.get('lender',0)+1}: principal {d.get('principal')} | interest {d.get('interest_percent',d.get('interest',0))}% | due {d.get('due_turn')} | remaining {remain} | collateral {d.get('collateral_property_id')} | penalty {d.get('penalty_if_unpaid',d.get('penalty',''))}"
+                self.ui.text(self.screen,line,(area.x+14,y),13,COLORS["text"],max_width=area.w-28); y+=24
+            y+=10; self.ui.text(self.screen,"Loans given",(area.x+14,y),17,COLORS["accent"]); y+=26
+            for other in ps.players:
+                for d in other.get("debts",[]):
+                    if d.get("status","active")=="active" and d.get("lender")==player["id"]:
+                        remain=max(0,d.get("due_turn",ps.turn_count)-ps.turn_count)
+                        line=f"To {other['name']}: principal {d.get('principal')} | interest {d.get('interest_percent',d.get('interest',0))}% | due {d.get('due_turn')} | remaining {remain} | status {d.get('status')}"
+                        self.ui.text(self.screen,line,(area.x+14,y),13,COLORS["text"],max_width=area.w-28); y+=24
+        else:
+            entries=[e for e in ps.trade_history if player["id"] in (e.get("from"),e.get("to"),e.get("lender"),e.get("borrower"))]
+            if not entries: self.ui.text(self.screen,"No trade history yet.",(area.x+18,y),17,COLORS["muted"])
+            for e in entries[-14:]:
+                self.ui.text(self.screen,self.format_trade_entry(ps,e),(area.x+14,y),13,COLORS["text"],max_width=area.w-28); y+=24
 
     def draw_bg(self):
         w,h=self.screen.get_size(); top=(10,18,32) if self.dark else (226,232,240); bot=(15,23,42) if self.dark else (248,250,252)
@@ -828,6 +923,9 @@ class App:
         if self.modal:
             for inp in self.modal_inputs: inp.handle(e)
             if e.type==pygame.MOUSEBUTTONDOWN and e.button==1:
+                if self.modal.get("type")=="player_details":
+                    for tab,r in self.detail_tab_rects():
+                        if r.collidepoint(e.pos): self.detail_tab=tab; return
                 for b in list(self.modal_buttons):
                     if b.click(e.pos) and b.action:
                         b.action(); return
@@ -843,6 +941,9 @@ class App:
         if e.type==pygame.MOUSEBUTTONDOWN and e.button==1:
             for b in list(self.buttons):
                 if b.click(e.pos) and b.action: b.action(); return
+            if self.scene=="gameplay":
+                for pid,r in getattr(self,"player_card_rects",[]):
+                    if r.collidepoint(e.pos): self.open_player_details(pid); return
             if self.scene=="edit_game" and self.editor_active: self.editor_click(e.pos)
         if e.type==pygame.KEYDOWN and self.scene=="edit_game" and self.editor_active:
             if e.key==pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL: self.save_edit()
@@ -882,12 +983,15 @@ class App:
         overlay = pygame.Surface((w, h), pygame.SRCALPHA); overlay.fill((0, 0, 0, 155)); self.screen.blit(overlay, (0, 0))
         age = time.time() - self.modal.get("opened_at", time.time())
         scale = min(1.0, 0.88 + age * 4.0)
-        full = pygame.Rect(w//2-300, h//2-185, 600, 390)
+        if self.modal.get("type") == "player_details": full = pygame.Rect(w//2-390, h//2-285, 780, 560)
+        else: full = pygame.Rect(w//2-300, h//2-185, 600, 390)
         box = pygame.Rect(0, 0, int(full.w*scale), int(full.h*scale)); box.center = full.center
         self.ui.glass(self.screen, box, COLORS["panel"], 220, 24, COLORS["accent"], 135, True)
         self.ui.text(self.screen, self.modal.get("title", "Popup"), (box.centerx, box.y+34), 30, COLORS["accent"], True, box.w-70)
         mtype = self.modal.get("type")
-        if mtype in ("info", "buy", "auction", "build"):
+        if mtype == "player_details":
+            self.draw_player_details_modal(box)
+        elif mtype in ("info", "buy", "auction", "build"):
             icon = self.modal.get("icon", "card")
             if mtype == "buy": icon = "go"
             if mtype == "auction": icon = "tax"
@@ -1021,33 +1125,44 @@ class App:
             self.ui.text(self.screen,f"{sq.get('type','custom')} • ${sq.get('price',0)} • rent {sq.get('rent',0)}",(tip.x+14,tip.y+39),14,COLORS["muted"],max_width=250)
         side=pygame.Rect(w-335,92,305,h-182); self.ui.glass(self.screen,side,COLORS["panel"],195,22,COLORS["accent"],85)
         self.ui.text(self.screen,"Players",(side.x+18,side.y+16),22,COLORS["accent"])
+        d1,d2=ps.animated_dice(); self.draw_die(side.right-118,side.y+10,d1); self.draw_die(side.right-58,side.y+10,d2)
+        self.player_card_rects=[]
         y=side.y+52
+        card_h=max(52, min(108, (side.h-70)//max(1,len(ps.players))-6))
         for i,p in enumerate(ps.players):
-            if y+96 > side.bottom-135: break
-            col=PLAYER_COLORS[i%len(PLAYER_COLORS)]; rr=pygame.Rect(side.x+14,y,277,88)
+            if y+card_h > side.bottom-10: break
+            stats=self.player_financial_stats(ps,p); col=PLAYER_COLORS[i%len(PLAYER_COLORS)]; rr=pygame.Rect(side.x+14,y,277,card_h); self.player_card_rects.append((p["id"],rr.copy()))
             glow = 0.5 + 0.5*math.sin(time.time()*2.4) if i==ps.current else 0
             border = COLORS["accent"] if i==ps.current else (255,255,255,35)
             self.ui.glass(self.screen,rr,(35,48,72) if i==ps.current else (30,41,59),220,14,border,int(80+80*glow) if i==ps.current else 45,False)
-            pygame.draw.circle(self.screen,col,(rr.x+25,rr.y+25),15); self.ui.text(self.screen,str(i+1),(rr.x+25,rr.y+25),14,COLORS["white"],True)
-            self.ui.text(self.screen,p["name"],(rr.x+48,rr.y+9),17,COLORS["text"],max_width=150)
-            self.ui.text(self.screen,f"Money: ${p['money']}",(rr.x+48,rr.y+31),14,COLORS["muted"],max_width=150)
-            self.ui.text(self.screen,f"Pos: {p['pos']}   Props: {len(p['properties'])}",(rr.x+48,rr.y+50),14,COLORS["muted"],max_width=160)
-            self.ui.text(self.screen,f"Debt: {len(p.get('debts',[]))}   Timer: {len(p.get('timers',[]))}",(rr.x+48,rr.y+69),14,COLORS["muted"],max_width=170)
-            chip_x=rr.right-84; chip_y=rr.y+18
+            pygame.draw.circle(self.screen,col,(rr.x+22,rr.y+22),13); self.ui.text(self.screen,str(i+1),(rr.x+22,rr.y+22),13,COLORS["white"],True)
+            self.ui.text(self.screen,p["name"],(rr.x+42,rr.y+6),16,COLORS["text"],max_width=120)
+            self.ui.text(self.screen,f"${p['money']} • {ps.square(p['pos'])['name']}",(rr.x+42,rr.y+25),12,COLORS["muted"],max_width=220)
+            if card_h >= 92:
+                self.ui.text(self.screen,f"Prop {stats['property_count']} | RR {stats['railroads']} | Util {stats['utilities']}",(rr.x+14,rr.y+48),12,COLORS["text"],max_width=130)
+                self.ui.text(self.screen,f"H {stats['houses']} | Hotel {stats['hotels']} | Mtg {stats['mortgaged']}",(rr.x+150,rr.y+48),12,COLORS["text"],max_width=120)
+                jail = "Yes" if p.get("in_jail") else "No"
+                self.ui.text(self.screen,f"Debt ${stats['debt_total']} | Receive ${stats['receivable_total']}",(rr.x+14,rr.y+66),12,COLORS["muted"],max_width=190)
+                self.ui.text(self.screen,f"Jail {jail} ({p.get('jail_turns_served',0)}) | Wait {p.get('wait_turns',0)} | Cards {stats['special_cards']}",(rr.x+14,rr.y+82),12,COLORS["muted"],max_width=230)
+            else:
+                self.ui.text(self.screen,f"P{stats['property_count']} RR{stats['railroads']} U{stats['utilities']} H{stats['houses']} T{stats['hotels']} M{stats['mortgaged']}",(rr.x+14,rr.y+45),11,COLORS["text"],max_width=210)
+                self.ui.text(self.screen,f"D${stats['debt_total']} R${stats['receivable_total']} Jail:{'Y' if p.get('in_jail') else 'N'} W{p.get('wait_turns',0)} C{stats['special_cards']}",(rr.x+14,rr.y+58),11,COLORS["muted"],max_width=230)
+            chip_x=rr.right-78; chip_y=rr.y+10
             for prop_id in p["properties"][:8]:
                 sq=ps.square(prop_id); chip_col=GROUP_COLORS.get(sq.get("color_group"),(100,116,139))
-                pygame.draw.rect(self.screen,chip_col,(chip_x,chip_y,14,10),border_radius=3); chip_x+=18
-                if chip_x>rr.right-18: chip_x=rr.right-84; chip_y+=15
-            y+=98
-        dice_y=max(y+10, side.bottom-118); self.ui.text(self.screen,"Dice",(side.x+18,dice_y),18,COLORS["accent"])
-        d1,d2=ps.animated_dice(); self.draw_die(side.x+24,dice_y+28,d1); self.draw_die(side.x+88,dice_y+28,d2)
-        self.ui.text(self.screen,"Log",(side.x+18,dice_y+88),18,COLORS["accent"])
-        yy=dice_y+112
-        for line in ps.logs[-4:]: self.ui.text(self.screen,line,(side.x+18,yy),13,COLORS["muted"],max_width=265); yy+=20
+                pygame.draw.rect(self.screen,chip_col,(chip_x,chip_y,13,9),border_radius=3); chip_x+=16
+                if chip_x>rr.right-14: chip_x=rr.right-78; chip_y+=14
+            y+=card_h+6
+        if y < side.bottom-82:
+            self.ui.text(self.screen,"Log",(side.x+18,y+6),18,COLORS["accent"])
+            yy=y+30
+            for line in ps.logs[-3:]:
+                if yy > side.bottom-18: break
+                self.ui.text(self.screen,line,(side.x+18,yy),13,COLORS["muted"],max_width=265); yy+=20
         bottom=pygame.Rect(24,h-70,w-48,60); self.ui.glass(self.screen,bottom,COLORS["panel"],160,18,COLORS["accent"],60,False)
         # Button availability follows the current square and turn state.
         current=ps.current_player(); sq=ps.square(current["pos"])
-        if len(self.buttons) >= 11:
+        if len(self.buttons) >= 12:
             self.buttons[1].enabled = (not ps.rolling and not ps.turn_rolled and not ps.winner)
             can_buy = sq["type"] in ("property","railroad","utility") and sq.get("owner") is None and current["money"] >= sq.get("price",0)
             self.buttons[2].enabled = can_buy
@@ -1055,6 +1170,7 @@ class App:
             self.buttons[6].enabled = bool(current["properties"])
             self.buttons[7].enabled = bool(current["properties"])
             self.buttons[8].enabled = bool(current["cards"])
+            self.buttons[9].enabled = bool(ps.players)
         if ps.winner:
             self.ui.glass(self.screen,(w//2-260,h//2-80,520,160),COLORS["panel2"],235,24,COLORS["good"],160)
             self.ui.text(self.screen,ps.winner+" wins!",(w//2,h//2),36,COLORS["good"],True)
@@ -1074,7 +1190,7 @@ class GameState:
     def __init__(self, game, names):
         self.game=game; self.players=[]; start=game["settings"].get("starting_money",1500)
         for i,n in enumerate(names): self.players.append({"id":i,"name":n,"money":start,"pos":0,"properties":[],"cards":[],"debts":[],"wait_turns":0,"in_jail":False,"jail_turns_served":0,"bankrupt":False,"doubles":0})
-        self.current=0; self.turn_count=1; self.last_roll=(1,1); self.rolling=False; self.roll_end=0; self.pending_steps=0; self.moving=False; self.move_timer=0; self.turn_rolled=False; self.logs=["Game started."]; self.winner=None; self.free_pool=0; self.last_popup=None; self.hover_square=None
+        self.current=0; self.turn_count=1; self.last_roll=(1,1); self.rolling=False; self.roll_end=0; self.pending_steps=0; self.moving=False; self.move_timer=0; self.turn_rolled=False; self.logs=["Game started."]; self.winner=None; self.free_pool=0; self.last_popup=None; self.hover_square=None; self.trade_history=[]
     def log(self,msg): self.logs.append(msg); self.logs=self.logs[-80:]
     def current_player(self): return self.players[self.current]
     def square(self,i): return self.game["board"][i % len(self.game["board"])]
@@ -1167,7 +1283,7 @@ class GameState:
         if card.get("holdable"): p["cards"].append(card); self.log("Card kept in hand.")
         else: self.apply_action(p,card.get("action",make_action()),source=card.get("name","Card"))
     def pay(self,src,dst,amt,reason):
-        src["money"]-=amt; dst["money"]+=amt; self.log(f"{src['name']} paid {dst['name']} {amt} ({reason}).")
+        src["money"]-=amt; dst["money"]+=amt; self.log(f"{src['name']} paid {dst['name']} {amt} ({reason})."); self.trade_history.append({"type":"money_transfer","from":src["id"],"to":dst["id"],"amount":amt,"reason":reason,"turn":self.turn_count})
         if src["money"]<0 and not src.get("bankrupt"):
             self.handle_bankruptcy(src, dst.get("id"))
     def move_direct(self,p,steps): p["pos"]=(p["pos"]+steps)%len(self.game["board"]); self.log(f"{p['name']} moved to {self.square(p['pos'])['name']}.")
@@ -1330,9 +1446,16 @@ class GameState:
             if st in ("property","railroad","utility") and sq.get("price",0):
                 ui.text(surf,"$"+str(sq.get("price",0)),(r.centerx,r.bottom-10),10,(71,85,105),True,max_width=r.w-10)
             if sq.get("owner") is not None:
-                pygame.draw.circle(surf,PLAYER_COLORS[sq["owner"]%len(PLAYER_COLORS)],(r.right-10,r.bottom-10),6)
-            if sq.get("houses",0): ui.text(surf,"H"+str(sq.get("houses")),(r.x+7,r.bottom-18),11,COLORS["good"])
-            if sq.get("hotel"): ui.text(surf,"HOT",(r.x+7,r.bottom-18),11,COLORS["bad"])
+                owner_col=PLAYER_COLORS[sq["owner"]%len(PLAYER_COLORS)]
+                pygame.draw.rect(surf,owner_col,(r.x+5,r.bottom-7,r.w-10,4),border_radius=2)
+                pygame.draw.circle(surf,owner_col,(r.right-10,r.bottom-13),6)
+            if sq.get("mortgaged"):
+                lock=pygame.Rect(r.x+6,r.bottom-20,15,13); pygame.draw.rect(surf,(107,114,128),lock,border_radius=3); pygame.draw.arc(surf,(107,114,128),(lock.x+2,lock.y-8,11,14),math.pi,0,2)
+            elif sq.get("hotel"):
+                pygame.draw.rect(surf,COLORS["bad"],(r.x+7,r.bottom-22,18,13),border_radius=3); ui.text(surf,"H",(r.x+16,r.bottom-16),10,COLORS["white"],True)
+            elif sq.get("houses",0):
+                for hi in range(min(4,sq.get("houses",0))):
+                    hx=r.x+7+hi*9; pygame.draw.rect(surf,COLORS["good"],(hx,r.bottom-20,7,10),border_radius=2)
         occupants={}
         for idx,p in enumerate(self.players):
             if not p["bankrupt"]: occupants.setdefault(p["pos"],[]).append(idx)
