@@ -18,7 +18,7 @@ SETTINGS_PATH = os.path.join(BASE_DIR, "settings.json")
 for folder in (GAMES_DIR, SAVES_DIR, ASSETS_DIR, TEMPLATES_DIR):
     os.makedirs(folder, exist_ok=True)
 
-BOARD_TYPES = ["Monopoly style square", "Circular path", "Free grid path"]
+BOARD_TYPES = ["Classic rectangle", "Circle", "Grid path"]
 SQUARE_TYPES = ["start", "property", "railroad", "utility", "tax", "card", "jail", "go_to_jail", "free", "reward", "penalty", "custom"]
 ACTION_TYPES = [
     "none", "buy", "pay_rent", "draw_card", "gain_money", "lose_money", "move_forward", "move_backward",
@@ -389,10 +389,12 @@ class App:
                 if fn.endswith(".json"):
                     p = os.path.join(folder, fn)
                     try:
-                        data = load_json(p, None)
+                        with open(p, "r", encoding="utf-8") as f:
+                            data = json.load(f)
                         if data and "metadata" in data:
                             games.append((p, data))
-                    except Exception:
+                    except Exception as e:
+                        self.notify(f"Broken JSON skipped: {fn} ({e})", 5)
                         continue
         self.games_cache = games
         return games
@@ -526,98 +528,155 @@ class App:
         self.play_state = GameState(deepcopy(self.setup_game), names)
         self.set_scene("gameplay")
 
+    def editor_content_rects(self):
+        w,h=self.screen.get_size()
+        top=128; bottom=h-82
+        shell=pygame.Rect(24,118,w-48,max(430,bottom-118))
+        left=pygame.Rect(shell.x+18,shell.y+58,min(440, max(300, shell.w//3)),shell.h-84)
+        right=pygame.Rect(left.right+18,left.y,shell.right-left.right-36,left.h)
+        return shell,left,right
+
+    def ensure_editor_defaults(self):
+        if not self.edit_game: return
+        self.edit_game.setdefault("settings",{})
+        self.edit_game.setdefault("rules",{})
+        self.edit_game.setdefault("card_decks",{})
+        self.edit_game.setdefault("trade_rules",{})
+        self.edit_game.setdefault("debt_rules",{})
+        self.edit_game.setdefault("visuals",{})
+        self.edit_game.setdefault("economy",{})
+        if not self.edit_game.get("board"):
+            self.edit_game["board"]=[make_square(0,"Start","start")]
+        self.selected_square=max(0,min(self.selected_square,len(self.edit_game["board"])-1))
+        for i,sq in enumerate(self.edit_game["board"]):
+            sq["id"]=i; sq.setdefault("actions",[make_action("none")]); sq.setdefault("timer",{"enabled":False,"mode":"turns","value":0,"action":make_action("none")})
+            for key,default in (("rent_base",sq.get("rent",0)),("rent_1_house",sq.get("rent",0)*5),("rent_2_house",sq.get("rent",0)*15),("rent_3_house",sq.get("rent",0)*45),("rent_4_house",sq.get("rent",0)*80),("rent_hotel",sq.get("rent",0)*125),("house_cost",50),("mortgage_value",sq.get("price",0)//2)):
+                sq.setdefault(key,default)
+
     def build_editor(self):
-        self.scene = "edit_game"
-        w,h=self.screen.get_size(); self.buttons=[Button((30,h-64,120,42),"Back",lambda:self.open_list("edit"),"secondary"), Button((w-170,h-64,140,42),"Save JSON",self.save_edit,"good")]
-        tabs=["Board","Actions","Timers","Cards","Rules","Trade","Assets"]
-        x=30
-        for t in tabs:
-            self.buttons.append(Button((x,82,110,36),t,lambda tab=t:self.set_tab(tab),"primary" if t==self.editor_tab else "secondary")); x+=118
+        self.scene = "edit_game"; self.ensure_editor_defaults()
+        w,h=self.screen.get_size(); self.inputs=[]; self.toggles=[]
+        self.editor_tabs=["Board","Squares","Rules","Cards","Economy","Trade & Debt","Visuals","Test Play"]
+        self.buttons=[Button((30,h-64,120,42),"Back",lambda:self.open_list("edit"),"secondary"), Button((w-230,h-64,200,42),"Save Game Template",self.save_edit,"good")]
+        tab_w=max(112,min(150,(w-60)//len(self.editor_tabs)-6)); x=30
+        for t in self.editor_tabs:
+            self.buttons.append(Button((x,82,tab_w,36),t,lambda tab=t:self.set_tab(tab),"primary" if t==self.editor_tab else "secondary")); x+=tab_w+6
+        shell,left,right=self.editor_content_rects(); g=self.edit_game; sq=g["board"][self.selected_square]
         if self.editor_tab=="Board":
-            self.buttons += [Button((30,135,120,34),"Add Square",self.ed_add_square,"good"), Button((160,135,120,34),"Delete",self.ed_del_square,"danger"), Button((290,135,80,34),"Up",self.ed_up,"secondary"), Button((380,135,80,34),"Down",self.ed_down,"secondary"), Button((470,135,180,34),"Type",self.cycle_square_type,"secondary")]
-            sq=self.edit_game["board"][self.selected_square]; self.inputs=[InputBox((620,175,260,34),sq["name"]),InputBox((620,225,120,34),str(sq.get("price",0)),True),InputBox((620,275,120,34),str(sq.get("rent",0)),True),InputBox((620,325,180,34),sq.get("color_group","Special")),InputBox((620,375,320,34),sq.get("description","")),InputBox((620,425,320,34),sq.get("image","")),InputBox((620,475,180,34),sq.get("icon",""))]
-        elif self.editor_tab=="Actions":
-            sq=self.edit_game["board"][self.selected_square]
-            if not sq.get("actions"):
-                sq["actions"] = [make_action("none")]
-            act=sq["actions"][0]
-            self.inputs=[InputBox((620,220,120,34),str(act.get("amount",0)),True),InputBox((620,270,230,34),str(act.get("target") or "")),InputBox((620,320,330,34),act.get("message","") )]
-            self.buttons.append(Button((620,170,230,34),"Action: "+act.get("type","none"),self.cycle_action,"secondary"))
-        elif self.editor_tab=="Timers":
-            sq=self.edit_game["board"][self.selected_square]; tm=sq.get("timer",{})
-            self.inputs=[InputBox((620,240,120,34),str(tm.get("value",0)),True),InputBox((620,290,220,34),tm.get("mode","turns")),InputBox((620,340,220,34),tm.get("action",{}).get("type","gain_money")),InputBox((620,390,120,34),str(tm.get("action",{}).get("amount",0)),True)]
-            self.toggles=[Toggle((620,190,56,28),tm.get("enabled",False))]
-        elif self.editor_tab=="Cards":
-            self.inputs=[InputBox((620,175,230,34),self.selected_card_deck)]
-            deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[])
-            card=deck[self.selected_card] if deck else {"name":"New Card","description":"","action":make_action("gain_money",50)}
-            self.inputs += [InputBox((620,250,260,34),card.get("name","")),InputBox((620,300,340,34),card.get("description","")),InputBox((620,350,120,34),str(card.get("action",{}).get("amount",0)),True)]
-            self.buttons += [Button((620,130,120,34),"New Deck",self.new_deck,"good"),Button((750,130,120,34),"Add Card",self.add_card,"good"),Button((880,130,120,34),"Del Card",self.del_card,"danger"),Button((620,395,220,34),"Card Action",self.cycle_card_action,"secondary")]
+            self.buttons += [Button((left.x,left.y-44,118,34),"Add Square",self.ed_add_square,"good"), Button((left.x+126,left.y-44,98,34),"Delete",self.ed_del_square,"danger"), Button((left.x+232,left.y-44,66,34),"Up",self.ed_up,"secondary"), Button((left.x+306,left.y-44,82,34),"Down",self.ed_down,"secondary"), Button((right.x,right.y-44,220,34),"Layout: "+g["settings"].get("board_layout",BOARD_TYPES[0]),self.cycle_board_layout,"secondary")]
+        elif self.editor_tab=="Squares":
+            x1=right.x+150; x2=right.x+470; y=right.y+42; row=38
+            self.inputs=[
+                InputBox((x1,y,260,30),sq.get("name","Square")), InputBox((x1,y+row,110,30),str(sq.get("price",0)),True), InputBox((x1,y+row*2,110,30),str(sq.get("rent_base",sq.get("rent",0))),True),
+                InputBox((x1,y+row*3,110,30),str(sq.get("rent_1_house",0)),True), InputBox((x1,y+row*4,110,30),str(sq.get("rent_2_house",0)),True), InputBox((x1,y+row*5,110,30),str(sq.get("rent_3_house",0)),True),
+                InputBox((x1,y+row*6,110,30),str(sq.get("rent_4_house",0)),True), InputBox((x1,y+row*7,110,30),str(sq.get("rent_hotel",0)),True), InputBox((x1,y+row*8,170,30),sq.get("color_group","Special")),
+                InputBox((x2,y,110,30),str(sq.get("house_cost",50)),True), InputBox((x2,y+row,110,30),str(sq.get("mortgage_value",sq.get("price",0)//2)),True), InputBox((x2,y+row*2,240,30),sq.get("image","")),
+                InputBox((x2,y+row*3,170,30),sq.get("icon","")), InputBox((x2,y+row*4,240,30),sq.get("description","")), InputBox((x2,y+row*5,110,30),str(sq.get("actions",[make_action()])[0].get("amount",0)),True),
+                InputBox((x2,y+row*6,180,30),str(sq.get("actions",[make_action()])[0].get("target") or "")), InputBox((x2,y+row*7,220,30),sq.get("actions",[make_action()])[0].get("message","")),
+                InputBox((x2,y+row*8,95,30),str(sq.get("timer",{}).get("value",0)),True), InputBox((x2+105,y+row*8,130,30),sq.get("timer",{}).get("mode","turns")),
+            ]
+            self.toggles=[Toggle((right.x+150,right.y+400,56,28),sq.get("timer",{}).get("enabled",False))]
+            self.buttons += [Button((right.x+20,right.y+10,178,32),"Type: "+sq.get("type","custom"),self.cycle_square_type,"secondary"), Button((right.x+210,right.y+10,210,32),"Action: "+sq.get("actions",[make_action()])[0].get("type","none"),self.cycle_action,"secondary")]
         elif self.editor_tab=="Rules":
-            self.inputs=[]; self.toggles=[]; keys=["pass_start_money_enabled","property_purchase_enabled","auction_enabled","rent_enabled","houses_hotels_enabled","mortgage_enabled","trade_enabled","debt_enabled","jail_enabled","double_reroll_enabled","three_doubles_jail","free_parking_pool_enabled"]
-            self.rule_keys=keys
-            for i,k in enumerate(keys): self.toggles.append(Toggle((620,145+i*36,56,26),self.edit_game["rules"].get(k,False)))
-            self.inputs=[InputBox((1000,145,90,32),str(self.edit_game["rules"].get("pass_start_money",200)),True),InputBox((1000,185,90,32),str(self.edit_game["rules"].get("jail_fee",50)),True),InputBox((1000,225,90,32),str(self.edit_game["rules"].get("debt_due_turns",5)),True),InputBox((1000,265,160,32),self.edit_game["rules"].get("end_condition","last_player_standing"))]
-        else:
+            self.rule_keys=["pass_start_money_enabled","auction_enabled","rent_enabled","trade_enabled","debt_enabled","jail_enabled","double_reroll_enabled","three_doubles_jail","free_parking_pool_enabled","mortgage_enabled","houses_hotels_enabled","bankruptcy_enabled"]
             self.inputs=[]; self.toggles=[]
-    def set_tab(self,tab): self.editor_tab=tab; self.build_editor()
+            for i,k in enumerate(self.rule_keys): self.toggles.append(Toggle((right.x+30+(i%2)*310,right.y+58+(i//2)*46,56,28),g["rules"].get(k,False)))
+        elif self.editor_tab=="Cards":
+            decks=list(g["card_decks"].keys()) or ["Custom Deck"]
+            if self.selected_card_deck not in g["card_decks"]: self.selected_card_deck=decks[0]; g["card_decks"].setdefault(self.selected_card_deck,[])
+            deck=g["card_decks"].setdefault(self.selected_card_deck,[]); card=deck[self.selected_card] if deck and self.selected_card < len(deck) else {"name":"New Card","description":"","image":"","action":make_action("gain_money",50),"holdable":False,"tradable":False,"return_to_deck":True,"single_use":False}
+            self.inputs=[InputBox((right.x+180,right.y+50,240,30),self.selected_card_deck),InputBox((right.x+180,right.y+96,260,30),card.get("name","")),InputBox((right.x+180,right.y+142,360,30),card.get("description","")),InputBox((right.x+180,right.y+188,260,30),card.get("image","")),InputBox((right.x+180,right.y+234,120,30),str(card.get("action",{}).get("amount",0)),True),InputBox((right.x+180,right.y+280,220,30),str(card.get("action",{}).get("target") or ""))]
+            self.toggles=[Toggle((right.x+220,right.y+328+i*38,56,28),card.get(k,False)) for i,k in enumerate(["holdable","tradable","return_to_deck","single_use"])]
+            self.buttons += [Button((right.x+20,right.y+8,120,32),"New Deck",self.new_deck,"good"),Button((right.x+150,right.y+8,110,32),"Add Card",self.add_card,"good"),Button((right.x+270,right.y+8,110,32),"Del Card",self.del_card,"danger"),Button((right.x+390,right.y+8,180,32),"Card Action",self.cycle_card_action,"secondary")]
+        elif self.editor_tab=="Economy":
+            econ=g.setdefault("economy",{}); rules=g["rules"]; settings=g["settings"]
+            self.inputs=[InputBox((right.x+260,right.y+60,130,32),str(settings.get("starting_money",1500)),True),InputBox((right.x+260,right.y+108,170,32),rules.get("tax_destination",econ.get("tax_destination","bank"))),InputBox((right.x+260,right.y+156,130,32),str(rules.get("pass_start_money",200)),True),InputBox((right.x+260,right.y+204,130,32),str(rules.get("jail_fee",50)),True),InputBox((right.x+260,right.y+252,130,32),str(econ.get("auction_minimum_bid",10)),True),InputBox((right.x+260,right.y+300,130,32),str(econ.get("mortgage_interest",10)),True)]
+            self.toggles=[Toggle((right.x+260,right.y+350,56,28),econ.get("bank_unlimited",True))]
+        elif self.editor_tab=="Trade & Debt":
+            tr=g.setdefault("trade_rules",{}); dr=g.setdefault("debt_rules",{})
+            keys=[("trade_enabled",g["rules"],"Trade enabled"),("debt_enabled",g["rules"],"Debt enabled"),("interest_enabled",dr,"Interest enabled"),("collateral_enabled",dr,"Collateral enabled"),("two_party_approval",tr,"Two side approval")]
+            self.trade_debt_keys=keys; self.toggles=[]
+            for i,(k,d,_) in enumerate(keys): self.toggles.append(Toggle((right.x+260,right.y+58+i*46,56,28),d.get(k,True)))
+            self.inputs=[InputBox((right.x+260,right.y+292,120,32),str(g["rules"].get("debt_due_turns",dr.get("default_due_turns",5))),True),InputBox((right.x+260,right.y+340,260,32),dr.get("default_penalty","bankruptcy_if_unpaid"))]
+        elif self.editor_tab=="Visuals":
+            v=g.setdefault("visuals",{})
+            self.inputs=[InputBox((right.x+260,right.y+60,220,32),v.get("theme","modern slate")),InputBox((right.x+260,right.y+108,300,32),v.get("board_background","")),InputBox((right.x+260,right.y+156,300,32),v.get("square_images_folder","assets/squares")),InputBox((right.x+260,right.y+204,300,32),v.get("card_back","")),InputBox((right.x+260,right.y+252,220,32),v.get("player_icon_set","classic tokens")),InputBox((right.x+260,right.y+300,90,32),str(v.get("font_size",18)),True)]
+            self.toggles=[Toggle((right.x+260,right.y+350,56,28),v.get("dark_theme",True))]
+        elif self.editor_tab=="Test Play":
+            self.buttons += [Button((right.x+40,right.y+84,250,46),"Start 2 Player Test",self.start_editor_test_play,"roll"), Button((right.x+40,right.y+146,250,42),"Save Then Test",self.save_then_test,"good")]
+
+    def set_tab(self,tab):
+        self.save_edit_values(); self.editor_tab=tab; self.build_editor()
+
     def save_edit_values(self):
         if not self.edit_game: return
-        if self.editor_tab=="Board" and self.inputs:
-            sq=self.edit_game["board"][self.selected_square]
-            sq.update({"name":self.inputs[0].value("Square"),"price":self.inputs[1].value(0),"rent":self.inputs[2].value(0),"color_group":self.inputs[3].value("Special"),"description":self.inputs[4].value(""),"image":self.inputs[5].value(""),"icon":self.inputs[6].value("")})
-        elif self.editor_tab=="Actions" and self.inputs:
-            sq=self.edit_game["board"][self.selected_square]
-            if not sq.get("actions"):
-                sq["actions"] = [make_action("none")]
-            act=sq["actions"][0]; act["amount"]=self.inputs[0].value(0); act["target"]=self.inputs[1].value("") or None; act["message"]=self.inputs[2].value("")
-        elif self.editor_tab=="Timers" and self.inputs:
-            sq=self.edit_game["board"][self.selected_square]; sq["timer"]={"enabled":self.toggles[0].value,"mode":self.inputs[1].value("turns"),"value":self.inputs[0].value(0),"action":make_action(self.inputs[2].value("gain_money"),self.inputs[3].value(0))}
+        self.ensure_editor_defaults(); g=self.edit_game; sq=g["board"][self.selected_square]
+        if self.editor_tab=="Squares" and self.inputs:
+            vals=self.inputs; sq["name"]=vals[0].value("Square"); sq["price"]=vals[1].value(0); sq["rent_base"]=vals[2].value(0); sq["rent"]=sq["rent_base"]
+            for idx,key in enumerate(["rent_1_house","rent_2_house","rent_3_house","rent_4_house","rent_hotel"],3): sq[key]=vals[idx].value(0)
+            sq["color_group"]=vals[8].value("Special"); sq["house_cost"]=vals[9].value(50); sq["mortgage_value"]=vals[10].value(sq.get("price",0)//2); sq["image"]=vals[11].value(""); sq["icon"]=vals[12].value(""); sq["description"]=vals[13].value("")
+            act=sq.setdefault("actions",[make_action("none")])[0]; act["amount"]=vals[14].value(0); act["target"]=vals[15].value("") or None; act["message"]=vals[16].value("")
+            sq["timer"]={"enabled":self.toggles[0].value if self.toggles else False,"mode":vals[18].value("turns"),"value":vals[17].value(0),"action":make_action(act.get("type","none"),act.get("amount",0),act.get("target"),act.get("message",""))}
+        elif self.editor_tab=="Rules":
+            for i,k in enumerate(getattr(self,"rule_keys",[])): g["rules"][k]=self.toggles[i].value
         elif self.editor_tab=="Cards" and self.inputs:
             old=self.selected_card_deck; new=self.inputs[0].value(old).strip() or old
-            if new!=old: self.edit_game["card_decks"][new]=self.edit_game["card_decks"].pop(old,[]); self.selected_card_deck=new
-            deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[])
+            if new!=old: g["card_decks"][new]=g["card_decks"].pop(old,[]); self.selected_card_deck=new
+            deck=g["card_decks"].setdefault(self.selected_card_deck,[])
             if deck:
-                card=deck[min(self.selected_card,len(deck)-1)]; card["name"]=self.inputs[1].value("Card"); card["description"]=self.inputs[2].value(""); card.setdefault("action",make_action()); card["action"]["amount"]=self.inputs[3].value(0)
-        elif self.editor_tab=="Rules":
-            for i,k in enumerate(self.rule_keys): self.edit_game["rules"][k]=self.toggles[i].value
-            self.edit_game["rules"]["pass_start_money"]=self.inputs[0].value(200); self.edit_game["rules"]["jail_fee"]=self.inputs[1].value(50); self.edit_game["rules"]["debt_due_turns"]=self.inputs[2].value(5); self.edit_game["rules"]["end_condition"]=self.inputs[3].value("last_player_standing")
+                self.selected_card=min(self.selected_card,len(deck)-1); card=deck[self.selected_card]
+                card["name"]=self.inputs[1].value("Card"); card["description"]=self.inputs[2].value(""); card["image"]=self.inputs[3].value(""); card.setdefault("action",make_action()); card["action"]["amount"]=self.inputs[4].value(0); card["action"]["target"]=self.inputs[5].value("") or None
+                for i,k in enumerate(["holdable","tradable","return_to_deck","single_use"]): card[k]=self.toggles[i].value
+        elif self.editor_tab=="Economy" and self.inputs:
+            econ=g.setdefault("economy",{}); settings=g["settings"]; rules=g["rules"]
+            settings["starting_money"]=self.inputs[0].value(1500); econ["bank_unlimited"]=self.toggles[0].value if self.toggles else True; rules["tax_destination"]=self.inputs[1].value("bank"); econ["tax_destination"]=rules["tax_destination"]; rules["pass_start_money"]=self.inputs[2].value(200); rules["jail_fee"]=self.inputs[3].value(50); econ["auction_minimum_bid"]=self.inputs[4].value(10); econ["mortgage_interest"]=self.inputs[5].value(10)
+        elif self.editor_tab=="Trade & Debt" and self.inputs:
+            for i,(k,d,_) in enumerate(getattr(self,"trade_debt_keys",[])): d[k]=self.toggles[i].value
+            g["rules"]["debt_due_turns"]=self.inputs[0].value(5); g["debt_rules"]["default_due_turns"]=self.inputs[0].value(5); g["debt_rules"]["default_penalty"]=self.inputs[1].value("bankruptcy_if_unpaid")
+        elif self.editor_tab=="Visuals" and self.inputs:
+            v=g.setdefault("visuals",{}); keys=["theme","board_background","square_images_folder","card_back","player_icon_set","font_size"]
+            for i,k in enumerate(keys): v[k]=self.inputs[i].value(18 if k=="font_size" else "")
+            v["dark_theme"]=self.toggles[0].value if self.toggles else True
+
     def save_edit(self):
-        self.save_edit_values(); self.edit_game["metadata"]["updated_at"]=datetime.now().isoformat(timespec="seconds"); save_json(self.edit_path,self.edit_game); self.notify("Game JSON saved.")
+        try:
+            self.save_edit_values(); self.ensure_editor_defaults(); self.edit_game["metadata"]["updated_at"]=datetime.now().isoformat(timespec="seconds"); save_json(self.edit_path,self.edit_game); self.notify("Game template saved as JSON.")
+        except Exception as e:
+            self.notify("JSON save failed: "+str(e),5)
+    def reindex_board(self):
+        for i,sq in enumerate(self.edit_game["board"]): sq["id"]=i
     def ed_add_square(self): self.save_edit_values(); i=len(self.edit_game["board"]); self.edit_game["board"].append(make_square(i,f"New Square {i}","custom",action=make_action("message",message="Custom square"))); self.selected_square=i; self.build_editor()
     def ed_del_square(self):
-        if len(self.edit_game["board"])>2: self.edit_game["board"].pop(self.selected_square); self.selected_square=max(0,self.selected_square-1); self.build_editor()
+        if len(self.edit_game["board"])>2: self.edit_game["board"].pop(self.selected_square); self.selected_square=max(0,self.selected_square-1); self.reindex_board(); self.build_editor()
     def ed_up(self):
-        b=self.edit_game["board"]; i=self.selected_square
-        if i>0: b[i-1],b[i]=b[i],b[i-1]; self.selected_square-=1; self.build_editor()
+        self.save_edit_values(); b=self.edit_game["board"]; i=self.selected_square
+        if i>0: b[i-1],b[i]=b[i],b[i-1]; self.selected_square-=1; self.reindex_board(); self.build_editor()
     def ed_down(self):
-        b=self.edit_game["board"]; i=self.selected_square
-        if i<len(b)-1: b[i+1],b[i]=b[i],b[i+1]; self.selected_square+=1; self.build_editor()
+        self.save_edit_values(); b=self.edit_game["board"]; i=self.selected_square
+        if i<len(b)-1: b[i+1],b[i]=b[i],b[i+1]; self.selected_square+=1; self.reindex_board(); self.build_editor()
+    def cycle_board_layout(self):
+        self.save_edit_values(); cur=self.edit_game["settings"].get("board_layout",BOARD_TYPES[0]); idx=(BOARD_TYPES.index(cur)+1)%len(BOARD_TYPES) if cur in BOARD_TYPES else 0; self.edit_game["settings"]["board_layout"]=BOARD_TYPES[idx]; self.build_editor()
     def cycle_square_type(self):
-        self.save_edit_values()
-        sq = self.edit_game["board"][self.selected_square]
-        current = sq.get("type", "custom")
-        idx = (SQUARE_TYPES.index(current) + 1) % len(SQUARE_TYPES) if current in SQUARE_TYPES else 0
-        sq["type"] = SQUARE_TYPES[idx]
-        if sq["type"] in ("property", "railroad", "utility") and sq.get("price", 0) == 0:
-            sq["price"] = 100
-            sq["rent"] = 10
+        self.save_edit_values(); sq=self.edit_game["board"][self.selected_square]; current=sq.get("type","custom"); idx=(SQUARE_TYPES.index(current)+1)%len(SQUARE_TYPES) if current in SQUARE_TYPES else 0; sq["type"]=SQUARE_TYPES[idx]
+        if sq["type"] in ("property","railroad","utility") and sq.get("price",0)==0: sq["price"]=100; sq["rent"]=10; sq["rent_base"]=10; sq["mortgage_value"]=50
         self.build_editor()
     def cycle_action(self):
-        sq = self.edit_game["board"][self.selected_square]
-        if not sq.get("actions"):
-            sq["actions"] = [make_action("none")]
-        act=sq["actions"][0]; idx=(ACTION_TYPES.index(act.get("type","none")) + 1) % len(ACTION_TYPES) if act.get("type","none") in ACTION_TYPES else 0; act["type"]=ACTION_TYPES[idx]; self.build_editor()
+        self.save_edit_values(); sq=self.edit_game["board"][self.selected_square]; act=sq.setdefault("actions",[make_action("none")])[0]; idx=(ACTION_TYPES.index(act.get("type","none"))+1)%len(ACTION_TYPES) if act.get("type","none") in ACTION_TYPES else 0; act["type"]=ACTION_TYPES[idx]; self.build_editor()
     def new_deck(self): self.save_edit_values(); self.selected_card_deck="Custom Deck "+str(len(self.edit_game["card_decks"])+1); self.edit_game["card_decks"][self.selected_card_deck]=[]; self.selected_card=0; self.build_editor()
     def add_card(self): self.save_edit_values(); deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[]); deck.append({"id":str(uuid.uuid4()),"name":"New Card","description":"A custom card.","image":"","return_to_deck":True,"single_use":False,"holdable":False,"tradable":False,"action":make_action("gain_money",50)}); self.selected_card=len(deck)-1; self.build_editor()
     def del_card(self):
         deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[])
         if deck: deck.pop(self.selected_card); self.selected_card=max(0,self.selected_card-1); self.build_editor()
     def cycle_card_action(self):
-        deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[])
+        self.save_edit_values(); deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[])
         if deck:
-            act=deck[self.selected_card].setdefault("action",make_action()); idx=(ACTION_TYPES.index(act.get("type","gain_money"))+1)%len(ACTION_TYPES) if act.get("type") in ACTION_TYPES else 0; act["type"]=ACTION_TYPES[idx]
+            self.selected_card=min(self.selected_card,len(deck)-1); act=deck[self.selected_card].setdefault("action",make_action()); idx=(ACTION_TYPES.index(act.get("type","gain_money"))+1)%len(ACTION_TYPES) if act.get("type") in ACTION_TYPES else 0; act["type"]=ACTION_TYPES[idx]
         self.build_editor()
+    def start_editor_test_play(self):
+        self.save_edit_values(); self.test_play_active=True; self.play_state=GameState(deepcopy(self.edit_game),["Tester 1","Tester 2"]); self.build_gameplay()
+    def save_then_test(self): self.save_edit(); self.start_editor_test_play()
+    def return_to_editor(self):
+        self.test_play_active=False; self.play_state=None; self.editor_active=True; self.build_editor()
 
     def build_settings(self):
         w,h=self.screen.get_size(); self.buttons=[Button((35,h-70,140,44),"Back",self.build_main_menu,"secondary"), Button((w//2-120,260,240,48),"Toggle Theme",self.toggle_theme,"secondary"), Button((w//2-120,325,240,48),"1280 x 720",lambda:self.set_res(1280,720),"secondary"), Button((w//2-120,390,240,48),"1920 x 1080",lambda:self.set_res(1920,1080),"secondary")]
@@ -626,7 +685,9 @@ class App:
     def build_gameplay(self):
         self.scene = "gameplay"
         w,h=self.screen.get_size(); y=h-58; x=30; gap=8; end_w=132; roll_w=145; details_w=126; small_w=max(76, min(96, (w-60-end_w-roll_w-details_w-gap*12)//9))
-        labels=[("Menu",self.confirm_menu,"secondary",small_w), ("Roll Dice",self.roll_dice,"roll",roll_w), ("Buy",self.buy_property,"good",small_w), ("Auction",self.auction,"secondary",small_w), ("Trade",self.trade,"secondary",small_w), ("Debt",self.debt,"secondary",small_w), ("Build",self.build_house,"secondary",small_w), ("Mortgage",self.mortgage,"secondary",small_w), ("Card",self.use_card,"secondary",small_w), ("Player Details",self.open_current_player_details,"primary",details_w), ("Save",self.save_game,"secondary",small_w)]
+        menu_label = "Return Editor" if getattr(self, "test_play_active", False) else "Menu"
+        menu_action = self.return_to_editor if getattr(self, "test_play_active", False) else self.confirm_menu
+        labels=[(menu_label,menu_action,"secondary",small_w), ("Roll Dice",self.roll_dice,"roll",roll_w), ("Buy",self.buy_property,"good",small_w), ("Auction",self.auction,"secondary",small_w), ("Trade",self.trade,"secondary",small_w), ("Debt",self.debt,"secondary",small_w), ("Build",self.build_house,"secondary",small_w), ("Mortgage",self.mortgage,"secondary",small_w), ("Card",self.use_card,"secondary",small_w), ("Player Details",self.open_current_player_details,"primary",details_w), ("Save",self.save_game,"secondary",small_w)]
         self.buttons=[]
         for lab,act,kind,bw in labels:
             self.buttons.append(Button((x,y,bw,42),lab,act,kind)); x += bw + gap
@@ -947,20 +1008,46 @@ class App:
             if self.scene=="edit_game" and self.editor_active: self.editor_click(e.pos)
         if e.type==pygame.KEYDOWN and self.scene=="edit_game" and self.editor_active:
             if e.key==pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL: self.save_edit()
+    def editor_square_rects(self, area):
+        board=self.edit_game.get("board",[]) if self.edit_game else []
+        n=max(1,len(board)); layout=self.edit_game.get("settings",{}).get("board_layout",BOARD_TYPES[0]) if self.edit_game else BOARD_TYPES[0]
+        rects=[]
+        if layout in ("Circle", "Circular path"):
+            cx,cy=area.center; rad=min(area.w,area.h)*0.36
+            for i in range(n):
+                a=-math.pi/2+2*math.pi*i/n; r=pygame.Rect(0,0,54,38); r.center=(cx+math.cos(a)*rad,cy+math.sin(a)*rad); rects.append(r)
+        elif layout in ("Grid path", "Free grid path"):
+            cols=max(2,math.ceil(math.sqrt(n))); rows=math.ceil(n/cols); cell_w=area.w/(cols+0.6); cell_h=area.h/(rows+0.6)
+            for i in range(n):
+                r=pygame.Rect(0,0,min(70,int(cell_w*0.82)),min(44,int(cell_h*0.72))); r.center=(area.x+cell_w*(0.45+i%cols),area.y+cell_h*(0.45+i//cols)); rects.append(r)
+        else:
+            per=max(1,n//4); left,right,top,bottom=area.x+48,area.right-48,area.y+45,area.bottom-45
+            for i in range(n):
+                side=i/per
+                if side<1: t=(i%per)/per; c=(right-(right-left)*t,bottom)
+                elif side<2: t=(i%per)/per; c=(left,bottom-(bottom-top)*t)
+                elif side<3: t=(i%per)/per; c=(left+(right-left)*t,top)
+                else: t=(i%per)/max(1,n-3*per); c=(right,top+(bottom-top)*t)
+                r=pygame.Rect(0,0,58 if i in (0,n//4,n//2,(n*3)//4) else 48,42 if i in (0,n//4,n//2,(n*3)//4) else 34); r.center=c; rects.append(r)
+        return rects
+
     def editor_click(self,pos):
-        if self.editor_tab in ("Board","Actions","Timers"):
-            x,y=30,185
-            for i,sq in enumerate(self.edit_game["board"]):
-                r=pygame.Rect(x,y+i*32,520,28)
-                if r.collidepoint(pos): self.save_edit_values(); self.selected_square=i; self.build_editor(); break
+        if self.editor_tab in ("Board","Squares"):
+            _,left,_=self.editor_content_rects()
+            preview=pygame.Rect(left.x+12,left.y+18,left.w-24,min(310,left.h-160)) if self.editor_tab=="Board" else pygame.Rect(left.x+12,left.y+18,left.w-24,260)
+            for i,r in enumerate(self.editor_square_rects(preview)):
+                if r.collidepoint(pos): self.save_edit_values(); self.selected_square=i; self.build_editor(); return
+            list_y=preview.bottom+18
+            for i,sq in enumerate(self.edit_game["board"][:12]):
+                if pygame.Rect(left.x+12,list_y+i*30,left.w-24,26).collidepoint(pos): self.save_edit_values(); self.selected_square=i; self.build_editor(); return
         elif self.editor_tab=="Cards":
-            x,y=30,170
+            _,left,_=self.editor_content_rects(); y=left.y+52
             decks=list(self.edit_game["card_decks"].keys())
-            for i,d in enumerate(decks):
-                if pygame.Rect(x,y+i*32,220,28).collidepoint(pos): self.save_edit_values(); self.selected_card_deck=d; self.selected_card=0; self.build_editor(); return
-            deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[])
-            for i,c in enumerate(deck):
-                if pygame.Rect(270,y+i*32,300,28).collidepoint(pos): self.save_edit_values(); self.selected_card=i; self.build_editor(); return
+            for i,d in enumerate(decks[:10]):
+                if pygame.Rect(left.x+14,y+i*30,left.w-28,26).collidepoint(pos): self.save_edit_values(); self.selected_card_deck=d; self.selected_card=0; self.build_editor(); return
+            deck=self.edit_game["card_decks"].setdefault(self.selected_card_deck,[]); cy=y+330
+            for i,c in enumerate(deck[:9]):
+                if pygame.Rect(left.x+14,cy+i*30,left.w-28,26).collidepoint(pos): self.save_edit_values(); self.selected_card=i; self.build_editor(); return
     def update(self,dt):
         if self.scene=="gameplay" and self.play_state:
             self.play_state.update(dt)
@@ -1062,40 +1149,75 @@ class App:
             m=g.get("metadata",{}); st=g.get("settings",{})
             self.ui.text(self.screen,m.get("name","Untitled"),(panel.x+55,y+idx*row_h+8),20,COLORS["text"],max_width=panel.w-560)
             self.ui.text(self.screen,f"Created: {m.get('created_at','?')}  Players: {st.get('min_players',2)}-{st.get('max_players',6)}  Squares: {len(g.get('board',[]))}",(panel.x+55,y+idx*row_h+32),14,COLORS["muted"],max_width=panel.w-560)
+    def draw_editor_board_preview(self, area):
+        self.ui.glass(self.screen,area,COLORS["panel2"],155,18,COLORS["accent"],55,False)
+        rects=self.editor_square_rects(area); board=self.edit_game.get("board",[])
+        for i,sq in enumerate(board):
+            if i>=len(rects): break
+            r=rects[i]; col=GROUP_COLORS.get(sq.get("color_group"),(100,116,139))
+            self.ui.rounded(self.screen,r,(248,250,252),8,border=COLORS["accent"] if i==self.selected_square else col,border_width=3 if i==self.selected_square else 2,shadow=i==self.selected_square)
+            pygame.draw.rect(self.screen,col,(r.x+3,r.y+3,r.w-6,6),border_radius=3)
+            self.ui.text(self.screen,str(i),(r.centerx,r.centery-2),12,COLORS["dark_text"],True,max_width=r.w-8)
+        self.ui.text(self.screen,self.edit_game["settings"].get("board_layout",BOARD_TYPES[0]),(area.centerx,area.bottom-22),16,COLORS["muted"],True,max_width=area.w-30)
+
+    def draw_field_labels(self, labels, start, row=38, color=None):
+        x,y=start
+        for i,l in enumerate(labels): self.ui.text(self.screen,l,(x,y+i*row+6),15,color or COLORS["muted"],max_width=145)
+
     def draw_edit_game(self):
         if not self.editor_active:
             self.draw_game_list("edit")
             return
-        g=self.edit_game; self.draw_header("Game Editor",g["metadata"].get("name","Game"))
-        if self.editor_tab in ("Board","Actions","Timers"):
-            self.ui.text(self.screen,"Squares",(30,170),20,COLORS["accent"])
-            for i,sq in enumerate(g["board"][:14]):
-                r=pygame.Rect(30,185+i*32,520,28); self.ui.rounded(self.screen,r,COLORS["accent2"] if i==self.selected_square else COLORS["panel"],8,shadow=False)
-                self.ui.text(self.screen,f"{i:02d} {sq['name']} | {sq['type']} | ${sq.get('price',0)} / rent {sq.get('rent',0)}",(40,190+i*32),14,COLORS["text"],max_width=500)
-            sq=g["board"][self.selected_square]; self.buttons[-1].label="Type: "+sq.get("type","custom"); self.ui.text(self.screen,"Selected square: "+sq["name"],(620,135),22,COLORS["accent"])
-            if self.editor_tab=="Board":
-                for j,l in enumerate(["Name","Price","Rent","Color group","Description","Image path","Icon"]): self.ui.text(self.screen,l,(500,183+j*50),18,COLORS["muted"])
-            if self.editor_tab=="Actions":
-                act=sq["actions"][0]; self.ui.text(self.screen,"Square Action Editor",(620,135),22,COLORS["accent"]); self.ui.text(self.screen,"Current action: "+act.get("type","none"),(620,205),18,COLORS["muted"])
-                for j,l in enumerate(["Amount","Target square/deck/player","Message"]): self.ui.text(self.screen,l,(430,228+j*50),18,COLORS["muted"])
-                self.ui.wrap(self.screen,"Actions include buying, rent, cards, money transfer, movement, jail, waiting turns, auctions, messages, timers and next-turn actions.",pygame.Rect(620,370,460,90),16,COLORS["muted"])
-            if self.editor_tab=="Timers":
-                self.ui.text(self.screen,"Timer System",(620,135),22,COLORS["accent"]); self.ui.text(self.screen,"Enabled",(500,194),18,COLORS["muted"])
-                for j,l in enumerate(["Timer value","Timer mode","Action when finished","Action amount"]): self.ui.text(self.screen,l,(430,248+j*50),18,COLORS["muted"])
-                self.ui.wrap(self.screen,"Modes: seconds, turns, on_return, after_n_turns. Gameplay executes turn timers and shows debt/timer warnings in the log.",pygame.Rect(620,440,480,80),16,COLORS["muted"])
-        elif self.editor_tab=="Cards":
-            self.ui.text(self.screen,"Decks",(30,135),20,COLORS["accent"]); y=170
-            for i,d in enumerate(g["card_decks"].keys()): self.ui.rounded(self.screen,(30,y+i*32,220,28),COLORS["accent2"] if d==self.selected_card_deck else COLORS["panel"],8,shadow=False); self.ui.text(self.screen,d,(40,y+i*32+5),14,COLORS["text"],max_width=200)
-            self.ui.text(self.screen,"Cards",(270,135),20,COLORS["accent"]); deck=g["card_decks"].get(self.selected_card_deck,[])
-            for i,c in enumerate(deck[:12]): self.ui.rounded(self.screen,(270,y+i*32,300,28),COLORS["accent2"] if i==self.selected_card else COLORS["panel"],8,shadow=False); self.ui.text(self.screen,c.get("name","Card"),(280,y+i*32+5),14,COLORS["text"],max_width=280)
-            for j,l in enumerate(["Deck name","Card name","Card description","Action amount"]): self.ui.text(self.screen,l,(465,183+j*50 if j else 183),18,COLORS["muted"])
+        self.ensure_editor_defaults(); g=self.edit_game; sq=g["board"][self.selected_square]
+        self.draw_header("Board Game Studio Editor",g["metadata"].get("name","Game"))
+        shell,left,right=self.editor_content_rects(); self.ui.glass(self.screen,shell,COLORS["panel"],160,22,COLORS["accent"],65)
+        self.ui.text(self.screen,self.editor_tab,(shell.x+24,shell.y+18),24,COLORS["accent"])
+        if self.editor_tab=="Board":
+            preview=pygame.Rect(left.x+12,left.y+18,left.w-24,min(310,left.h-160)); self.draw_editor_board_preview(preview)
+            list_y=preview.bottom+18; self.ui.text(self.screen,"Square order",(left.x+14,list_y-24),18,COLORS["accent"])
+            for i,item in enumerate(g["board"][:12]):
+                r=pygame.Rect(left.x+12,list_y+i*30,left.w-24,26); self.ui.rounded(self.screen,r,COLORS["accent2"] if i==self.selected_square else COLORS["panel"],8,shadow=False)
+                self.ui.text(self.screen,f"{i:02d}  {item['name']}  •  {item.get('type','custom')}",(r.x+10,r.y+5),13,COLORS["text"],max_width=r.w-20)
+            self.ui.text(self.screen,"Selected square",(right.x+20,right.y+24),22,COLORS["accent"])
+            self.ui.wrap(self.screen,f"#{self.selected_square} {sq['name']}\nType: {sq.get('type')}\nPrice: ${sq.get('price',0)}\nColor group: {sq.get('color_group')}\n\nUse Add/Delete/Up/Down to change the board order. Use the Layout button to switch Classic rectangle, Circle and Grid path previews.",pygame.Rect(right.x+22,right.y+70,right.w-44,210),18,COLORS["text"])
+        elif self.editor_tab=="Squares":
+            preview=pygame.Rect(left.x+12,left.y+18,left.w-24,260); self.draw_editor_board_preview(preview)
+            list_y=preview.bottom+18
+            for i,item in enumerate(g["board"][:12]):
+                r=pygame.Rect(left.x+12,list_y+i*30,left.w-24,26); self.ui.rounded(self.screen,r,COLORS["accent2"] if i==self.selected_square else COLORS["panel"],8,shadow=False)
+                self.ui.text(self.screen,f"{i:02d} {item['name']}",(r.x+10,r.y+5),13,COLORS["text"],max_width=r.w-20)
+            self.ui.text(self.screen,f"Editing square #{self.selected_square}",(right.x+20,right.y+14),22,COLORS["accent"])
+            self.draw_field_labels(["Name","Price","Rent base","Rent 1 house","Rent 2 houses","Rent 3 houses","Rent 4 houses","Rent hotel","Color group"],(right.x+20,right.y+42))
+            self.draw_field_labels(["House cost","Mortgage value","Image path","Icon","Description","Action amount","Action target","Action message","Timer value / mode"],(right.x+330,right.y+42))
+            self.ui.text(self.screen,"Timer enabled",(right.x+20,right.y+404),15,COLORS["muted"])
         elif self.editor_tab=="Rules":
-            self.ui.text(self.screen,"Rules Editor",(60,135),24,COLORS["accent"])
-            for i,k in enumerate(self.rule_keys): self.ui.text(self.screen,k.replace("_"," ").title(),(690,148+i*36),16,COLORS["text"])
-            self.ui.text(self.screen,"Money / jail / debt / end condition",(1000,120),18,COLORS["accent"])
-        else:
-            self.ui.text(self.screen,self.editor_tab+" System",(60,140),28,COLORS["accent"])
-            self.ui.wrap(self.screen,"This panel documents and stores trade/debt/asset options in JSON. The first version includes working money trades, loans with interest and due turns, default icons, missing-image fallback, player tokens, property ownership markers, and editable JSON fields.",pygame.Rect(60,190,800,160),20,COLORS["text"])
+            labels=["Pass Start Money","Auction","Rent","Trade","Debt","Jail","Double Dice","Three Doubles Jail","Free Parking Pot","Mortgage","Houses and Hotels","Bankruptcy"]
+            self.ui.wrap(self.screen,"Turn major gameplay systems on/off. Economy values live in the Economy tab; trade and loan contract defaults live in Trade & Debt.",pygame.Rect(left.x+20,left.y+28,left.w-40,110),18,COLORS["text"])
+            for i,l in enumerate(labels): self.ui.text(self.screen,l,(right.x+100+(i%2)*310,right.y+62+(i//2)*46),16,COLORS["text"],max_width=230)
+        elif self.editor_tab=="Cards":
+            self.ui.text(self.screen,"Deck list",(left.x+18,left.y+18),20,COLORS["accent"]); y=left.y+52
+            for i,d in enumerate(g["card_decks"].keys()):
+                if i>=10: break
+                r=pygame.Rect(left.x+14,y+i*30,left.w-28,26); self.ui.rounded(self.screen,r,COLORS["accent2"] if d==self.selected_card_deck else COLORS["panel"],8,shadow=False); self.ui.text(self.screen,d,(r.x+10,r.y+5),13,COLORS["text"],max_width=r.w-20)
+            self.ui.text(self.screen,"Cards in deck",(left.x+18,y+300),20,COLORS["accent"]); deck=g["card_decks"].get(self.selected_card_deck,[])
+            for i,c in enumerate(deck[:9]):
+                r=pygame.Rect(left.x+14,y+330+i*30,left.w-28,26); self.ui.rounded(self.screen,r,COLORS["accent2"] if i==self.selected_card else COLORS["panel"],8,shadow=False); self.ui.text(self.screen,c.get("name","Card"),(r.x+10,r.y+5),13,COLORS["text"],max_width=r.w-20)
+            self.draw_field_labels(["Deck name","Card name","Description","Card image","Action amount","Action target"],(right.x+20,right.y+50),46)
+            for i,l in enumerate(["Holdable","Tradable","Return to deck","Single use"]): self.ui.text(self.screen,l,(right.x+300,right.y+332+i*38),15,COLORS["text"])
+        elif self.editor_tab=="Economy":
+            self.ui.wrap(self.screen,"Configure money values used by the template and gameplay economy. These values are saved into JSON with the game template.",pygame.Rect(left.x+20,left.y+30,left.w-40,120),18,COLORS["text"])
+            self.draw_field_labels(["Starting money","Tax destination","Salary amount","Jail fee","Auction minimum bid","Mortgage interest %","Bank money unlimited"],(right.x+40,right.y+62),48)
+        elif self.editor_tab=="Trade & Debt":
+            self.ui.wrap(self.screen,"Configure player-to-player trades, debt contracts, interest, collateral and approval requirements.",pygame.Rect(left.x+20,left.y+30,left.w-40,120),18,COLORS["text"])
+            for i,l in enumerate(["Trade open","Debt open","Interest open","Collateral open","Two party approval"]): self.ui.text(self.screen,l,(right.x+340,right.y+62+i*46),16,COLORS["text"])
+            self.draw_field_labels(["Default due turns","Default penalty"],(right.x+40,right.y+298),48)
+        elif self.editor_tab=="Visuals":
+            self.ui.wrap(self.screen,"Choose visual metadata for this game. Missing external assets still fall back to generated Pygame icons and tokens.",pygame.Rect(left.x+20,left.y+30,left.w-40,130),18,COLORS["text"])
+            self.draw_field_labels(["Theme preset","Board background","Square images","Card back face","Player icon set","Font size","Dark theme"],(right.x+40,right.y+62),48)
+        elif self.editor_tab=="Test Play":
+            self.ui.wrap(self.screen,"Quickly test the current JSON template from inside the editor. A temporary 2-player game starts with Tester 1 and Tester 2. Use Return Editor in the gameplay bottom bar to come back without losing editor changes.",pygame.Rect(left.x+20,left.y+30,left.w-40,180),20,COLORS["text"])
+            preview=pygame.Rect(right.x+330,right.y+70,min(360,right.w-360),260); self.draw_editor_board_preview(preview)
+            self.ui.text(self.screen,"Test play uses a deepcopy of the current template.",(right.x+40,right.y+220),18,COLORS["muted"],max_width=300)
     def draw_editor(self):
         self.draw_edit_game()
     def draw_settings(self):
@@ -1400,11 +1522,11 @@ class GameState:
     def draw_board(self,surf,ui,rect):
         layout=self.game["settings"].get("board_layout",BOARD_TYPES[0]); n=len(self.game["board"]); centers=[]; self.hover_square=None
         mouse=pygame.mouse.get_pos()
-        if layout=="Circular path":
+        if layout in ("Circle", "Circular path"):
             cx,cy=rect.center; rad=min(rect.w,rect.h)*0.38
             for i in range(n):
                 a=-math.pi/2+2*math.pi*i/n; centers.append((cx+math.cos(a)*rad,cy+math.sin(a)*rad))
-        elif layout=="Free grid path":
+        elif layout in ("Grid path", "Free grid path"):
             cols=math.ceil(math.sqrt(n)); rows=math.ceil(n/cols); cell=min(rect.w/(cols+1),rect.h/(rows+1))
             for i in range(n): centers.append((rect.x+cell*(1+i%cols),rect.y+cell*(1+i//cols)))
         else:
