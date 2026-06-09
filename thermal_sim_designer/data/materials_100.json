@@ -1,0 +1,1002 @@
+[
+  {
+    "name": "Aluminum 1050",
+    "category": "Aluminum Alloys",
+    "thermal_conductivity": 229,
+    "density": 2705,
+    "specific_heat": 900,
+    "emissivity": 0.09,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum 2024",
+    "category": "Aluminum Alloys",
+    "thermal_conductivity": 121,
+    "density": 2780,
+    "specific_heat": 875,
+    "emissivity": 0.09,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum 3003",
+    "category": "Aluminum Alloys",
+    "thermal_conductivity": 193,
+    "density": 2730,
+    "specific_heat": 893,
+    "emissivity": 0.09,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum 5052",
+    "category": "Aluminum Alloys",
+    "thermal_conductivity": 138,
+    "density": 2680,
+    "specific_heat": 880,
+    "emissivity": 0.09,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum 6061",
+    "category": "Aluminum Alloys",
+    "thermal_conductivity": 167,
+    "density": 2700,
+    "specific_heat": 896,
+    "emissivity": 0.09,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum 6063",
+    "category": "Aluminum Alloys",
+    "thermal_conductivity": 201,
+    "density": 2700,
+    "specific_heat": 900,
+    "emissivity": 0.09,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum 7075",
+    "category": "Aluminum Alloys",
+    "thermal_conductivity": 130,
+    "density": 2810,
+    "specific_heat": 960,
+    "emissivity": 0.09,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Pure Copper",
+    "category": "Copper Alloys",
+    "thermal_conductivity": 401,
+    "density": 8960,
+    "specific_heat": 385,
+    "emissivity": 0.03,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Copper C110",
+    "category": "Copper Alloys",
+    "thermal_conductivity": 391,
+    "density": 8940,
+    "specific_heat": 385,
+    "emissivity": 0.03,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Brass",
+    "category": "Copper Alloys",
+    "thermal_conductivity": 109,
+    "density": 8500,
+    "specific_heat": 380,
+    "emissivity": 0.2,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Bronze",
+    "category": "Copper Alloys",
+    "thermal_conductivity": 60,
+    "density": 8800,
+    "specific_heat": 380,
+    "emissivity": 0.2,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Beryllium Copper",
+    "category": "Copper Alloys",
+    "thermal_conductivity": 105,
+    "density": 8250,
+    "specific_heat": 420,
+    "emissivity": 0.15,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Carbon Steel",
+    "category": "Steels",
+    "thermal_conductivity": 54,
+    "density": 7850,
+    "specific_heat": 486,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Mild Steel",
+    "category": "Steels",
+    "thermal_conductivity": 51,
+    "density": 7850,
+    "specific_heat": 486,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "AISI 1010 Steel",
+    "category": "Steels",
+    "thermal_conductivity": 63,
+    "density": 7870,
+    "specific_heat": 448,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "AISI 1020 Steel",
+    "category": "Steels",
+    "thermal_conductivity": 52,
+    "density": 7870,
+    "specific_heat": 486,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "AISI 1045 Steel",
+    "category": "Steels",
+    "thermal_conductivity": 49,
+    "density": 7850,
+    "specific_heat": 486,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Cast Iron",
+    "category": "Steels",
+    "thermal_conductivity": 52,
+    "density": 7200,
+    "specific_heat": 460,
+    "emissivity": 0.64,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Ductile Iron",
+    "category": "Steels",
+    "thermal_conductivity": 36,
+    "density": 7100,
+    "specific_heat": 460,
+    "emissivity": 0.64,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Stainless Steel 304",
+    "category": "Stainless Steels",
+    "thermal_conductivity": 16.2,
+    "density": 8000,
+    "specific_heat": 500,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Stainless Steel 316",
+    "category": "Stainless Steels",
+    "thermal_conductivity": 16.3,
+    "density": 8000,
+    "specific_heat": 500,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Stainless Steel 321",
+    "category": "Stainless Steels",
+    "thermal_conductivity": 16.1,
+    "density": 8020,
+    "specific_heat": 500,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Stainless Steel 430",
+    "category": "Stainless Steels",
+    "thermal_conductivity": 26,
+    "density": 7750,
+    "specific_heat": 460,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Tool Steel",
+    "category": "Steels",
+    "thermal_conductivity": 27,
+    "density": 7700,
+    "specific_heat": 460,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Titanium Grade 2",
+    "category": "Titanium Alloys",
+    "thermal_conductivity": 16.4,
+    "density": 4510,
+    "specific_heat": 520,
+    "emissivity": 0.35,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Titanium Grade 5",
+    "category": "Titanium Alloys",
+    "thermal_conductivity": 6.7,
+    "density": 4430,
+    "specific_heat": 560,
+    "emissivity": 0.35,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Inconel 600",
+    "category": "Nickel Alloys",
+    "thermal_conductivity": 14.9,
+    "density": 8470,
+    "specific_heat": 444,
+    "emissivity": 0.88,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Inconel 625",
+    "category": "Nickel Alloys",
+    "thermal_conductivity": 9.8,
+    "density": 8440,
+    "specific_heat": 410,
+    "emissivity": 0.88,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Inconel 718",
+    "category": "Nickel Alloys",
+    "thermal_conductivity": 11.4,
+    "density": 8190,
+    "specific_heat": 435,
+    "emissivity": 0.88,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Nickel 200",
+    "category": "Nickel Alloys",
+    "thermal_conductivity": 70,
+    "density": 8890,
+    "specific_heat": 440,
+    "emissivity": 0.31,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Monel 400",
+    "category": "Nickel Alloys",
+    "thermal_conductivity": 22,
+    "density": 8830,
+    "specific_heat": 427,
+    "emissivity": 0.35,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Zinc",
+    "category": "Metals",
+    "thermal_conductivity": 116,
+    "density": 7140,
+    "specific_heat": 388,
+    "emissivity": 0.05,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Tin",
+    "category": "Metals",
+    "thermal_conductivity": 67,
+    "density": 7310,
+    "specific_heat": 227,
+    "emissivity": 0.05,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Lead",
+    "category": "Metals",
+    "thermal_conductivity": 35,
+    "density": 11340,
+    "specific_heat": 129,
+    "emissivity": 0.28,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Magnesium AZ31",
+    "category": "Metals",
+    "thermal_conductivity": 96,
+    "density": 1770,
+    "specific_heat": 1040,
+    "emissivity": 0.07,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Silver",
+    "category": "Metals",
+    "thermal_conductivity": 429,
+    "density": 10490,
+    "specific_heat": 235,
+    "emissivity": 0.02,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Gold",
+    "category": "Metals",
+    "thermal_conductivity": 317,
+    "density": 19300,
+    "specific_heat": 129,
+    "emissivity": 0.02,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Platinum",
+    "category": "Metals",
+    "thermal_conductivity": 72,
+    "density": 21450,
+    "specific_heat": 133,
+    "emissivity": 0.1,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Tungsten",
+    "category": "Metals",
+    "thermal_conductivity": 174,
+    "density": 19300,
+    "specific_heat": 134,
+    "emissivity": 0.35,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Molybdenum",
+    "category": "Metals",
+    "thermal_conductivity": 138,
+    "density": 10220,
+    "specific_heat": 251,
+    "emissivity": 0.25,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Graphite",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 120,
+    "density": 1800,
+    "specific_heat": 710,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Silicon",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 148,
+    "density": 2330,
+    "specific_heat": 700,
+    "emissivity": 0.65,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Silicon Carbide",
+    "category": "Ceramics",
+    "thermal_conductivity": 120,
+    "density": 3210,
+    "specific_heat": 750,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Alumina",
+    "category": "Ceramics",
+    "thermal_conductivity": 30,
+    "density": 3900,
+    "specific_heat": 880,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum Nitride",
+    "category": "Ceramics",
+    "thermal_conductivity": 170,
+    "density": 3260,
+    "specific_heat": 740,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Boron Nitride",
+    "category": "Ceramics",
+    "thermal_conductivity": 60,
+    "density": 2100,
+    "specific_heat": 800,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Zirconia",
+    "category": "Ceramics",
+    "thermal_conductivity": 2.2,
+    "density": 5680,
+    "specific_heat": 480,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Glass",
+    "category": "Ceramics",
+    "thermal_conductivity": 1.05,
+    "density": 2500,
+    "specific_heat": 840,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Quartz",
+    "category": "Ceramics",
+    "thermal_conductivity": 1.4,
+    "density": 2650,
+    "specific_heat": 730,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Soda Lime Glass",
+    "category": "Ceramics",
+    "thermal_conductivity": 0.96,
+    "density": 2500,
+    "specific_heat": 840,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "FR4 PCB",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 0.3,
+    "density": 1850,
+    "specific_heat": 1100,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Polyimide",
+    "category": "Polymers",
+    "thermal_conductivity": 0.12,
+    "density": 1420,
+    "specific_heat": 1090,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Kapton",
+    "category": "Polymers",
+    "thermal_conductivity": 0.12,
+    "density": 1420,
+    "specific_heat": 1090,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Epoxy",
+    "category": "Polymers",
+    "thermal_conductivity": 0.2,
+    "density": 1200,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Silicone Rubber",
+    "category": "Rubbers",
+    "thermal_conductivity": 0.2,
+    "density": 1100,
+    "specific_heat": 1460,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Natural Rubber",
+    "category": "Rubbers",
+    "thermal_conductivity": 0.13,
+    "density": 930,
+    "specific_heat": 1880,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Nitrile Rubber",
+    "category": "Rubbers",
+    "thermal_conductivity": 0.25,
+    "density": 1000,
+    "specific_heat": 1500,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Neoprene",
+    "category": "Rubbers",
+    "thermal_conductivity": 0.19,
+    "density": 1230,
+    "specific_heat": 1500,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "PTFE",
+    "category": "Polymers",
+    "thermal_conductivity": 0.25,
+    "density": 2200,
+    "specific_heat": 1000,
+    "emissivity": 0.92,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "PEEK",
+    "category": "Polymers",
+    "thermal_conductivity": 0.25,
+    "density": 1320,
+    "specific_heat": 1340,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Nylon",
+    "category": "Polymers",
+    "thermal_conductivity": 0.25,
+    "density": 1150,
+    "specific_heat": 1700,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Polycarbonate",
+    "category": "Polymers",
+    "thermal_conductivity": 0.2,
+    "density": 1200,
+    "specific_heat": 1200,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "ABS",
+    "category": "Polymers",
+    "thermal_conductivity": 0.18,
+    "density": 1040,
+    "specific_heat": 1300,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "PVC",
+    "category": "Polymers",
+    "thermal_conductivity": 0.19,
+    "density": 1400,
+    "specific_heat": 900,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Polyethylene",
+    "category": "Polymers",
+    "thermal_conductivity": 0.42,
+    "density": 950,
+    "specific_heat": 1900,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Polypropylene",
+    "category": "Polymers",
+    "thermal_conductivity": 0.22,
+    "density": 900,
+    "specific_heat": 1800,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "PMMA",
+    "category": "Polymers",
+    "thermal_conductivity": 0.19,
+    "density": 1180,
+    "specific_heat": 1470,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "PET",
+    "category": "Polymers",
+    "thermal_conductivity": 0.24,
+    "density": 1380,
+    "specific_heat": 1200,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Acetal POM",
+    "category": "Polymers",
+    "thermal_conductivity": 0.31,
+    "density": 1410,
+    "specific_heat": 1470,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Polyurethane",
+    "category": "Polymers",
+    "thermal_conductivity": 0.03,
+    "density": 60,
+    "specific_heat": 1400,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Thermal Grease",
+    "category": "Thermal Interface Materials",
+    "thermal_conductivity": 4,
+    "density": 2500,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Thermal Pad 1 W/mK",
+    "category": "Thermal Interface Materials",
+    "thermal_conductivity": 1,
+    "density": 2200,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Thermal Pad 3 W/mK",
+    "category": "Thermal Interface Materials",
+    "thermal_conductivity": 3,
+    "density": 2300,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Thermal Pad 5 W/mK",
+    "category": "Thermal Interface Materials",
+    "thermal_conductivity": 5,
+    "density": 2400,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Thermal Adhesive",
+    "category": "Thermal Interface Materials",
+    "thermal_conductivity": 1.5,
+    "density": 1800,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Solder SAC305",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 58,
+    "density": 7400,
+    "specific_heat": 220,
+    "emissivity": 0.3,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Lead Tin Solder",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 50,
+    "density": 8400,
+    "specific_heat": 150,
+    "emissivity": 0.3,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Silicon Die",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 130,
+    "density": 2330,
+    "specific_heat": 700,
+    "emissivity": 0.65,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Copper Trace",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 385,
+    "density": 8960,
+    "specific_heat": 385,
+    "emissivity": 0.03,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "PCB Core Material",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 0.35,
+    "density": 1850,
+    "specific_heat": 1100,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Ceramic Substrate",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 24,
+    "density": 3900,
+    "specific_heat": 880,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "DBC Substrate",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 180,
+    "density": 3300,
+    "specific_heat": 750,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Alumina Substrate",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 30,
+    "density": 3900,
+    "specific_heat": 880,
+    "emissivity": 0.85,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aluminum Nitride Substrate",
+    "category": "Electronics Materials",
+    "thermal_conductivity": 170,
+    "density": 3260,
+    "specific_heat": 740,
+    "emissivity": 0.8,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Mica",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.7,
+    "density": 2800,
+    "specific_heat": 800,
+    "emissivity": 0.75,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Mineral Wool",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.04,
+    "density": 100,
+    "specific_heat": 840,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Glass Wool",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.04,
+    "density": 24,
+    "specific_heat": 800,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Rock Wool",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.045,
+    "density": 80,
+    "specific_heat": 840,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Aerogel",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.015,
+    "density": 150,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Calcium Silicate",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.06,
+    "density": 250,
+    "specific_heat": 1000,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Foam Insulation",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.03,
+    "density": 35,
+    "specific_heat": 1400,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Wood",
+    "category": "Construction Materials",
+    "thermal_conductivity": 0.12,
+    "density": 600,
+    "specific_heat": 1700,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Concrete",
+    "category": "Construction Materials",
+    "thermal_conductivity": 1.4,
+    "density": 2300,
+    "specific_heat": 880,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Brick",
+    "category": "Construction Materials",
+    "thermal_conductivity": 0.72,
+    "density": 1800,
+    "specific_heat": 840,
+    "emissivity": 0.9,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Asphalt",
+    "category": "Construction Materials",
+    "thermal_conductivity": 0.75,
+    "density": 2300,
+    "specific_heat": 920,
+    "emissivity": 0.95,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Dry Soil",
+    "category": "Construction Materials",
+    "thermal_conductivity": 0.25,
+    "density": 1600,
+    "specific_heat": 800,
+    "emissivity": 0.95,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Wet Soil",
+    "category": "Construction Materials",
+    "thermal_conductivity": 1.5,
+    "density": 1800,
+    "specific_heat": 1200,
+    "emissivity": 0.95,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Ice",
+    "category": "Construction Materials",
+    "thermal_conductivity": 2.2,
+    "density": 917,
+    "specific_heat": 2100,
+    "emissivity": 0.97,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Water Ice",
+    "category": "Construction Materials",
+    "thermal_conductivity": 2.2,
+    "density": 917,
+    "specific_heat": 2100,
+    "emissivity": 0.97,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  },
+  {
+    "name": "Air Gap Equivalent",
+    "category": "Insulation Materials",
+    "thermal_conductivity": 0.026,
+    "density": 1.2,
+    "specific_heat": 1005,
+    "emissivity": 0.0,
+    "melting_point": null,
+    "notes": "Varsayılan mühendislik veri tabanı değeri"
+  }
+]
